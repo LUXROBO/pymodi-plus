@@ -18,7 +18,7 @@ class Module:
     """
 
     class Property:
-        def __init__(self, value: bytearray):
+        def __init__(self, value: bytearray=bytearray(8)):
             self.value = value
             self.last_update_time = time.time()
 
@@ -86,7 +86,7 @@ class Module:
         version_string += str(self.__app_version % (2 ** 8))
         return version_string
 
-    @version.setter
+    @app_version.setter
     def app_version(self, version_info):
         self.__app_version = version_info
 
@@ -98,7 +98,7 @@ class Module:
         version_string += str(self.__os_version % (2 ** 8))
         return version_string
 
-    @version.setter
+    @os_version.setter
     def os_version(self, version_info):
         self.__os_version = version_info
 
@@ -123,9 +123,9 @@ class Module:
             )
         )
         version_path = path.join(root_path, 'version.txt')
-        with open(version_path) as version_file:
+        with open(version_path, "r") as version_file:
             try:
-                version_info = json.loads(version_file.readall())
+                version_info = json.loads(version_file.read())
             except Exception as e:
                 pass
 

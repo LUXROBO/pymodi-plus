@@ -4,6 +4,7 @@ import serial
 from serial.serialutil import SerialException
 from modi.task.conn_task import ConnTask
 from modi.util.connection_util import list_modi_ports
+from modi.util.modi_serialport import ModiSerialPort
 
 
 class SerTask(ConnTask):
@@ -41,7 +42,7 @@ class SerTask(ConnTask):
         for modi_port in modi_ports:
             self._bus = self.__init_serial(modi_port)
             try:
-                self._bus.open()
+                self._bus.open(modi_port)
                 print(f'Serial is open at "{modi_port}"')
                 return
             except SerialException:
@@ -50,10 +51,7 @@ class SerTask(ConnTask):
 
     @staticmethod
     def __init_serial(port):
-        ser = serial.Serial(exclusive=True)
-        ser.baudrate = 921600
-        ser.port = port
-        ser.write_timeout = 0
+        ser = ModiSerialPort(timeout=0.02)
         return ser
 
     def close_conn(self) -> None:

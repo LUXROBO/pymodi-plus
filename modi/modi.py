@@ -11,7 +11,6 @@ from modi._exe_thrd import ExeThrd
 from modi.util.connection_util import is_network_module_connected, is_on_pi
 from modi.util.miscellaneous_util import ModuleList
 from modi.util.strange_util import check_complete
-from modi.util.topology_util import TopologyManager
 # from modi.util.firmware_updater import STM32FirmwareUpdater
 # from modi.util.firmware_updater import ESP32FirmwareUpdater
 
@@ -29,8 +28,7 @@ class MODI:
         if not network_uuid:
             raise ValueError('Should input a valid network uuid!')
         if network_uuid not in cls.network_uuids:
-            cls.network_uuids[network_uuid] = \
-                super(MODI, cls).__call__(*args, **kwargs)
+            cls.network_uuids[network_uuid] = super(MODI, cls).__call__(*args, **kwargs)
         return cls.network_uuids[network_uuid]
 
     def __init__(
@@ -38,58 +36,28 @@ class MODI:
         network_uuid="", virtual_modules=None,
     ):
         if virtual_modules and conn_type != "vir":
-            raise ValueError(
-                "Virtual modules can only be defined in virtual connection"
-            )
+            raise ValueError("Virtual modules can only be defined in virtual connection")
         self._modules = list()
-        self._topology_data = dict()
 
-        self._conn = self.__init_task(
-            conn_type, verbose, port, network_uuid,
-        )
+        self._conn = self.__init_task(conn_type, verbose, port, network_uuid)
 
-        self._exe_thrd = ExeThrd(
-            self._modules, self._topology_data, self._conn
-        )
+        self._exe_thrd = ExeThrd(self._modules, self._conn)
         print('Start initializing connected MODI modules')
         self._exe_thrd.start()
 
-        self._topology_manager = TopologyManager(
-            self._topology_data, self._modules
-        )
-
         init_time = time.time()
-        while not self._topology_manager.is_topology_complete():
-            time.sleep(0.1)
-            if time.time() - init_time > 3:
-                print(
-                    'MODI init timeout over. Check your module connection.'
-                )
-                break
         check_complete(self)
         print("MODI modules are initialized!")
 
-        bad_modules = (
-            self.__wait_user_code_check() if conn_type != 'ble' else []
-        )
+        bad_modules = (self.__wait_user_code_check() if conn_type != 'ble' else [])
         if bad_modules:
-            cmd = input(f"{[str(module) for module in bad_modules]} "
-                        f"has user code in it.\n"
-                        f"Reset the user code? [y/n] ")
+            cmd = input(f"{[str(module) for module in bad_modules]} has user code in it.\nReset the user code? [y/n] ")
             if 'y' in cmd:
                 self.close()
-                modules_to_reset = filter(
-                    lambda m: m.is_up_to_date, bad_modules
-                )
-                modules_to_update = filter(
-                    lambda m: not m.is_up_to_date, bad_modules
-                )
-                reset_module_firmware(
-                    tuple(module.id for module in modules_to_reset)
-                )
-                update_module_firmware(
-                    tuple(module.id for module in modules_to_update)
-                )
+                modules_to_reset = filter(lambda m: m.is_up_to_date, bad_modules)
+                modules_to_update = filter(lambda m: not m.is_up_to_date, bad_modules)
+                reset_module_firmware(tuple(module.id for module in modules_to_reset))
+                update_module_firmware(tuple(module.id for module in modules_to_update))
                 self.open()
         atexit.register(self.close)
 
@@ -98,9 +66,7 @@ class MODI:
         logger = logging.getLogger(f'PyMODI (v{__version__}) Logger')
         logger.setLevel(logging.DEBUG)
 
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        )
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         file_handler = logging.FileHandler('pymodi.log')
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
@@ -120,9 +86,7 @@ class MODI:
                 bad_modules.append(module)
         return bad_modules
 
-    def __init_task(
-        self, conn_type, verbose, port, network_uuid,
-    ):
+    def __init_task(self, conn_type, verbose, port, network_uuid):
         if not conn_type:
             is_can = not is_network_module_connected() and is_on_pi()
             conn_type = 'can' if is_can else 'ser'
@@ -150,9 +114,7 @@ class MODI:
 
     def open(self):
         atexit.register(self.close)
-        self._exe_thrd = ExeThrd(
-            self._modules, self._topology_data, self._conn
-        )
+        self._exe_thrd = ExeThrd(self._modules, self._conn)
         self._conn.open_conn()
         self._exe_thrd.start()
 
@@ -177,14 +139,6 @@ class MODI:
         :rtype: str if msg exists, else None
         """
         return self._conn.recv()
-
-    def print_topology_map(self, print_id=False):
-        """Prints out the topology map
-
-        :param print_id: if True, the result includes module id
-        :return: None
-        """
-        self._topology_manager.print_topology_map(print_id)
 
     @property
     def modules(self) -> ModuleList:

@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import List
 
 import serial.tools.list_ports as stl
@@ -10,12 +11,10 @@ def list_modi_ports() -> List[str]:
 
     :return: List[ListPortInfo]
     """
-
-    port_list = []
+    info_list = []
 
     def __is_modi_port(port):
         return (port.vid == 0x2FDE and port.pid == 0x0003)
-
     modi_ports = [port for port in stl.comports() if __is_modi_port(port)]
     for modi_port in modi_ports:
         info_list.append(modi_port.device)
