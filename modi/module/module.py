@@ -18,8 +18,8 @@ class Module:
     """
 
     class Property:
-        def __init__(self, value: bytearray=bytearray(8)):
-            self.value = value
+        def __init__(self):
+            self.value = bytearray(12)
             self.last_update_time = time.time()
 
     RUN = 0
@@ -39,7 +39,6 @@ class Module:
 
         self.module_type = str()
         self._properties = dict()
-        self._topology = {'r': 0, 't': 0, 'l': 0, 'b': 0}
 
         # sampling_rate = (100 - property_sampling_frequency) * 11, in ms
         self.prop_samp_freq = 91

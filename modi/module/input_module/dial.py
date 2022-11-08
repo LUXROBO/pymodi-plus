@@ -20,7 +20,7 @@ class Dial(InputModule):
 
         offset = Dial.PROP_OFFSET_TURN
         raw = self._get_property(Dial.PROP_DIAL_STATE)
-        data = struct.unpack('b', raw[offset:offset+2])[0]
+        data = struct.unpack('h', raw[offset:offset+2])[0]
         return data
 
     @property
@@ -33,5 +33,5 @@ class Dial(InputModule):
 
         offset = Dial.PROP_OFFSET_SPEED
         raw = self._get_property(Dial.PROP_DIAL_STATE)
-        data = struct.unpack('b', raw[offset:offset+2])[0]
+        data = struct.unpack('h', raw[offset:offset+2])[0]
         return data
