@@ -32,7 +32,7 @@ class MODI:
         return cls.network_uuids[network_uuid]
 
     def __init__(
-        self, modi_version=1, conn_type="", verbose=False, port=None,
+        self, conn_type="", verbose=False, port=None,
         network_uuid="", virtual_modules=None,
     ):
         if virtual_modules and conn_type != "vir":
@@ -92,7 +92,7 @@ class MODI:
             conn_type = 'can' if is_can else 'ser'
 
         if conn_type == 'ser':
-            return im('modi.task.ser_task').SerTask(verbose, port)
+            return im('modi.task.serialport_task').SerialportTask(verbose, port)
         elif conn_type == 'soc':
             return im('modi.task.soc_task').SocTask(verbose, port)
         elif conn_type == 'vir':
@@ -148,7 +148,27 @@ class MODI:
 
     @property
     def networks(self) -> ModuleList:
+        """Module List of connected Network modules.
+        """
         return ModuleList(self._modules, 'network')
+
+    @property
+    def batterys(self) -> ModuleList:
+        """Module List of connected Battery modules.
+        """
+        return ModuleList(self._modules, 'battery')
+
+    @property
+    def envs(self) -> ModuleList:
+        """Module List of connected Env modules.
+        """
+        return ModuleList(self._modules, "env")
+
+    @property
+    def imus(self) -> ModuleList:
+        """Module List of connected IMU modules.
+        """
+        return ModuleList(self._modules, "imu")
 
     @property
     def buttons(self) -> ModuleList:
@@ -163,40 +183,22 @@ class MODI:
         return ModuleList(self._modules, "dial")
 
     @property
+    def joysticks(self) -> ModuleList:
+        """Module List of connected Joystick modules.
+        """
+        return ModuleList(self._modules, "joystick")
+
+    @property
+    def tofs(self) -> ModuleList:
+        """Module List of connected ToF modules.
+        """
+        return ModuleList(self._modules, "tof")
+
+    @property
     def displays(self) -> ModuleList:
         """Module List of connected Display modules.
         """
         return ModuleList(self._modules, "display")
-
-    @property
-    def envs(self) -> ModuleList:
-        """Module List of connected Env modules.
-        """
-        return ModuleList(self._modules, "env")
-
-    @property
-    def gyros(self) -> ModuleList:
-        """Module List of connected Gyro modules.
-        """
-        return ModuleList(self._modules, "gyro")
-
-    @property
-    def irs(self) -> ModuleList:
-        """Module List of connected Ir modules.
-        """
-        return ModuleList(self._modules, "ir")
-
-    @property
-    def leds(self) -> ModuleList:
-        """Module List of connected Led modules.
-        """
-        return ModuleList(self._modules, "led")
-
-    @property
-    def mics(self) -> ModuleList:
-        """Module List of connected Mic modules.
-        """
-        return ModuleList(self._modules, "mic")
 
     @property
     def motors(self) -> ModuleList:
@@ -205,17 +207,16 @@ class MODI:
         return ModuleList(self._modules, "motor")
 
     @property
+    def leds(self) -> ModuleList:
+        """Module List of connected Led modules.
+        """
+        return ModuleList(self._modules, "led")
+
+    @property
     def speakers(self) -> ModuleList:
         """Module List of connected Speaker modules.
         """
         return ModuleList(self._modules, "speaker")
-
-    @property
-    def ultrasonics(self) -> ModuleList:
-        """Module List of connected Ultrasonic modules.
-        """
-        return ModuleList(self._modules, "ultrasonic")
-
 
 # def update_module_firmware(target_ids=(0xFFF, )):
 #     updater = STM32FirmwareUpdater(target_ids=target_ids)

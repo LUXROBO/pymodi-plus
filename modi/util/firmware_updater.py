@@ -126,7 +126,7 @@ class STM32FirmwareUpdater:
         if is_on_pi() and self.conn_type == 'can':
             return im('modi.task.can_task').CanTask()
         else:
-            return im('modi.task.ser_task').SerTask()
+            return im('modi.task.serialport_task').SerialportTask()
 
     def _reconnect_serial_connection(self, modi_num):
         while True:
@@ -1230,7 +1230,7 @@ class GD32FirmwareUpdater:
         if is_on_pi() and self.conn_type == 'can':
             return im('modi.task.can_task').CanTask()
         else:
-            return im('modi.task.ser_task').SerTask()
+            return im('modi.task.serialport_task').SerialportTask()
 
     def reinitialize_serial_connection(self):
         print('Temporally disconnecting the serial connection...')

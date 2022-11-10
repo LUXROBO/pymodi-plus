@@ -8,7 +8,7 @@ from modi.util.connection_util import list_modi_ports
 from modi.util.modi_serialport import ModiSerialPort
 
 
-class SerTask(ConnTask):
+class SerialportTask(ConnTask):
 
     def __init__(self, verbose=False, port=None):
         print("Initiating serial connection...")

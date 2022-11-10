@@ -61,7 +61,9 @@ class ExeTask:
                 break
         if not network_module:
             return
-        network_module.esp_version = b64decode(message['b'])[3:].decode()
+
+        raw_data = b64decode(message['b'])
+        network_module.esp_version = raw_data.lstrip(b'\x00').decode()
 
     def __get_module_by_id(self, module_id):
         for module in self._modules:
