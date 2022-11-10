@@ -169,9 +169,7 @@ class ExeTask:
         self._conn.send_nowait(parse_message(0x09, 0, destination_id, (module_state, pnp_state)))
 
     def __request_module_uuid(self):
-        self._conn.send_nowait(parse_message(0x8, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F)))
+        self._conn.send_nowait(parse_message(0x8, 0x00, BROADCAST_ID, (0xFF, 0x0F)))
 
     def __request_network_uuid(self):
-        self._conn.send_nowait(
-            parse_message(0x28, BROADCAST_ID, BROADCAST_ID, (0xFF, 0x0F))
-        )
+        self._conn.send_nowait(parse_message(0x28, 0x00, BROADCAST_ID, (0xFF, 0x0F)))
