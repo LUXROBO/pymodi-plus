@@ -48,15 +48,12 @@ class OutputModule(Module):
         :type property_values: Tuple
         :return: None
         """
-        messages = self.__parse_set_message(
+        message = self.__parse_set_message(
             destination_id,
             property_num,
             property_values,
         )
-
-        for message in messages:
-            self._conn.send(message)
-            time.sleep(0.01)
+        self._conn.send(message)
 
     @staticmethod
     def _validate_property(nb_values: int, value_range: Tuple = None):

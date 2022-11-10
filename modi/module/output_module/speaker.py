@@ -72,10 +72,9 @@ class Speaker(OutputModule):
             raise ValueError("Not a supported frequency value")
 
         self._set_property(
-            self._id,
-            Speaker.SET_TUNE,
-            tune_value,
-            OutputModule.FLOAT,
+            destination_id=self._id,
+            property_num=Speaker.SET_TUNE,
+            property_values=(('float', tune_value))
         )
         self.update_property(Speaker.FREQUENCY, tune_value[0])
         self.update_property(Speaker.VOLUME, tune_value[1])

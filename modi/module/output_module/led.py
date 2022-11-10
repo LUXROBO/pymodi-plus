@@ -29,9 +29,11 @@ class Led(OutputModule):
         if color == self.rgb:
             return
         self._set_property(
-            self._id,
-            Led.SET_RGB,
-            color,
+            destination_id=self._id,
+            property_num=Led.SET_RGB,
+            property_values=(('u16', color[0]),
+                             ('u16', color[1]),
+                             ('u16', color[2]))
         )
         self.update_property(Led.RED, color[0])
         self.update_property(Led.GREEN, color[1])
