@@ -1,6 +1,7 @@
 import json
 import struct
 from base64 import b64encode, b64decode
+from typing import Optional
 from typing import Tuple
 
 
@@ -69,27 +70,18 @@ def unpack_data(data: str, structure: Tuple = (1, 1, 1, 1, 1, 1, 1, 1)):
     return result
 
 
-def parse_data(values, data_type: str) -> Tuple:
-    data = []
-    if data_type == 'int':
-        for value in values:
-            if value >= 0:
-                data += int.to_bytes(int(value), byteorder='little', length=2)
-            else:
-                data += int.to_bytes(
-                    int(value), byteorder='little', length=4, signed=True
-                )
+def parse_data(values, data_type: str) -> Optional[Tuple]:
+    if data_type == 'string':
+        return tuple(str.encode(data_type))
     elif data_type == 'float':
-        for value in values:
-            data += struct.pack("f", float(value))
-    elif data_type == 'string':
-        data = map(ord, str(values))
-    elif data_type == 'raw':
-        data = values
-    elif data_type == 'display_var':
-        data = struct.pack("f", float(values[0])) + bytearray(
-            [values[1], 0x00, values[2], 0x00])
-    return tuple(data)
+        return tuple(bytearray(struct.pack("f", values)))
+    elif data_type.find('s') != -1:
+        return tuple(int.to_bytes(int(values), byteorder='little', signed=True, length=(int(data_type[1:])) // 8))
+    elif data_type.find('u') != -1:
+        return tuple(int.to_bytes(int(values), byteorder='little', signed=False, length=(int(data_type[1:])) // 8))
+    else:
+        # error type
+        return None
 
 
 def decode_data(data: str) -> float:
