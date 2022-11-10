@@ -34,13 +34,11 @@ class Motor(OutputModule):
         :rtype: Tuple[float, float]
         """
         self._set_property(
-            self._id,
-            Motor.CHANNEL,
-            (
-                motor_channel,
-                control_mode,
-                control_value
-            ),
+            destination_id=self._id,
+            property_num=Motor.CHANNEL,
+            property_values=(('u16', motor_channel),
+                             ('u16', control_mode),
+                             ('u16', control_value))
         )
 
     @property

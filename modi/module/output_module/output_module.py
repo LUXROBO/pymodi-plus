@@ -15,71 +15,45 @@ class OutputModule(Module):
 
     @staticmethod
     def __parse_set_message(destination_id: int,
-                            property_type: int,
-                            property_values: Tuple,
-                            property_data_type: int) -> List[str]:
-        """Generate set_property json serialized message
+                            property_num: int,
+                            property_values: Tuple) -> List[str]:
 
+        """Generate set_property json serialized message
         :param destination_id: Id of the destination module
         :type destination_id: int
-        :param property_type: Property Type
-        :type property_type: int
+        :param property_num: Property Type
+        :type property_num: int
         :param property_values: Property values
         :type property_values: Tuple
-        :param property_data_type: Property Data Type
-        :type property_data_type: int
         :return: List of json messages
         :rtype: List[str]
         """
-        data_list = []
-        if property_data_type == OutputModule.INT:
-            data_list.append(parse_data(property_values, 'int'))
-        elif property_data_type == OutputModule.FLOAT:
-            data_list.append(parse_data(property_values, 'float'))
-        elif property_data_type == OutputModule.STRING:
-            for i in range(0, len(property_values), 8):
-                chunk = str(property_values)[i:i + 8]
-                data_list.append(parse_data(chunk, 'string'))
-        elif property_data_type == OutputModule.RAW:
-            data_list.append(parse_data(property_values, 'raw'))
-        elif property_data_type == OutputModule.DISPLAY_VAR:
-            data_list.append(parse_data(property_values, 'display_var'))
-        else:
-            raise RuntimeError("Not supported property data type.")
 
-        messages = []
-        for data in data_list:
-            messages.append(
-                parse_message(0x04, property_type, destination_id, data)
-            )
-        return messages
+        data = []
+        for value_type, value in property_values:
+            data += parse_data(value, value_type)
+            # TODO: exception need
+        return parse_message(0x04, property_num, destination_id, data)
 
     def _set_property(self, destination_id: int,
-                      property_type: int, property_values: Union[Tuple, str],
-                      property_data_type: int
-                      = 0) -> None:
+                      property_num: int, 
+                      property_values: Union[Tuple, str]) -> None:
         """Send the message of set_property command to the module
 
         :param destination_id: Id of the destination module
         :type destination_id: int
-        :param property_type: Property Type
-        :type property_type: int
+        :param property_num: Property Type
+        :type property_num: int
         :param property_values: Property Values
         :type property_values: Tuple
-        :param property_data_type: Property Data Type
-        :type property_data_type: int
         :return: None
         """
-        messages = self.__parse_set_message(
+        message = self.__parse_set_message(
             destination_id,
-            property_type,
+            property_num,
             property_values,
-            property_data_type
         )
-
-        for message in messages:
-            self._conn.send(message)
-            time.sleep(0.01)
+        self._conn.send(message)
 
     @staticmethod
     def _validate_property(nb_values: int, value_range: Tuple = None):
