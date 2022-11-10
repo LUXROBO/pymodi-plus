@@ -57,7 +57,6 @@ if __name__ == "__main__":
                 "update_modules",
                 "help",
                 "verbose",
-                "performance",
                 "debug",
                 "inspect",
                 "update_network",
@@ -87,36 +86,6 @@ if __name__ == "__main__":
     if check_option('-t', '--tutorial'):
         pymodi_tutor = Tutor()
         pymodi_tutor.run_introduction()
-        os._exit(0)
-
-    # Time message transfer between local machine and network module
-    if check_option('-p', '--performance'):
-        print("[PyMODI Performance Test]" + "\n" + "=" * 25)
-        init_time = time.time()
-        bundle = modi.MODI()
-        fin_time = time.time()
-        took = (fin_time - init_time) * 100 // 1 / 100
-        print("Hard waiting for topology data to be initialized...")
-        time.sleep(0.5 * len(bundle.modules))
-        bundle.print_topology_map(True)
-        print(f"Took {took} seconds to initialize")
-        req_tp_msg = parse_message(0x2A, 0, bundle.networks[0].id)
-        print(f"sending request message... {req_tp_msg}")
-        bundle._exe_thrd.close()
-        init_time = time.perf_counter()
-        bundle.send(req_tp_msg)
-        msg = None
-        while True:
-            msg = bundle.recv()
-            if not msg:
-                continue
-            recv_cmd = decode_message(msg)[0]
-            if recv_cmd == 0x07:
-                break
-        fin_time = time.perf_counter()
-        took = fin_time - init_time
-        print(f"received message... {msg}")
-        print(f"Took {took / 2:.10f} seconds for message transfer")
         os._exit(0)
 
     # Update ESP32 module (only network module)

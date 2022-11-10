@@ -11,9 +11,7 @@ class ExeThrd(th.Thread):
     def __init__(self, modules, conn_task):
         super().__init__(daemon=True)
         conn_task.open_conn()
-        self.__exe_task = ExeTask(
-            modules, conn_task
-        )
+        self.__exe_task = ExeTask(modules, conn_task)
         self.__kill_sig = False
 
     def close(self):
