@@ -75,9 +75,9 @@ def parse_data(values, data_type: str) -> Optional[Tuple]:
         return tuple(str.encode(data_type))
     elif data_type == 'float':
         return tuple(bytearray(struct.pack("f", values)))
-    elif data_type.find('s') != -1:
+    elif data_type in ['s8', 's16', 's32']:
         return tuple(int.to_bytes(int(values), byteorder='little', signed=True, length=(int(data_type[1:])) // 8))
-    elif data_type.find('u') != -1:
+    elif data_type in ['u8', 'u16', 'u32']:
         return tuple(int.to_bytes(int(values), byteorder='little', signed=False, length=(int(data_type[1:])) // 8))
     else:
         # error type
