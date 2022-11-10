@@ -1,3 +1,4 @@
+import time
 from typing import Optional
 
 import serial
@@ -7,13 +8,12 @@ from modi.util.connection_util import list_modi_ports
 from modi.util.modi_serialport import ModiSerialPort
 
 
-class SerTask(ConnTask):
+class SerialportTask(ConnTask):
 
     def __init__(self, verbose=False, port=None):
         print("Initiating serial connection...")
         super().__init__(verbose)
         self.__port = port
-        self.__json_buffer = b''
 
     #
     # Inherited Methods
@@ -51,8 +51,28 @@ class SerTask(ConnTask):
 
     @staticmethod
     def __init_serial(port):
-        ser = ModiSerialPort(timeout=0.02)
+        ser = ModiSerialPort(timeout=0.1)
         return ser
+
+    def __read_json(self):
+        json_pkt = b""
+        while json_pkt != b"{":
+            json_pkt = self._bus.read(1)
+            if json_pkt == b"":
+                return None
+            time.sleep(0.001)
+        json_pkt += self._bus.read_until(b"}")
+        return json_pkt
+
+    def __wait_for_json(self, timeout=0.1):
+        json_msg = self.__read_json()
+        init_time = time.time()
+        while not json_msg:
+            json_msg = self.__read_json()
+            time.sleep(0.001)
+            if time.time() - init_time > timeout:
+                return None
+        return json_msg
 
     def close_conn(self) -> None:
         """ Close serial port
@@ -66,21 +86,14 @@ class SerTask(ConnTask):
 
         :return: str
         """
-        buf_temp = self._bus.read_all()
-        self.__json_buffer += buf_temp
-        idx = self.__json_buffer.find(b'{')
-        if idx < 0:
-            self.__json_buffer = b''
+        json_pkt = self.__wait_for_json()
+        if json_pkt is None:
             return None
-        self.__json_buffer = self.__json_buffer[idx:]
-        idx = self.__json_buffer.find(b'}')
-        if idx < 0:
-            return None
-        json_pkt = self.__json_buffer[:idx + 1].decode('utf8')
-        self.__json_buffer = self.__json_buffer[idx + 1:]
+
         if self.verbose:
             print(f'recv: {json_pkt}')
-        return json_pkt
+
+        return json_pkt.decode('utf8')
 
     @ConnTask.wait
     def send(self, pkt: str, verbose=False) -> None:

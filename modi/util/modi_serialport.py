@@ -8,7 +8,7 @@ class ModiSerialPort():
     SERIAL_MODE_COMPORT = 1
     SERIAL_MODI_WINUSB = 2
 
-    def __init__(self, port = None, baudrate = 921600, timeout = 0.2, write_timeout = None):
+    def __init__(self, port=None, baudrate=921600, timeout=0.2, write_timeout=None):
         self.type = self.SERIAL_MODE_COMPORT
         self._port = port
         self._baudrate = baudrate

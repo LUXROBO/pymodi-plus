@@ -9,17 +9,11 @@ network module
 
 if __name__ == "__main__":
     bundle = modi.MODI()
-    time.sleep(5)
+
+    input()
 
     if len(bundle.buttons):
         button = bundle.buttons[0]
-
         while True:
-            if button.pressed:
-                print("pressed       ", end='\r')
-            else:
-                print("not pressed   ", end='\r')
-            if button.double_clicked:
-                print("double clicked", end='\r')
-                break
+            print(f"pressed:{button.pressed},\tclicked:{button.clicked},\tdouble clicked:{button.double_clicked},\ttoggled:{button.toggled}      ", end="\r")
             time.sleep(0.02)
