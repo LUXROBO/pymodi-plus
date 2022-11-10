@@ -15,8 +15,8 @@ def get_module_type_from_uuid(uuid):
 
         # Output modules
         '4000': 'display',
-        '4010': 'motor_a',
-        '4011': 'motor_b',
+        '4010': 'motor',
+        '4011': 'motor',
         '4020': 'led',
         '4030': 'speaker',
     }.get(type_indicator)
@@ -33,6 +33,7 @@ def get_module_from_name(module_type: str):
     """
     module_type = module_type[0].lower() + module_type[1:]
     module_name = module_type[0].upper() + module_type[1:]
+    print("module type : ", module_type, module_name)
     module_module = find_spec(f'modi.module.input_module.{module_type}')
     if not module_module:
         module_module = find_spec(f'modi.module.output_module.{module_type}')

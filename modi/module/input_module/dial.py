@@ -1,6 +1,7 @@
 """Dial module."""
 
 import struct
+
 from modi.module.input_module.input_module import InputModule
 
 

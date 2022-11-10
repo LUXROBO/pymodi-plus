@@ -1,7 +1,8 @@
 """Joystick module."""
 
-from modi.module.input_module.input_module import InputModule
+import struct
 
+from modi.module.input_module.input_module import InputModule
 
 class Joystick(InputModule):
 
