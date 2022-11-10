@@ -51,7 +51,7 @@ class SerTask(ConnTask):
 
     @staticmethod
     def __init_serial(port):
-        ser = ModiSerialPort(timeout=0.02)
+        ser = ModiSerialPort(timeout=0.1)
         return ser
 
     def __read_json(self):
@@ -64,7 +64,7 @@ class SerTask(ConnTask):
         json_pkt += self._bus.read_until(b"}")
         return json_pkt
 
-    def __wait_for_json(self, timeout=0.01):
+    def __wait_for_json(self, timeout=0.1):
         json_msg = self.__read_json()
         init_time = time.time()
         while not json_msg:
