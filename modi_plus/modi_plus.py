@@ -120,7 +120,7 @@ class MODIPlus:
                 raise ValueError("Network UUID not specified!")
             self.network_uuids[network_uuid] = self
             mod_path = {
-                "win32": "modi_plus.task.ble_task.ble_task_mac",
+                "win32": "modi_plus.task.ble_task.ble_task_win",
                 "linux": "modi_plus.task.ble_task.ble_task_rpi",
                 "darwin": "modi_plus.task.ble_task.ble_task_mac",
             }.get(sys.platform)
@@ -131,7 +131,7 @@ class MODIPlus:
     def open(self):
         atexit.register(self.close)
         self._exe_thread = ExeThread(self._modules, self._connection)
-        self._connection.open_conn()
+        self._connection.open_connection()
         self._exe_thread.start()
 
     def close(self):

@@ -45,6 +45,17 @@ def is_network_module_connected() -> bool:
     """
     return bool(list_modi_ports())
 
+def ask_modi_device(devices):
+    if not devices:
+        raise ValueError(
+            'No MODI network module(s) available!\n'
+            'The network module that you\'re trying to connect, may in use.'
+        )
+    for idx, dev in enumerate(devices):
+        print(f"<{idx}>: {dev}")
+    i = input("Choose your device index (ex: 0) : ")
+    return devices[int(i)].lstrip('MODI_')
+
 
 class MODIConnectionError(Exception):
     pass
