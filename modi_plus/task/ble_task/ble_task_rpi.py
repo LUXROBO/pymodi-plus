@@ -86,8 +86,7 @@ class BleTask(ConnectionTask):
             except Exception:
                 continue
             msg = self._bus.after.decode().lstrip("value: ").split()
-            json_msg = self.__parse_ble_msg(
-                bytearray([int(b, 16) for b in msg]))
+            json_msg = self.__parse_ble_msg(bytearray([int(b, len(msg)) for b in msg]))
             if self.verbose:
                 print(f"recv: {json_msg}")
             self._recv_q.put(json_msg)
@@ -95,7 +94,7 @@ class BleTask(ConnectionTask):
                 break
             time.sleep(0.002)
 
-    @sys.platform.wait
+    @ConnectionTask.wait
     def send(self, pkt: str) -> None:
         self.send_nowait(pkt)
 
@@ -115,8 +114,17 @@ class BleTask(ConnectionTask):
     # Ble Helper Methods
     #
     @staticmethod
+    def __parse_ble_msg(ble_msg):
+        json_msg = dict()
+        json_msg["c"] = ble_msg[1] << 8 | ble_msg[0]
+        json_msg["s"] = ble_msg[3] << 8 | ble_msg[2]
+        json_msg["d"] = ble_msg[5] << 8 | ble_msg[4]
+        json_msg["l"] = ble_msg[7] << 8 | ble_msg[6]
+        json_msg["b"] = base64.b64encode(ble_msg[8:]).decode("utf-8")
+        return json.dumps(json_msg, separators=(",", ":"))
+
+    @staticmethod
     def __compose_ble_msg(json_msg):
-        ble_msg = bytearray(16)
 
         ins = json_msg["c"]
         sid = json_msg["s"]
@@ -124,6 +132,7 @@ class BleTask(ConnectionTask):
         dlc = json_msg["l"]
         data = json_msg["b"]
 
+        ble_msg = bytearray(8 + dlc)
         ble_msg[0] = ins & 0xFF
         ble_msg[1] = ins >> 8 & 0xFF
         ble_msg[2] = sid & 0xFF
@@ -138,13 +147,3 @@ class BleTask(ConnectionTask):
         for b in ble_msg:
             data += f"{b:02X}"
         return data
-
-    @staticmethod
-    def __parse_ble_msg(ble_msg):
-        json_msg = dict()
-        json_msg["c"] = ble_msg[1] << 8 | ble_msg[0]
-        json_msg["s"] = ble_msg[3] << 8 | ble_msg[2]
-        json_msg["d"] = ble_msg[5] << 8 | ble_msg[4]
-        json_msg["l"] = ble_msg[7] << 8 | ble_msg[6]
-        json_msg["b"] = base64.b64encode(ble_msg[8:]).decode("utf-8")
-        return json.dumps(json_msg, separators=(",", ":"))
