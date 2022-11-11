@@ -72,7 +72,7 @@ def unpack_data(data: str, structure: Tuple=(1, 1, 1, 1, 1, 1, 1, 1)):
 
 def parse_data(values, data_type: str) -> Optional[Tuple]:
     if data_type == "string":
-        return tuple(str.encode(data_type))
+        return tuple(str.encode(values))
     elif data_type == "float":
         return tuple(bytearray(struct.pack("f", values)))
     elif data_type in ["s8", "s16", "s32"]:
