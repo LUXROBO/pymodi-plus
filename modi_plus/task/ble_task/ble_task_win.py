@@ -59,9 +59,7 @@ class BleTask(ConnectionTask):
             if self._send_q.empty():
                 await asyncio.sleep(0.001)
             else:
-                await self._bus.write_gatt_char(
-                    self.__char_uuid, self._send_q.get()
-                )
+                await self._bus.write_gatt_char(self.__char_uuid, self._send_q.get())
             if self.__close_event:
                 break
 
