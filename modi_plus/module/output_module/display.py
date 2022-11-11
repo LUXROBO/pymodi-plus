@@ -21,8 +21,7 @@ class Display(OutputModule):
     def text(self):
         return self._text
 
-    @text.setter
-    def text(self, text: str) -> None:
+    def set_text(self, text: str) -> None:
         """Clears the display and show the input string on the display.
         Returns the json serialized signal sent to the module
         to display the text
