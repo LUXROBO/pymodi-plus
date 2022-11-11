@@ -13,11 +13,7 @@ class ExeTask:
         self._conn = connection_task
 
         # Reboot all modules
-        self.__set_module_state(BROADCAST_ID, Module.REBOOT, Module.PNP_OFF)
-
-        # Request data required to initialize MODI
-        self.__request_module_uuid()
-        self.__request_network_uuid()
+        self.__request_reboot(BROADCAST_ID)
 
     def run(self, delay):
         """ Run in ExecutorThread
@@ -31,9 +27,9 @@ class ExeTask:
         else:
             try:
                 json_msg = json.loads(json_pkt)
-                self.__command_handler(json_msg['c'])(json_msg)
+                self.__command_handler(json_msg["c"])(json_msg)
             except json.decoder.JSONDecodeError:
-                print('current json message:', json_pkt)
+                print("current json message:", json_pkt)
 
     def __command_handler(self, command):
         """ Execute task based on command message
@@ -45,8 +41,8 @@ class ExeTask:
         """
         return {
             0x00: self.__update_health,
-            0x05: self.__update_modules,
-            0x1F: self.__update_property,
+            0x05: self.__update_assign_id,
+            0x1F: self.__update_channel,
             0xA1: self.__update_esp_version,
         }.get(command, lambda _: None)
 
@@ -72,13 +68,12 @@ class ExeTask:
             module.last_updated = curr_time
             module.is_connected = True
 
-            # Turn off pnp if pnp flag is on
-            if module.module_type != 'network':
-                self.__set_module_state(module_id, Module.RUN, Module.PNP_OFF)
-
             # Reset disconnection alert status
             if module.has_printed:
                 module.has_printed = False
+        else:
+            self.__request_find_id(module_id)
+            self.__request_find_network_id(module_id)
 
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
@@ -86,40 +81,41 @@ class ExeTask:
                 module.is_connected = False
                 module._last_set_message = None
 
-    def __update_modules(self, message):
+    def __update_assign_id(self, message):
         """ Update module information
         :param message: Dictionary format module info
         :type message: Dictionary
         :return: None
         """
-        module_id = message['s']
-        module_uuid, module_os_version_info, module_app_version_info = unpack_data(message['b'], (6, 2, 2))
+        module_id = message["s"]
+        module_uuid, module_os_version_info, module_app_version_info = unpack_data(message["b"], (6, 2, 2))
+        module_type = get_module_type_from_uuid(module_uuid)
 
         # Handle new modules
         if module_id not in (module.id for module in self._modules):
-            module_type = get_module_type_from_uuid(module_uuid)
             new_module = self.__add_new_module(module_type, module_id, module_uuid, module_app_version_info, module_os_version_info)
             new_module.module_type = module_type
-            if module_type != 'network' and not new_module.is_up_to_date:
-                print(f"{str(new_module)} is not up to date. Please update the module by calling modi.update_module_firmware")
-
-        elif not self.__get_module_by_id(module_id).is_connected:
-            # Handle Reconnected modules
-            self.__get_module_by_id(module_id).is_connected = True
-            module_type = get_module_type_from_uuid(module_uuid)
-            print(f"{module_type} ({module_id}) has been reconnected!!")
+            if module_type == "network":
+                self.__request_esp_version(module_id)
+        else:
+            module = self.__get_module_by_id(module_id)
+            if not module.is_connected:
+                # Handle Reconnected modules
+                module.is_connected = True
+                self.__request_pnp_off(BROADCAST_ID)
+                print(f"{str(module)} has been reconnected!")
 
     def __add_new_module(self, module_type, module_id, module_uuid, module_app_version_info, module_os_version_info):
         module_template = get_module_from_name(module_type)
         module_instance = module_template(module_id, module_uuid, self._conn)
-        self.__set_module_state(module_instance.id, Module.RUN, Module.PNP_OFF)
+        self.__request_pnp_off(module_instance.id)
         module_instance.app_version = module_app_version_info
         module_instance.os_version = module_os_version_info
         self._modules.append(module_instance)
         print(f"{str(module_instance)} has been connected!")
         return module_instance
 
-    def __update_property(self, message):
+    def __update_channel(self, message):
         """ Update module property
 
         :param message: Dictionary format message
@@ -127,30 +123,31 @@ class ExeTask:
         :return: None
         """
 
-        # Do not update reserved property
+        module_id = message["s"]
         property_number = message["d"]
+        property_data = bytearray(b64decode(message["b"]))
+
+        # Do not update reserved property
         if property_number == 0 or property_number == 1:
             return
-        module = self.__get_module_by_id(message['s'])
+
+        module = self.__get_module_by_id(module_id)
         if not module:
             return
-        data = bytearray(b64decode(message['b']))
-        if module.module_type == 'network':
-            module.update_property(property_number, data)
-        else:
-            module.update_property(property_number, data)
+
+        module.update_property(property_number, property_data)
 
     def __update_esp_version(self, message):
         network_module = None
         for module in self._modules:
-            if module.module_type == 'network':
+            if module.module_type == "network":
                 network_module = module
                 break
         if not network_module:
             return
 
-        raw_data = b64decode(message['b'])
-        network_module.esp_version = raw_data.lstrip(b'\x00').decode()
+        raw_data = b64decode(message["b"])
+        network_module.esp_version = raw_data.lstrip(b"\x00").decode()
 
     def __set_module_state(self, destination_id, module_state, pnp_state):
         """ Generate message for set module state and pnp state
@@ -165,8 +162,20 @@ class ExeTask:
         """
         self._conn.send_nowait(parse_message(0x09, 0, destination_id, (module_state, pnp_state)))
 
-    def __request_module_uuid(self):
-        self._conn.send_nowait(parse_message(0x8, 0x00, BROADCAST_ID, (0xFF, 0x0F)))
+    def __request_reboot(self, id):
+        self.__set_module_state(id, Module.REBOOT, Module.PNP_OFF)
 
-    def __request_network_uuid(self):
-        self._conn.send_nowait(parse_message(0x28, 0x00, BROADCAST_ID, (0xFF, 0x0F)))
+    def __request_pnp_on(self, id):
+        self.__set_module_state(id, Module.RUN, Module.PNP_ON)
+
+    def __request_pnp_off(self, id):
+        self.__set_module_state(id, Module.RUN, Module.PNP_OFF)
+
+    def __request_find_id(self, id):
+        self._conn.send_nowait(parse_message(0x08, 0x00, id, (0xFF, 0x0F)))
+
+    def __request_find_network_id(self, id):
+        self._conn.send_nowait(parse_message(0x28, 0x00, id, (0xFF, 0x0F)))
+
+    def __request_esp_version(self, id):
+        self._conn.send_nowait(parse_message(0xA0, 25, id, (0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF)))
