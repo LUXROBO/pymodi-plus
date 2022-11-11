@@ -12,6 +12,9 @@ class ExeTask:
         self._modules = modules
         self._conn = connection_task
 
+        # Reboot all modules
+        self.__request_reboot(BROADCAST_ID)
+
     def run(self, delay):
         """ Run in ExecutorThread
 
@@ -146,11 +149,27 @@ class ExeTask:
         raw_data = b64decode(message["b"])
         network_module.esp_version = raw_data.lstrip(b"\x00").decode()
 
+    def __set_module_state(self, destination_id, module_state, pnp_state):
+        """ Generate message for set module state and pnp state
+
+        :param destination_id: Id to target destination
+        :type destination_id: int
+        :param module_state: State value of the module
+        :type module_state: int
+        :param pnp_state: Pnp state value
+        :type pnp_state: int
+        :return: None
+        """
+        self._conn.send_nowait(parse_message(0x09, 0, destination_id, (module_state, pnp_state)))
+
+    def __request_reboot(self, id):
+        self.__set_module_state(id, Module.REBOOT, Module.PNP_OFF)
+
     def __request_pnp_on(self, id):
-        self._conn.send_nowait(parse_message(0x09, 0, id, (Module.RUN, Module.PNP_ON)))
+        self.__set_module_state(id, Module.RUN, Module.PNP_ON)
 
     def __request_pnp_off(self, id):
-        self._conn.send_nowait(parse_message(0x09, 0, id, (Module.RUN, Module.PNP_OFF)))
+        self.__set_module_state(id, Module.RUN, Module.PNP_OFF)
 
     def __request_find_id(self, id):
         self._conn.send_nowait(parse_message(0x08, 0x00, id, (0xFF, 0x0F)))
