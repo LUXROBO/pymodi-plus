@@ -1,9 +1,7 @@
 """Main MODI+ module."""
 
 import sys
-import time
 import atexit
-import logging
 from typing import Optional
 
 from importlib import import_module as im
@@ -94,23 +92,9 @@ class MODIPlus:
 
         print("Start initializing connected MODI+ modules")
         self._exe_thread.start()
-        init_time = time.time()
         print("MODI+ modules are initialized!")
 
         atexit.register(self.close)
-
-    @staticmethod
-    def __init_logger():
-        logger = logging.getLogger(f"PyMODI+ (v{__version__}) Logger")
-        logger.setLevel(logging.DEBUG)
-
-        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        file_handler = logging.FileHandler("pymodi+.log")
-        file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(formatter)
-
-        logger.addHandler(file_handler)
-        return logger
 
     def __init_task(self, connection_type, verbose, port, network_uuid):
         if connection_type == "serialport":
