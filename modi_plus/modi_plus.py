@@ -27,6 +27,52 @@ from modi_plus._exe_thread import ExeThread
 from modi_plus.about import __version__
 
 
+class ModuleList(list):
+
+    def __init__(self, src, module_type=None):
+        self.__src = src
+        self.__module_type = module_type
+        super().__init__(self.sublist())
+
+    def __len__(self):
+        return len(self.sublist())
+
+    def __eq__(self, other):
+        return super().__eq__(other)
+
+    def get(self, module_id):
+        for module in self.sublist():
+            if module.id == module_id:
+                return module
+        raise Exception("Module with given id does not exits!!")
+
+    def sublist(self):
+        """ When accessing the module, the modules are sorted in an
+        ascending order of
+        1. the distance from network module
+        2. left to right
+        3. up to down
+
+        :return: Module
+        """
+        if self.__module_type:
+            modules = list(
+                filter(
+                    lambda module: module.module_type == self.__module_type,
+                    self.__src
+                )
+            )
+        else:
+            modules = self.__src
+        modules.sort()
+        return modules
+
+    def find(self, module_id):
+        for idx, module in enumerate(self.sublist()):
+            if module_id == module.id:
+                return idx
+        return -1
+
 class MODIPlus:
     network_uuids = {}
 
@@ -42,7 +88,7 @@ class MODIPlus:
         return cls.network_uuids[network_uuid]
 
     def __init__(self, connection_type="serialport", verbose=False, port=None, network_uuid=""):
-        self._modules = {}
+        self._modules = list()
         self._connection = self.__init_task(connection_type, verbose, port, network_uuid)
         self._exe_thread = ExeThread(self._modules, self._connection)
 
@@ -110,92 +156,170 @@ class MODIPlus:
         """
         return self._connection.recv()
 
-    def __get_module_class(self, uuid):
-        if uuid in self._modules.keys():
-            return self._modules[uuid]
-        else:
-            return None
+    def __get_module_by_uuid(self, module_uuid):
+        for module in self._modules:
+            if module.uuid == module_uuid:
+                return module
+        return None
 
     def network(self, uuid: int) -> Optional[Network]:
         """Module Class of connected Network module.
         """
         if get_module_type_from_uuid(uuid) != "network":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def battery(self, uuid: int) -> Optional[Battery]:
         """Module Class of connected Battery module.
         """
         if get_module_type_from_uuid(uuid) != "battery":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def env(self, uuid: int) -> Optional[Env]:
         """Module Class of connected Environment modules.
         """
         if get_module_type_from_uuid(uuid) != "env":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def imu(self, uuid: int) -> Optional[Imu]:
         """Module Class of connected IMU modules.
         """
         if get_module_type_from_uuid(uuid) != "imu":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def button(self, uuid: int) -> Optional[Button]:
         """Module Class of connected Button modules.
         """
         if get_module_type_from_uuid(uuid) != "button":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def dial(self, uuid: int) -> Optional[Dial]:
         """Module Class of connected Dial modules.
         """
         if get_module_type_from_uuid(uuid) != "dial":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def joystick(self, uuid: int) -> Optional[Joystick]:
         """Module Class of connected Joystick modules.
         """
         if get_module_type_from_uuid(uuid) != "joystick":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def tof(self, uuid: int) -> Optional[Tof]:
         """Module Class of connected ToF modules.
         """
         if get_module_type_from_uuid(uuid) != "tof":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def display(self, uuid: int) -> Optional[Display]:
         """Module Class of connected Display modules.
         """
         if get_module_type_from_uuid(uuid) != "display":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def motor(self, uuid: int) -> Optional[Motor]:
         """Module Class of connected Motor modules.
         """
         if get_module_type_from_uuid(uuid) != "motor":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def led(self, uuid: int) -> Optional[Led]:
         """Module Class of connected Led modules.
         """
         if get_module_type_from_uuid(uuid) != "led":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
 
     def speaker(self, uuid: int) -> Optional[Speaker]:
         """Module Class of connected Speaker modules.
         """
         if get_module_type_from_uuid(uuid) != "speaker":
             return None
-        return self.__get_module_class(uuid)
+        return self.__get_module_by_uuid(uuid)
+
+    @property
+    def modules(self) -> ModuleList:
+        """Module List of connected modules except network module.
+        """
+        return ModuleList(self._modules)
+
+    @property
+    def networks(self) -> ModuleList:
+        """Module List of connected Network modules.
+        """
+        return ModuleList(self._modules, "network")
+
+    @property
+    def batterys(self) -> ModuleList:
+        """Module List of connected Battery modules.
+        """
+        return ModuleList(self._modules, "battery")
+
+    @property
+    def envs(self) -> ModuleList:
+        """Module List of connected Environment modules.
+        """
+        return ModuleList(self._modules, "env")
+
+    @property
+    def imus(self) -> ModuleList:
+        """Module List of connected IMU modules.
+        """
+        return ModuleList(self._modules, "imu")
+
+    @property
+    def buttons(self) -> ModuleList:
+        """Module List of connected Button modules.
+        """
+        return ModuleList(self._modules, "button")
+
+    @property
+    def dials(self) -> ModuleList:
+        """Module List of connected Dial modules.
+        """
+        return ModuleList(self._modules, "dial")
+
+    @property
+    def joysticks(self) -> ModuleList:
+        """Module List of connected Joystick modules.
+        """
+        return ModuleList(self._modules, "joystick")
+
+    @property
+    def tofs(self) -> ModuleList:
+        """Module List of connected ToF modules.
+        """
+        return ModuleList(self._modules, "tof")
+
+    @property
+    def displays(self) -> ModuleList:
+        """Module List of connected Display modules.
+        """
+        return ModuleList(self._modules, "display")
+
+    @property
+    def motors(self) -> ModuleList:
+        """Module List of connected Motor modules.
+        """
+        return ModuleList(self._modules, "motor")
+
+    @property
+    def leds(self) -> ModuleList:
+        """Module List of connected Led modules.
+        """
+        return ModuleList(self._modules, "led")
+
+    @property
+    def speakers(self) -> ModuleList:
+        """Module List of connected Speaker modules.
+        """
+        return ModuleList(self._modules, "speaker")
