@@ -1,8 +1,11 @@
 import time
 from typing import Optional
+from queue import Queue
+import threading as th
 
 import serial
 from serial.serialutil import SerialException
+
 from modi_plus.task.connection_task import ConnectionTask
 from modi_plus.util.connection_util import list_modi_ports
 from modi_plus.util.modi_serialport import ModiSerialPort
@@ -14,6 +17,10 @@ class SerialportTask(ConnectionTask):
         print("Initiating serial connection...")
         super().__init__(verbose)
         self.__port = port
+        self.__json_buffer = b""
+        self.__recv_queue = Queue()
+        self.__recv_thread = None
+        self.__stop_signal = False
 
     #
     # Inherited Methods
@@ -35,6 +42,7 @@ class SerialportTask(ConnectionTask):
                 try:
                     self._bus = self.__init_serial(self.__port)
                     self._bus.open()
+                    self.__open_recv_thread()
                     return
                 except SerialException:
                     raise SerialException(f"{self.__port} is not available.")
@@ -43,6 +51,7 @@ class SerialportTask(ConnectionTask):
             self._bus = self.__init_serial(modi_port)
             try:
                 self._bus.open(modi_port)
+                self.__open_recv_thread()
                 print(f'Serial is open at "{modi_port}"')
                 return
             except SerialException:
@@ -51,28 +60,40 @@ class SerialportTask(ConnectionTask):
 
     @staticmethod
     def __init_serial(port):
-        ser = ModiSerialPort(timeout=0.1)
+        ser = ModiSerialPort(timeout=0.01)
         return ser
 
-    def __read_json(self):
-        json_pkt = b""
-        while json_pkt != b"{":
-            json_pkt = self._bus.read(1)
-            if json_pkt == b"":
-                return None
-            time.sleep(0.001)
-        json_pkt += self._bus.read_until(b"}")
-        return json_pkt
+    def __open_recv_thread(self):
+        self.__json_buffer = b""
+        self.__recv_queue = Queue()
+        self.__stop_signal = False
+        self.__recv_thread = th.Thread(target=self.__recv_handler, daemon=True)
+        self.__recv_thread.start()
 
-    def __wait_for_json(self, timeout=0.1):
-        json_msg = self.__read_json()
-        init_time = time.time()
-        while not json_msg:
-            json_msg = self.__read_json()
-            time.sleep(0.001)
-            if time.time() - init_time > timeout:
-                return None
-        return json_msg
+    def __close_recv_thread(self):
+        self.__stop_signal = True
+        if self.__recv_thread:
+            self.__recv_thread.join()
+
+    def __recv_handler(self):
+        while not self.__stop_signal:
+            recv = self._bus.read()
+            if recv:
+                self.__json_buffer += recv
+
+            header_index = self.__json_buffer.find(b"{")
+            if header_index < 0:
+                self.__json_buffer = b""
+                continue
+            self.__json_buffer = self.__json_buffer[header_index:]
+
+            tail_index = self.__json_buffer.find(b"}")
+            if tail_index < 0:
+                continue
+
+            json_pkt = self.__json_buffer[:tail_index + 1].decode("utf8")
+            self.__json_buffer = self.__json_buffer[tail_index + 1:]
+            self.__recv_queue.put(json_pkt)
 
     def close_connection(self) -> None:
         """ Close serial port
@@ -86,14 +107,17 @@ class SerialportTask(ConnectionTask):
 
         :return: str
         """
-        json_pkt = self.__wait_for_json()
+        if self.__recv_queue.empty():
+            return None
+
+        json_pkt = self.__recv_queue.get()
         if json_pkt is None:
             return None
 
         if self.verbose:
             print(f'recv: {json_pkt}')
 
-        return json_pkt.decode('utf8')
+        return json_pkt
 
     @ConnectionTask.wait
     def send(self, pkt: str, verbose=False) -> None:
