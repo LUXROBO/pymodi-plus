@@ -7,59 +7,54 @@ from typing import Optional
 from queue import Queue
 from threading import Thread
 
-from bleak import discover, BleakClient, BleakError
+from bleak import BleakClient, BleakError, BleakScanner
 
 from modi_plus.task.connection_task import ConnectionTask
 from modi_plus.util.connection_util import MODIConnectionError
 
 
 class BleTask(ConnectionTask):
+    CHAR_UUID = "00008421-0000-1000-8000-00805f9b34fb"
 
     def __init__(self, verbose=False, uuid=None):
         super().__init__(verbose=verbose)
+        self.modi_name = f"MODI+_{uuid.upper()}"
+        print(f"Initiating ble_task connection with {self.modi_name}")
         self._loop = asyncio.get_event_loop()
-        self.__uuid = uuid
-        self.__char_uuid = ""
         self._recv_q = Queue()
         self._send_q = Queue()
         self.__close_event = False
 
-    async def _list_modi_devices(self):
-        devices = await discover(timeout=5)
-        modi_devies = []
-        for d in devices:
-            if "MODI+" in d.name:
-                modi_devies.append(d)
-        if not self.__uuid:
-            return modi_devies[0]
-        else:
-            for d in modi_devies:
-                if self.__uuid in d.name:
-                    return d
-            return None
+    def match_device(self, device, _):
+        return device.name == self.modi_name
 
     async def __connect(self, address):
-        client = BleakClient(address, timeout=5)
-        await client.connect(timeout=1)
+        client = BleakClient(address, disconnected_callback=self.handle_disconnected, timeout=5)
+        await client.connect(timeout=2)
         return client
-
-    async def __get_characteristic_uuid(self):
-        for service in self._bus.services:
-            for char in service.characteristics:
-                if "notify" in char.properties:
-                    return char.uuid
 
     def __run_loop(self):
         asyncio.set_event_loop(self._loop)
-        self._loop.run_until_complete(self.__communicate())
+        tasks = asyncio.gather(self.__send_handler(), self.__watch_notify())
+        self._loop.run_until_complete(tasks)
 
-    async def __communicate(self):
-        await self._bus.start_notify(self.__char_uuid, self.__recv_handler)
+    async def __watch_notify(self):
+        await self._bus.start_notify(self.CHAR_UUID, self.__recv_handler)
+        while True:
+            await asyncio.sleep(0.001)
+            if self.__close_event:
+                break
+
+    async def __send_handler(self):
         while True:
             if self._send_q.empty():
                 await asyncio.sleep(0.001)
             else:
-                await self._bus.write_gatt_char(self.__char_uuid, self._send_q.get())
+                try:
+                    pkt = self._send_q.get()
+                    await self._bus.write_gatt_char(self.CHAR_UUID, pkt, response=True)
+                except BleakError:
+                    self.__close_event = True
             if self.__close_event:
                 break
 
@@ -67,11 +62,9 @@ class BleTask(ConnectionTask):
         self._recv_q.put(data)
 
     def open_connection(self):
-        print("Initiating bluetooth connection...")
-        modi_device = self._loop.run_until_complete(self._list_modi_devices())
+        modi_device = self._loop.run_until_complete(BleakScanner.find_device_by_filter(self.match_device))
         if modi_device:
             self._bus = self._loop.run_until_complete(self.__connect(modi_device.address))
-            self.__char_uuid = self._loop.run_until_complete(self.__get_characteristic_uuid())
             Thread(target=self.__run_loop, daemon=True).start()
             print(f"Connected to {modi_device.name}")
         else:
@@ -79,7 +72,7 @@ class BleTask(ConnectionTask):
 
     async def __close_client(self):
         try:
-            await self._bus.stop_notify(self.__char_uuid)
+            await self._bus.stop_notify(self.CHAR_UUID)
             await self._bus.disconnect()
         except BleakError:
             pass
@@ -90,6 +83,10 @@ class BleTask(ConnectionTask):
             while self._loop.is_running():
                 time.sleep(0.1)
             self._loop.run_until_complete(self.__close_client())
+            self._loop.close()
+
+    def handle_disconnected(self, _):
+        print("Device is being properly disconnected...")
 
     def recv(self) -> Optional[str]:
         if self._recv_q.empty():
@@ -102,6 +99,8 @@ class BleTask(ConnectionTask):
     @ConnectionTask.wait
     def send(self, pkt: str) -> None:
         self._send_q.put(self.__compose_ble_msg(pkt))
+        while not self._send_q.empty():
+            time.sleep(0.01)
         if self.verbose:
             print(f"send: {pkt}")
 

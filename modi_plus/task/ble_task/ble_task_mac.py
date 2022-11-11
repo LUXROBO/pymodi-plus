@@ -129,7 +129,8 @@ class BleTask(ConnectionTask):
     #
     # Non-Async Methods
     #
-    def __parse_ble_msg(self, ble_msg):
+    @staticmethod
+    def __parse_ble_msg(ble_msg):
         json_msg = dict()
         json_msg["c"] = ble_msg[1] << 8 | ble_msg[0]
         json_msg["s"] = ble_msg[3] << 8 | ble_msg[2]
@@ -138,7 +139,8 @@ class BleTask(ConnectionTask):
         json_msg["l"] = ble_msg[7] << 8 | ble_msg[6]
         return json.dumps(json_msg, separators=(",", ":"))
 
-    def __compose_ble_msg(self, json_msg):
+    @staticmethod
+    def __compose_ble_msg(json_msg):
         json_msg = json.loads(json_msg)
         ins = json_msg["c"]
         sid = json_msg["s"]
