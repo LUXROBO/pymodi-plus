@@ -17,6 +17,7 @@ class SerialportTask(ConnectionTask):
         print("Initiating serial connection...")
         super().__init__(verbose)
         self.__port = port
+        self.__json_buffer = b""
         self.__recv_queue = Queue()
         self.__recv_thread = None
         self.__stop_signal = False
@@ -59,30 +60,11 @@ class SerialportTask(ConnectionTask):
 
     @staticmethod
     def __init_serial(port):
-        ser = ModiSerialPort(timeout=0.1)
+        ser = ModiSerialPort(timeout=0.01)
         return ser
 
-    def __read_json(self):
-        json_pkt = b""
-        while json_pkt != b"{":
-            json_pkt = self._bus.read(1)
-            if json_pkt == b"":
-                return None
-            time.sleep(0.001)
-        json_pkt += self._bus.read_until(b"}")
-        return json_pkt
-
-    def __wait_for_json(self, timeout=0.1):
-        json_msg = self.__read_json()
-        init_time = time.time()
-        while not json_msg:
-            json_msg = self.__read_json()
-            time.sleep(0.001)
-            if time.time() - init_time > timeout:
-                return None
-        return json_msg
-
     def __open_recv_thread(self):
+        self.__json_buffer = b""
         self.__recv_queue = Queue()
         self.__stop_signal = False
         self.__recv_thread = th.Thread(target=self.__recv_handler, daemon=True)
@@ -95,13 +77,23 @@ class SerialportTask(ConnectionTask):
 
     def __recv_handler(self):
         while not self.__stop_signal:
+            recv = self._bus.read()
+            if recv:
+                self.__json_buffer += recv
 
-            json_pkt = self.__wait_for_json()
-            if json_pkt:
-                message = json_pkt.decode('utf8')
-                self.__recv_queue.put(message)
+            header_index = self.__json_buffer.find(b"{")
+            if header_index < 0:
+                self.__json_buffer = b""
+                continue
+            self.__json_buffer = self.__json_buffer[header_index:]
 
-            time.sleep(0.001)
+            tail_index = self.__json_buffer.find(b"}")
+            if tail_index < 0:
+                continue
+
+            json_pkt = self.__json_buffer[:tail_index + 1].decode("utf8")
+            self.__json_buffer = self.__json_buffer[tail_index + 1:]
+            self.__recv_queue.put(json_pkt)
 
     def close_connection(self) -> None:
         """ Close serial port
