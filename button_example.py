@@ -1,4 +1,4 @@
-import modi
+import modi_plus
 import time
 
 """
@@ -8,12 +8,13 @@ network module
 """
 
 if __name__ == "__main__":
-    bundle = modi.MODI()
+    bundle = modi_plus.MODIPlus()
 
     input()
 
-    if len(bundle.buttons):
-        button = bundle.buttons[0]
-        while True:
-            print(f"pressed:{button.pressed},\tclicked:{button.clicked},\tdouble clicked:{button.double_clicked},\ttoggled:{button.toggled}      ", end="\r")
-            time.sleep(0.02)
+    # button0 = bundle.button(0x20307D218B0A)
+    button0 = bundle.buttons[0]
+
+    while True:
+        print(f"pressed:{button0.pressed},\tclicked:{button0.clicked},\tdouble clicked:{button0.double_clicked},\ttoggled:{button0.toggled}      ", end="\r")
+        time.sleep(0.02)
