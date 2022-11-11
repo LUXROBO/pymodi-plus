@@ -102,7 +102,7 @@ class ExeTask:
             if not module.is_connected:
                 # Handle Reconnected modules
                 module.is_connected = True
-                self.__request_pnp_off(module.id)
+                self.__request_pnp_off(BROADCAST_ID)
                 print(f"{str(module)} has been reconnected!")
 
     def __add_new_module(self, module_type, module_id, module_uuid, module_app_version_info, module_os_version_info):
