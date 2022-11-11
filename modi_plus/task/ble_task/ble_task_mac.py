@@ -69,8 +69,7 @@ class BleTask(ConnectionTask):
             else:
                 try:
                     pkt = self._send_q.get()
-                    print(pkt)
-                    await self._bus.write_gatt_char(self.CHAR_UUID, pkt)
+                    await self._bus.write_gatt_char(self.CHAR_UUID, pkt, response=True)
                 except BleakError:
                     self.__close_event = True
             if self.__close_event:
