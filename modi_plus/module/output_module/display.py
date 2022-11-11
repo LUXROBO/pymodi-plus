@@ -31,20 +31,24 @@ class Display(OutputModule):
         :return: None
         """
         # self.clear()
+        if self._text == text:
+            return
+
         string_cursor = 0
-        if len(text) >= 24:
-            for num in range(len(text)//24):
+        encoding_data = str.encode(text)
+        if len(encoding_data) >= 24:
+            for num in range(len(encoding_data)//24):
                 self._set_property(
                     self._id,
                     Display.TEXT,
-                    property_values=(("string", str(text)[string_cursor:string_cursor+24]),) # 24 characters can be sent per one packet
+                    property_values=(("bytes", encoding_data[string_cursor:string_cursor+24]),) # 24 characters can be sent per one packet
                 )
                 string_cursor += 24
 
         self._set_property(
             self._id,
             Display.TEXT,
-            property_values=(("string", str(text)[string_cursor:] + "\0"),)
+            property_values=(("bytes", encoding_data[string_cursor:] + bytes(0)),)
         )
         self._text = text
 
@@ -113,7 +117,7 @@ class Display(OutputModule):
                              ("s8", position_y) )
         )
 
-    def set_move(self, move_x: int, move_y: int) -> None:
+    def move(self, move_x: int, move_y: int) -> None:
         """Move the screen by move_x and move_y
 
         :param move_x: Xaxis movement value
