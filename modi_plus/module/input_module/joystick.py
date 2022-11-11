@@ -1,5 +1,6 @@
 """Joystick module."""
 
+import struct
 from modi_plus.module.input_module.input_module import InputModule
 
 

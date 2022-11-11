@@ -51,7 +51,7 @@ class ExeTask:
         }.get(command, lambda _: None)
 
     def __get_module_by_id(self, module_id):
-        for module in self._modules.values():
+        for module in self._modules:
             if module.id == module_id:
                 return module
 
@@ -67,7 +67,7 @@ class ExeTask:
         curr_time = time.time()
 
         # Checking starts only when module is registered
-        if module_id in (module.id for module in self._modules.values()):
+        if module_id in (module.id for module in self._modules):
             module = self.__get_module_by_id(module_id)
             module.last_updated = curr_time
             module.is_connected = True
@@ -81,7 +81,7 @@ class ExeTask:
                 module.has_printed = False
 
         # Disconnect module with no health message for more than 2 second
-        for module in self._modules.values():
+        for module in self._modules:
             if curr_time - module.last_updated > 2:
                 module.is_connected = False
                 module._last_set_message = None
@@ -96,7 +96,7 @@ class ExeTask:
         module_uuid, module_os_version_info, module_app_version_info = unpack_data(message['b'], (6, 2, 2))
 
         # Handle new modules
-        if module_id not in (module.id for module in self._modules.values()):
+        if module_id not in (module.id for module in self._modules):
             module_type = get_module_type_from_uuid(module_uuid)
             new_module = self.__add_new_module(module_type, module_id, module_uuid, module_app_version_info, module_os_version_info)
             new_module.module_type = module_type
@@ -115,7 +115,7 @@ class ExeTask:
         self.__set_module_state(module_instance.id, Module.RUN, Module.PNP_OFF)
         module_instance.app_version = module_app_version_info
         module_instance.os_version = module_os_version_info
-        self._modules[module_uuid] = module_instance
+        self._modules.append(module_instance)
         print(f"{str(module_instance)} has been connected!")
         return module_instance
 
@@ -142,7 +142,7 @@ class ExeTask:
 
     def __update_esp_version(self, message):
         network_module = None
-        for module in self._modules.values():
+        for module in self._modules:
             if module.module_type == 'network':
                 network_module = module
                 break
