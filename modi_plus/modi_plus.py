@@ -1,6 +1,7 @@
 """Main MODI+ module."""
 
 import sys
+import platform
 import atexit
 from typing import Optional
 
@@ -105,9 +106,9 @@ class MODIPlus:
             self.network_uuids[network_uuid] = self
             mod_path = {
                 "win32": "modi_plus.task.ble_task.ble_task_win",
-                "linux": "modi_plus.task.ble_task.ble_task_rpi",
                 "darwin": "modi_plus.task.ble_task.ble_task_mac",
-            }.get(sys.platform)
+                "rpi": "modi_plus.task.ble_task.ble_task_rpi",
+            }.get(self.__get_platform())
             return im(mod_path).BleTask(verbose, network_uuid)
         else:
             raise ValueError(f"Invalid conn mode: {connection_type}")
@@ -139,6 +140,11 @@ class MODIPlus:
         :rtype: str if msg exists, else None
         """
         return self._connection.recv()
+
+    def __get_platform(self):
+        if platform.uname().node == "raspberrypi":
+            return "rpi"
+        return sys.platform
 
     def __get_module_by_uuid(self, module_uuid):
         for module in self._modules:
