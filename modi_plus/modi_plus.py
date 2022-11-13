@@ -1,9 +1,8 @@
 """Main MODI+ module."""
 
 import sys
-import time
+import platform
 import atexit
-import logging
 from typing import Optional
 
 from importlib import import_module as im
@@ -94,23 +93,9 @@ class MODIPlus:
 
         print("Start initializing connected MODI+ modules")
         self._exe_thread.start()
-        init_time = time.time()
         print("MODI+ modules are initialized!")
 
         atexit.register(self.close)
-
-    @staticmethod
-    def __init_logger():
-        logger = logging.getLogger(f"PyMODI+ (v{__version__}) Logger")
-        logger.setLevel(logging.DEBUG)
-
-        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        file_handler = logging.FileHandler("pymodi+.log")
-        file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(formatter)
-
-        logger.addHandler(file_handler)
-        return logger
 
     def __init_task(self, connection_type, verbose, port, network_uuid):
         if connection_type == "serialport":
@@ -120,10 +105,10 @@ class MODIPlus:
                 raise ValueError("Network UUID not specified!")
             self.network_uuids[network_uuid] = self
             mod_path = {
-                "win32": "modi_plus.task.ble_task.ble_task_mac",
-                "linux": "modi_plus.task.ble_task.ble_task_rpi",
+                "win32": "modi_plus.task.ble_task.ble_task_win",
                 "darwin": "modi_plus.task.ble_task.ble_task_mac",
-            }.get(sys.platform)
+                "rpi": "modi_plus.task.ble_task.ble_task_rpi",
+            }.get(self.__get_platform())
             return im(mod_path).BleTask(verbose, network_uuid)
         else:
             raise ValueError(f"Invalid conn mode: {connection_type}")
@@ -131,7 +116,7 @@ class MODIPlus:
     def open(self):
         atexit.register(self.close)
         self._exe_thread = ExeThread(self._modules, self._connection)
-        self._connection.open_conn()
+        self._connection.open_connection()
         self._exe_thread.start()
 
     def close(self):
@@ -155,6 +140,11 @@ class MODIPlus:
         :rtype: str if msg exists, else None
         """
         return self._connection.recv()
+
+    def __get_platform(self):
+        if platform.uname().node == "raspberrypi":
+            return "rpi"
+        return sys.platform
 
     def __get_module_by_uuid(self, module_uuid):
         for module in self._modules:

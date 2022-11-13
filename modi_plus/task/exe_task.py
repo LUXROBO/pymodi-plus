@@ -108,7 +108,7 @@ class ExeTask:
     def __add_new_module(self, module_type, module_id, module_uuid, module_app_version_info, module_os_version_info):
         module_template = get_module_from_name(module_type)
         module_instance = module_template(module_id, module_uuid, self._conn)
-        self.__request_pnp_off(module_instance.id)
+        self.__request_pnp_off(BROADCAST_ID)
         module_instance.app_version = module_app_version_info
         module_instance.os_version = module_os_version_info
         self._modules.append(module_instance)
