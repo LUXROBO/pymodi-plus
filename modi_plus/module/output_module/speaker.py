@@ -1,15 +1,26 @@
 """Speaker module."""
 
+import struct
 from typing import Tuple
 from modi_plus.module.output_module.output_module import OutputModule
 
 
 class Speaker(OutputModule):
 
-    FREQUENCY = 3
-    VOLUME = 2
+    PROPERTY_SPEAKER_STATE = 2
 
-    SET_TUNE = 16
+    PROPERTY_SPEAKER_SET_TUNE = 16
+    PROPERTY_SPEAKER_RESET = 17
+    PROPERTY_SPEAKER_MUSIC = 18
+    PROPERTY_SPEAKER_MELODY = 19
+
+    STOP = 0
+    START = 1
+    PAUSE = 2
+    RESUME = 3
+
+    PROPERTY_OFFSET_CURRENT_VOLUME = 0
+    PROPERTY_OFFSET_CURRENT_FREQUENCY = 2
 
     SCALE_TABLE = {
         "FA5": 698,
@@ -40,83 +51,100 @@ class Speaker(OutputModule):
 
     def __init__(self, id_, uuid, connection_task):
         super().__init__(id_, uuid, connection_task)
-        # Default frequency of MODI Speaker
-        self.frequency = 1318
 
-    @property
-    def tune(self) -> Tuple[float, float]:
-        return (
-            self.frequency,
-            self.volume
-        )
-
-    @tune.setter
-    @OutputModule._validate_property(nb_values=2)
-    def tune(self, tune_value: Tuple[int, int]) -> None:
+    def set_tune(self, frequency, volume) -> None:
         """Set tune for the speaker
 
         :param tune_value: Value of frequency and volume
         :type tune_value: Tuple[int, int]
         :return: None
         """
-        if tune_value == self.tune:
-            return
-
-        if isinstance(tune_value[0], str):
+        tune_value = (frequency, volume)
+        if isinstance(frequency, str):
             tune_value = (
                 Speaker.SCALE_TABLE.get(tune_value[0], -1),
                 tune_value[1]
             )
+
+        if tune_value == (self.frequency, self.volume):
+            return
 
         if tune_value[0] < 0:
             raise ValueError("Not a supported frequency value")
 
         self._set_property(
             destination_id=self._id,
-            property_num=Speaker.SET_TUNE,
-            property_values=(('float', tune_value))
+            property_num=Speaker.PROPERTY_SPEAKER_SET_TUNE,
+            property_values=(('u16', tune_value[0]),
+                             ('u16', tune_value[1]))
         )
-        self.update_property(Speaker.FREQUENCY, tune_value[0])
-        self.update_property(Speaker.VOLUME, tune_value[1])
 
     @property
-    def frequency(self) -> float:
-        return self._get_property(Speaker.FREQUENCY)
-
-    @frequency.setter
-    @OutputModule._validate_property(nb_values=1)
-    def frequency(self, frequency_value: float) -> None:
-        """Set the frequency for the speaker
-
-        :param frequency_value: Frequency to set
-        :type frequency_value: float, optional
-        :return: None
-        """
-        self.tune = frequency_value, self.volume
+    def frequency(self) -> int:
+        offset = Speaker.PROPERTY_OFFSET_CURRENT_FREQUENCY
+        raw = self._get_property(Speaker.PROPERTY_SPEAKER_STATE)
+        data = struct.unpack("H", raw[offset:offset+2])[0]
+        return data
 
     @property
-    def volume(self) -> float:
+    def volume(self) -> int:
         """Returns current volume
 
         :return: Volume value
-        :rtype: float
+        :rtype: int
         """
-        return self._get_property(Speaker.VOLUME)
+        offset = Speaker.PROPERTY_OFFSET_CURRENT_VOLUME
+        raw = self._get_property(Speaker.PROPERTY_SPEAKER_STATE)
+        data = struct.unpack("H", raw[offset:offset+2])[0]
+        return data
 
-    @volume.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
-    def volume(self, volume_value: float) -> None:
-        """Set the volume for the speaker
+    def melody(self, cmd: int, volume: int, melody_name: str = "") -> None:
+        """Play 
 
-        :param volume_value: Volume to set
-        :type volume_value: float
+        :param cmd: cmd to play melody (Stop, Start, Pause, Resume).
+        :type cmd: int
+        :param volume: volume of speaker
+        :type volume: int
+        :param melody_name: melody file name for playing
+        :type melody_name: str
         :return: None
         """
-        self.tune = self.frequency, volume_value
+
+        if len(melody_name) != 0:
+            self.playing_file_name = melody_name
+        self._set_property(
+            self._id,
+            Speaker.PROPERTY_SPEAKER_MELODY,
+            property_values=(("u8", cmd),
+                             ("u8", volume),
+                             ("string", "res/" + self.playing_file_name))
+        )
+
+    def music(self, cmd: int, volume: int, music_name: str = "") -> None:
+        """Play 
+
+        :param cmd: cmd to play music (Stop, Start, Pause, Resume).
+        :type cmd: int
+        :param volume: volume of speaker
+        :type volume: int
+        :param melody_name: music file name for playing
+        :type melody_name: str
+        :return: None
+        """
+        
+        if len(music_name) != 0:
+            self.playing_file_name = music_name
+        self._set_property(
+            self._id,
+            Speaker.PROPERTY_SPEAKER_MUSIC,
+            property_values=(("u8", cmd),
+                             ("u8", volume),
+                             ("string", "res/" + self.playing_file_name))
+        )
 
     def turn_off(self) -> None:
         """Turn off the sound
 
         :return: None
         """
-        self.tune = 0, 0
+        self.set_tune(0, 0)
