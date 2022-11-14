@@ -98,7 +98,7 @@ class Speaker(OutputModule):
         data = struct.unpack("H", raw[offset:offset+2])[0]
         return data
 
-    def melody(self, cmd: int, volume: int, melody_name: str = "") -> None:
+    def play_melody(self, cmd: int, volume: int, melody_name: str = "") -> None:
         """Play 
 
         :param cmd: cmd to play melody (Stop, Start, Pause, Resume).
@@ -120,7 +120,7 @@ class Speaker(OutputModule):
                              ("string", "res/" + self.playing_file_name))
         )
 
-    def music(self, cmd: int, volume: int, music_name: str = "") -> None:
+    def play_music(self, cmd: int, volume: int, music_name: str = "") -> None:
         """Play 
 
         :param cmd: cmd to play music (Stop, Start, Pause, Resume).
@@ -142,7 +142,7 @@ class Speaker(OutputModule):
                              ("string", "res/" + self.playing_file_name))
         )
 
-    def turn_off(self) -> None:
+    def reset(self) -> None:
         """Turn off the sound
 
         :return: None

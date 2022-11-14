@@ -8,13 +8,13 @@ class Motor(OutputModule):
 
     PROPERTY_MOTOR_STATE = 2
 
-    PROPERTY_MOTOR_VELOCITY = 17
+    PROPERTY_MOTOR_SPEED = 17
     PROPERTY_MOTOR_ANGLE = 18
     PROPERTY_MOTOR_ANGLE_APPEND = 19
     PROPERTY_MOTOR_STOP = 20
 
     PROPERTY_OFFSET_CURRENT_ANGLE = 0
-    PROPERTY_OFFSET_CURRENT_VELOCITY = 2
+    PROPERTY_OFFSET_CURRENT_SPEED = 2
     PROPERTY_OFFSET_TARGET_ANGLE = 4
     PROPERTY_OFFSET_TARGET_SPEED = 6
 
@@ -43,25 +43,25 @@ class Motor(OutputModule):
         return data
 
     @property
-    def velocity(self) -> float:
-        """Returns current velocity
+    def speed(self) -> float:
+        """Returns current speed
 
-        :return: current velocity value
+        :return: current speed value
         :rtype: float
         """
-        offset = Motor.PROPERTY_OFFSET_CURRENT_VELOCITY
+        offset = Motor.PROPERTY_OFFSET_CURRENT_SPEED
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset+2])[0]
         return data
 
     @property
-    def target_velocity(self) -> float:
-        """Returns current velocity
+    def target_speed(self) -> float:
+        """Returns current speed
 
-        :return: current velocity value
+        :return: current speed value
         :rtype: float
         """
-        offset = Motor.PROPERTY_OFFSET_TARGET_VELOCITY
+        offset = Motor.PROPERTY_OFFSET_TARGET_SPEED
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset+2])[0]
         return data
@@ -83,20 +83,20 @@ class Motor(OutputModule):
         )
         self._target_angle = target_angle
 
-    def set_velocity(self, target_velocity: int) -> None:
-        """Sets the velocity of the motor at channel I
+    def set_speed(self, target_speed: int) -> None:
+        """Sets the speed of the motor at channel I
 
-        :param target_velocity: Velocity to set the motor.
-        :type target_velocity: int
+        :param target_speed: Velocity to set the motor.
+        :type target_speed: int
         :return: None
         """
         
         self._set_property(
             destination_id=self._id,
-            property_num=Motor.PROPERTY_MOTOR_VELOCITY,
-            property_values=(('s32', target_velocity),)
+            property_num=Motor.PROPERTY_MOTOR_SPEED,
+            property_values=(('s32', target_speed),)
         )
-        self._target_velocity = target_velocity
+        self._target_speed = target_speed
 
     def append_angle(self, target_angle, target_speed) -> None:
         """append the angle form current angle of the motor

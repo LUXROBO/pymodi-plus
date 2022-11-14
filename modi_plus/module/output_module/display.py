@@ -21,7 +21,7 @@ class Display(OutputModule):
     def text(self):
         return self._text
 
-    def set_text(self, text: str) -> None:
+    def write_text(self, text: str) -> None:
         """Clears the display and show the input string on the display.
         Returns the json serialized signal sent to the module
         to display the text
@@ -52,7 +52,7 @@ class Display(OutputModule):
         )
         self._text = text
 
-    def show_variable(self, variable: float, position_x: int,
+    def write_variable(self, variable: float, position_x: int,
                       position_y: int) -> None:
         """Clears the display and show the input variable on the display.
         Returns the json serialized signal sent to
@@ -76,7 +76,7 @@ class Display(OutputModule):
         )
         self._text += str(variable)
 
-    def draw_image(self, position_x: int, position_y: int, image_name: int) -> None:
+    def draw_picture(self, position_x: int, position_y: int, image_name: int) -> None:
         """Clears the display and show the input variable on the display.
         Returns the json serialized signal sent to
         the module to display the text
@@ -117,7 +117,7 @@ class Display(OutputModule):
                              ("s8", position_y) )
         )
 
-    def move(self, move_x: int, move_y: int) -> None:
+    def move_screen(self, move_x: int, move_y: int) -> None:
         """Move the screen by move_x and move_y
 
         :param move_x: Xaxis movement value
@@ -133,7 +133,7 @@ class Display(OutputModule):
                              ("s8", move_y) )
         )
 
-    def clear(self) -> None:
+    def reset(self) -> None:
         """Clear the screen.
 
         :return: json serialized message to te module
