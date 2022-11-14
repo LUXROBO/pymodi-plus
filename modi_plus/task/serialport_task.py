@@ -1,9 +1,7 @@
-import time
 from typing import Optional
 from queue import Queue
 import threading as th
 
-import serial
 from serial.serialutil import SerialException
 
 from modi_plus.task.connection_task import ConnectionTask
@@ -32,12 +30,11 @@ class SerialportTask(ConnectionTask):
         """
         modi_ports = list_modi_ports()
         if not modi_ports:
-            raise SerialException("No MODI network module is available")
+            raise SerialException("No MODI+ network module is available")
 
         if self.__port:
             if self.__port not in map(lambda info: info, modi_ports):
-                raise SerialException(f"{self.__port} is not connected "
-                                      f"to a MODI network module.")
+                raise SerialException(f"{self.__port} is not connected to a MODI+ network module.")
             else:
                 try:
                     self._bus = self.__init_serial(self.__port)
@@ -56,7 +53,7 @@ class SerialportTask(ConnectionTask):
                 return
             except SerialException:
                 continue
-        raise SerialException("No MODI port is available now")
+        raise SerialException("No MODI+ port is available now")
 
     @staticmethod
     def __init_serial(port):
@@ -100,6 +97,7 @@ class SerialportTask(ConnectionTask):
 
         :return: None
         """
+        self.__close_recv_thread()
         self._bus.close()
 
     def recv(self) -> Optional[str]:

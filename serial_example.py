@@ -13,8 +13,9 @@ if __name__ == "__main__":
     input()
 
     # button0 = bundle.button(0x20307D218B0A)
-    button0 = bundle.buttons[0]
+    motor0 = bundle.motors[0]
+    motor1 = bundle.motors[0]
 
     while True:
-        print(f"pressed:{button0.pressed},\tclicked:{button0.clicked},\tdouble clicked:{button0.double_clicked},\ttoggled:{button0.toggled}      ", end="\r")
+        # print(f"pressed:{button0.pressed},\tclicked:{button0.clicked},\tdouble clicked:{button0.double_clicked},\ttoggled:{button0.toggled}      ", end="\r")
         time.sleep(0.02)
