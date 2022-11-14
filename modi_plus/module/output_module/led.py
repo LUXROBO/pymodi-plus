@@ -16,9 +16,7 @@ class Led(OutputModule):
     def rgb(self) -> Tuple[float, float, float]:
         return self.red, self.green, self.blue
 
-    @rgb.setter
-    @OutputModule._validate_property(nb_values=3, value_range=(0, 100))
-    def rgb(self, color: Tuple[int, int, int]) -> None:
+    def set_rgb(self, red, green, blue) -> None:
         """Sets the color of the LED light with given RGB values, and returns
         the current RGB values.
 
@@ -26,18 +24,18 @@ class Led(OutputModule):
         :type color: Tuple[int, int, int]
         :return: None
         """
-        if color == self.rgb:
+        if (red, green, blue) == self.rgb:
             return
         self._set_property(
             destination_id=self._id,
             property_num=Led.SET_RGB,
-            property_values=(('u16', color[0]),
-                             ('u16', color[1]),
-                             ('u16', color[2]))
+            property_values=(('u16', red),
+                             ('u16', green),
+                             ('u16', blue))
         )
-        self.update_property(Led.RED, color[0])
-        self.update_property(Led.GREEN, color[1])
-        self.update_property(Led.BLUE, color[2])
+        self.update_property(Led.RED, red)
+        self.update_property(Led.GREEN, green)
+        self.update_property(Led.BLUE, blue)
 
     @property
     def red(self) -> float:
@@ -48,17 +46,6 @@ class Led(OutputModule):
         """
         return self._get_property(Led.RED)
 
-    @red.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
-    def red(self, red: int) -> None:
-        """Sets the red component of the LED light by given value
-
-        :param red: Red component to set
-        :type red: int
-        :return: None
-        """
-        self.rgb = red, self.green, self.blue
-
     @property
     def green(self) -> float:
         """Returns the current value of the green component of the LED
@@ -68,17 +55,6 @@ class Led(OutputModule):
         """
         return self._get_property(Led.GREEN)
 
-    @green.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
-    def green(self, green: int) -> None:
-        """Sets the green component of the LED light by given value
-
-        :param green: Green component to set
-        :type green: int
-        :return: None
-        """
-        self.rgb = self.red, green, self.blue
-
     @property
     def blue(self) -> float:
         """Returns the current value of the blue component of the LED
@@ -87,17 +63,6 @@ class Led(OutputModule):
         :rtype: float
         """
         return self._get_property(Led.BLUE)
-
-    @blue.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
-    def blue(self, blue: int) -> None:
-        """Sets the blue component of the LED light by given value
-
-        :param blue: Blue component to set
-        :type blue: int
-        :return: None
-        """
-        self.rgb = self.red, self.green, blue
 
     #
     # Legacy Support

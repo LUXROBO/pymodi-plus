@@ -7,9 +7,11 @@ class Display(OutputModule):
 
     TEXT = 17
     CLEAR = 21
+    DOT = 18
+    IMAGE = 19
     VARIABLE = 22
-    SET_HORIZONTAL = 25
-    SET_VERTICAL = 26
+    OFFSET = 25
+    MOVE = 26
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
@@ -19,8 +21,7 @@ class Display(OutputModule):
     def text(self):
         return self._text
 
-    @text.setter
-    def text(self, text: str) -> None:
+    def write_text(self, text: str) -> None:
         """Clears the display and show the input string on the display.
         Returns the json serialized signal sent to the module
         to display the text
@@ -29,16 +30,29 @@ class Display(OutputModule):
         :type text: str
         :return: None
         """
-        self.clear()
+        # self.clear()
+        if self._text == text:
+            return
+
+        string_cursor = 0
+        encoding_data = str.encode(text)
+        if len(encoding_data) >= 24:
+            for num in range(len(encoding_data)//24):
+                self._set_property(
+                    self._id,
+                    Display.TEXT,
+                    property_values=(("bytes", encoding_data[string_cursor:string_cursor+24]),) # 24 characters can be sent per one packet
+                )
+                string_cursor += 24
+
         self._set_property(
             self._id,
             Display.TEXT,
-            str(text)[:27] + "\0",  # 27 characters can be shown on the display
-            OutputModule.STRING
+            property_values=(("bytes", encoding_data[string_cursor:] + bytes(0)),)
         )
         self._text = text
 
-    def show_variable(self, variable: float, position_x: int,
+    def write_variable(self, variable: float, position_x: int,
                       position_y: int) -> None:
         """Clears the display and show the input variable on the display.
         Returns the json serialized signal sent to
@@ -56,38 +70,70 @@ class Display(OutputModule):
         self._set_property(
             self._id,
             Display.VARIABLE,
-            (variable, position_x, position_y),
-            OutputModule.DISPLAY_VAR,
+            property_values=(("u8", position_x), 
+                             ("u8", position_y),
+                             ("float",variable))
         )
         self._text += str(variable)
 
-    def set_horizontal(self, offset) -> None:
-        """Set the horizontal offset on the screen
+    def draw_picture(self, position_x: int, position_y: int, image_name: int) -> None:
+        """Clears the display and show the input variable on the display.
+        Returns the json serialized signal sent to
+        the module to display the text
 
-        :param offset: offset in pixels
-        :type offset: float
+        :param variable: variable to display.
+        :type variable: float
+        :param position_x: x coordinate of the desired position
+        :type position_x: int
+        :param position_y: y coordinate of te desired position
+        :type position_y: int
+        :return: A json serialized signal to module
+        :rtype: string
+        """
+        self._set_property(
+            self._id,
+            Display.IMAGE,
+            property_values=(("u8", position_x),
+                             ("u8", position_y),
+                             ("u8", 96),
+                             ("u8", 96),
+                             ("string", "res/" + image_name))
+        )
+
+
+    def set_offset(self, position_x: int, position_y: int) -> None:
+        """Set origin point on the screen
+
+        :param position_x: Xaxis offset on screen
+        :type position_x: int
+        :param position_y: Yaxis offset on screen
+        :type position_y: int
         :return: None
         """
         self._set_property(
             self.id,
-            Display.SET_HORIZONTAL, (offset, ),
-            OutputModule.FLOAT,
+            Display.OFFSET,
+            property_values=(("s8", position_x),
+                             ("s8", position_y) )
         )
 
-    def set_vertical(self, offset) -> None:
-        """Set the vertical offset on the screen
+    def move_screen(self, move_x: int, move_y: int) -> None:
+        """Move the screen by move_x and move_y
 
-        :param offset: offset in pixels
-        :type offset: float
+        :param move_x: Xaxis movement value
+        :type move_x: int
+        :param move_y: Yaxis movement value
+        :type move_y: int
         :return: None
         """
         self._set_property(
             self.id,
-            Display.SET_VERTICAL, (offset, ),
-            OutputModule.FLOAT,
+            Display.MOVE,
+            property_values=(("s8", move_x),
+                             ("s8", move_y) )
         )
 
-    def clear(self) -> None:
+    def reset(self) -> None:
         """Clear the screen.
 
         :return: json serialized message to te module
@@ -96,7 +142,6 @@ class Display(OutputModule):
         self._set_property(
             self._id,
             Display.CLEAR,
-            (0, 0),
-            OutputModule.RAW
+            property_values=(("u8", 0),)
         )
         self._text = ""

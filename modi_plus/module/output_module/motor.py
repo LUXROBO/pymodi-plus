@@ -1,181 +1,126 @@
 """Motor module."""
-
+import struct
 from typing import Tuple
 from modi_plus.module.output_module.output_module import OutputModule
 
 
 class Motor(OutputModule):
 
-    FIRST_TORQUE = 2
-    SECOND_TORQUE = 10
-    FIRST_SPEED = 3
-    SECOND_SPEED = 11
-    FIRST_DEGREE = 4
-    SECOND_DEGREE = 12
+    PROPERTY_MOTOR_STATE = 2
 
-    TORQUE = 16
-    SPEED = 17
-    DEGREE = 18
-    CHANNEL = 19
+    PROPERTY_MOTOR_SPEED = 17
+    PROPERTY_MOTOR_ANGLE = 18
+    PROPERTY_MOTOR_ANGLE_APPEND = 19
+    PROPERTY_MOTOR_STOP = 20
 
-    def __set_motor_channel(self,
-                            motor_channel: int, control_mode: int,
-                            control_value: int = None) -> None:
-        """Select te motor channel for control
-        Mode: 0:Torque 1:Speed 2:Angle (Torque is not implemented yet)
+    PROPERTY_OFFSET_CURRENT_ANGLE = 0
+    PROPERTY_OFFSET_CURRENT_SPEED = 2
+    PROPERTY_OFFSET_TARGET_ANGLE = 4
+    PROPERTY_OFFSET_TARGET_SPEED = 6
 
-        :param motor_channel: channel number for control 0:Top 1:Bot
-        :type motor_channel: int
-        :param control_mode: Control mode of the motor to be selected
-        :type control_mode: int
-        :param control_value: value to control
-        :type control_value: int, optional
-        :return: current value of the motor control
-        :rtype: Tuple[float, float]
+    @property
+    def angle(self) -> float:
+        """Returns current angle
+
+        :return: current angle value
+        :rtype: float
+        """
+        offset = Motor.PROPERTY_OFFSET_CURRENT_ANGLE
+        raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
+        data = struct.unpack("H", raw[offset:offset+2])[0]
+        return data
+
+    @property
+    def target_angle(self) -> float:
+        """Returns current angle
+
+        :return: current angle value
+        :rtype: float
+        """
+        offset = Motor.PROPERTY_OFFSET_TARGET_ANGLE
+        raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
+        data = struct.unpack("H", raw[offset:offset+2])[0]
+        return data
+
+    @property
+    def speed(self) -> float:
+        """Returns current speed
+
+        :return: current speed value
+        :rtype: float
+        """
+        offset = Motor.PROPERTY_OFFSET_CURRENT_SPEED
+        raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
+        data = struct.unpack("H", raw[offset:offset+2])[0]
+        return data
+
+    @property
+    def target_speed(self) -> float:
+        """Returns current speed
+
+        :return: current speed value
+        :rtype: float
+        """
+        offset = Motor.PROPERTY_OFFSET_TARGET_SPEED
+        raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
+        data = struct.unpack("H", raw[offset:offset+2])[0]
+        return data
+
+    def set_angle(self, target_angle: int, target_speed: int) -> None:
+        """Sets the angle of the motor
+
+        :param target_angle: Angle to set the motor.
+        :type target_angle: int
+        :param target_speed: Speed to reach target angle.
+        :type target_angle: int
+        :return: None
         """
         self._set_property(
             destination_id=self._id,
-            property_num=Motor.CHANNEL,
-            property_values=(('u16', motor_channel),
-                             ('u16', control_mode),
-                             ('u16', control_value))
+            property_num=Motor.PROPERTY_MOTOR_ANGLE,
+            property_values=(('u16', target_angle),
+                             ('u16', target_speed))
         )
+        self._target_angle = target_angle
 
-    @property
-    def first_degree(self) -> float:
-        """Returns first degree
+    def set_speed(self, target_speed: int) -> None:
+        """Sets the speed of the motor at channel I
 
-        :return: first degree value
-        :rtype: float
-        """
-        return self._get_property(Motor.FIRST_DEGREE)
-
-    @first_degree.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
-    def first_degree(self, degree_value: int) -> None:
-        """Sets the angle of the motor at channel I
-
-        :param degree_value: Angle to set the first motor.
-        :type degree_value: int
+        :param target_speed: Velocity to set the motor.
+        :type target_speed: int
         :return: None
         """
-        _ = self.first_degree
-        self.__set_motor_channel(0, 2, degree_value)
-        self.update_property(Motor.FIRST_DEGREE, degree_value)
-
-    @property
-    def second_degree(self) -> float:
-        """Returns second degree
-
-        :return: second degree value
-        :rtype: float
-        """
-        return self._get_property(Motor.SECOND_DEGREE)
-
-    @second_degree.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(0, 100))
-    def second_degree(self, degree_value: int) -> None:
-        """Sets the angle of the motor at channel II
-
-        :param degree_value: Angle to set the second motor.
-        :type degree_value
-        :return: None
-        """
-        _ = self.second_degree
-        self.__set_motor_channel(1, 2, degree_value)
-        self.update_property(Motor.SECOND_DEGREE, degree_value)
-
-    @property
-    def first_speed(self) -> float:
-        """Returns first speed
-
-        :return: first speed value
-        :rtype: float
-        """
-        return self._get_property(Motor.FIRST_SPEED)
-
-    @first_speed.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
-    def first_speed(self, speed_value: int) -> None:
-        """Set the speed of the motor at channel I
-
-        :param speed_value: Angular speed to set the first motor.
-        :return: None
-        """
-        _ = self.first_speed
-        self.__set_motor_channel(0, 1, speed_value)
-        self.update_property(Motor.FIRST_SPEED, speed_value)
-
-    @property
-    def second_speed(self) -> float:
-        """Returns second speed
-
-        :return: second speed value
-        :rtype: float
-        """
-        return self._get_property(Motor.SECOND_SPEED)
-
-    @second_speed.setter
-    @OutputModule._validate_property(nb_values=1, value_range=(-100, 100))
-    def second_speed(self, speed_value: int) -> None:
-        """Set the speed of the motor at channel II
-
-        :param speed_value: Angular speed to set the second motor.
-        :return: None
-        """
-        _ = self.second_speed
-        self.__set_motor_channel(1, 1, speed_value)
-        self.update_property(Motor.SECOND_SPEED, speed_value)
-
-    @property
-    def speed(self):
-        """Returns speed value of two motors
-
-        :return: Tuple[float, float]
-        """
-        return (
-            self._get_property(Motor.FIRST_SPEED),
-            self._get_property(Motor.SECOND_SPEED),
+        
+        self._set_property(
+            destination_id=self._id,
+            property_num=Motor.PROPERTY_MOTOR_SPEED,
+            property_values=(('s32', target_speed),)
         )
+        self._target_speed = target_speed
 
-    @speed.setter
-    @OutputModule._validate_property(2, (-100, 100))
-    def speed(self, speed_value: Tuple[int, int]) -> None:
-        """Set the speed of the motors at both channels
+    def append_angle(self, target_angle, target_speed) -> None:
+        """append the angle form current angle of the motor
 
-        :param speed_value: Speed to set the motor.
-        :type speed_value: Tuple[int, int]
+        :param target_angle: Angle to append the motor angle.
+        :type target_angle: int
+        :param target_speed: Speed to reach target angle.
+        :type target_angle: int
         :return: None
         """
-        _ = self.speed
-        self.__set_motor_channel(0, 1, speed_value[0])
-        self.__set_motor_channel(1, 1, speed_value[1])
-        self.update_property(Motor.FIRST_SPEED, speed_value[0])
-        self.update_property(Motor.SECOND_SPEED, speed_value[1])
-
-    @property
-    def degree(self) -> Tuple[float, float]:
-        """Returns current angle
-
-        :return: Angle of two motors
-        :rtype: float
-        """
-        return (
-            self._get_property(Motor.FIRST_DEGREE),
-            self._get_property(Motor.SECOND_DEGREE),
+        self._set_property(
+            destination_id=self._id,
+            property_num=Motor.PROPERTY_MOTOR_ANGLE_APPEND,
+            property_values=(('s16', target_angle),
+                             ('u16', target_speed))
         )
+    
+    def stop(self) -> None:
+        """Stop operating motor
 
-    @degree.setter
-    @OutputModule._validate_property(nb_values=2, value_range=(0, 100))
-    def degree(self, degree_value: Tuple[int, int]) -> None:
-        """Set the angle of the motors at both channels
-
-        :param degree_value: Degree to set
-        :type degree_value: Tuple[int, int]
         :return: None
         """
-        _ = self.degree
-        self.__set_motor_channel(0, 2, degree_value[0])
-        self.__set_motor_channel(1, 2, degree_value[1])
-        self.update_property(Motor.FIRST_DEGREE, degree_value[0])
-        self.update_property(Motor.SECOND_DEGREE, degree_value[1])
+        self._set_property(
+            destination_id=self._id,
+            property_num=Motor.PROPERTY_MOTOR_STOP,
+            property_values=()
+        )
