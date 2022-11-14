@@ -102,8 +102,33 @@ class Module:
         self.is_connected = True
         self.has_printed = False
         self.last_updated = time.time()
+        self.first_connected = None
         self.__app_version = None
         self.__os_version = None
+
+    def __gt__(self, other):
+        if self.first_connected is not None:
+            if other.first_connected is not None:
+                return self.first_connected > other.first_connected
+            else:
+                return False
+        else:
+            if other.first_connected is not None:
+                return True
+            else:
+                return False
+
+    def __lt__(self, other):
+        if self.first_connected is not None:
+            if other.first_connected is not None:
+                return self.first_connected < other.first_connected
+            else:
+                return True
+        else:
+            if other.first_connected is not None:
+                return False
+            else:
+                return True
 
     def __str__(self):
         return f"{self.__class__.__name__}(0x{self._uuid:X})"

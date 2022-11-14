@@ -46,21 +46,13 @@ class ModuleList(list):
         raise Exception("Module with given id does not exits!!")
 
     def sublist(self):
-        """ When accessing the module, the modules are sorted in an
-        ascending order of
-        1. the distance from network module
-        2. left to right
-        3. up to down
+        """ When accessing the module, the modules are sorted in an ascending order of
+        1. the connected time from network module
 
         :return: Module
         """
         if self.__module_type:
-            modules = list(
-                filter(
-                    lambda module: module.module_type == self.__module_type,
-                    self.__src
-                )
-            )
+            modules = list(filter(lambda module: module.module_type == self.__module_type, self.__src))
         else:
             modules = self.__src
         modules.sort()
