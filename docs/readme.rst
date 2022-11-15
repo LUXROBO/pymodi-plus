@@ -93,6 +93,19 @@ Let’s blink the LED 5 times.
        led.turn_off()
        time.sleep(0.5)
 
+If you are still not sure how to use PyMODI, you can play PyMODI
+tutorial over REPL:
+
+::
+
+   $ python -m modi --tutorial
+
+As well as an interactive usage examples:
+
+::
+
+   $ python -m modi --usage
+
 Additional Usage
 ----------------
 

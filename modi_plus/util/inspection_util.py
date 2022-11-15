@@ -30,7 +30,7 @@ class StoppableThread(th.Thread):
 
 class Inspector:
     """
-    Inspector diagnoses malfunctioning STM32 modules (all modules but network)
+    Inspector diagnoses malfunctioning modules (all modules but network)
     """
 
     row_len = 79
@@ -359,7 +359,7 @@ class Inspector:
         self.print_wrap(
             """
             PyMODI+ provides a number of tools that can be utilized in different
-            purpose. One of them is the STM32 module (all modules but network)
+            purpose. One of them is the module (all modules but network)
             inspector which diagnoses any malfunctioning MODI+ module.
             """
         )
