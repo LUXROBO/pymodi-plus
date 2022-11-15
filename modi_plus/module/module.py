@@ -3,7 +3,6 @@
 import time
 import json
 from os import path
-from typing import Union
 from importlib.util import find_spec
 
 from modi_plus.util.message_util import parse_message
