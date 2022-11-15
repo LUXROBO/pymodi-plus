@@ -314,6 +314,7 @@ class Inspector:
         input("\nIf you see strong blue from the led module, Press ENTER: ")
         self.clear()
 
+        module.set_rgb(0, 0, 0)
         self.print_module_page(module, i, nb_modules)
         input(dedent(
             f"""
@@ -384,6 +385,8 @@ class Inspector:
         print("Importing modi_plus package and creating a modi+ bundle object...\n")
         import modi_plus
         self.bundle = modi_plus.MODIPlus()
+
+        input("wait for connecting.....\nif check the module connected, press ENTER\n")
 
         modules = [m for m in self.bundle.modules if m.module_type != "network"]
         nb_modules_detected = len(modules)
