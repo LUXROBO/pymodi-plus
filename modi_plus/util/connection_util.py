@@ -48,13 +48,13 @@ def is_network_module_connected() -> bool:
 def ask_modi_device(devices):
     if not devices:
         raise ValueError(
-            'No MODI network module(s) available!\n'
-            'The network module that you\'re trying to connect, may in use.'
+            "No MODI network module(s) available!\n"
+            "The network module that you're trying to connect, may in use."
         )
     for idx, dev in enumerate(devices):
         print(f"<{idx}>: {dev}")
     i = input("Choose your device index (ex: 0) : ")
-    return devices[int(i)].lstrip('MODI_')
+    return devices[int(i)].lstrip("MODI+_")
 
 
 class MODIConnectionError(Exception):
@@ -68,4 +68,4 @@ class MockConn:
         self.send_list.append(pkt)
 
     def recv(self):
-        return 'Test'
+        return "Test"

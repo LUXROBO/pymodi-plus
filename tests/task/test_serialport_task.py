@@ -15,7 +15,7 @@ class TestSerialportTask(unittest.TestCase):
 
         def read_mock(self):
             self.in_waiting = 0
-            return 'complete'
+            return "complete"
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -34,8 +34,8 @@ class TestSerialportTask(unittest.TestCase):
     def test_recv_data(self):
         """Test _read_data method"""
         self.serialport_task._bus = self.MockSerial()
-        self.serialport_task._recv_queue.put('complete')
-        self.assertEqual(self.serialport_task.recv(), 'complete')
+        self.serialport_task._recv_queue.put("complete")
+        self.assertEqual(self.serialport_task.recv(), "complete")
 
     def test_send_data(self):
         """Test _write_data method"""

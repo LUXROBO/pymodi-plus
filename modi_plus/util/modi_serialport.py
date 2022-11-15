@@ -161,7 +161,7 @@ class ModiSerialPort():
         non-blocking and fully blocking I/O operations. The attributes
         is_non_blocking and is_infinite are set accordingly.
         """
-        if hasattr(time, 'monotonic'):
+        if hasattr(time, "monotonic"):
             # Timeout implementation with time.monotonic(). This function is only
             # supported by Python 3.3 and above. It returns a time in seconds
             # (float) just as time.time(), but is not affected by system clock

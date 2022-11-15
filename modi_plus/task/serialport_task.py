@@ -127,9 +127,9 @@ class SerialportTask(ConnectionTask):
         :type verbose: bool
         :return: None
         """
-        self._bus.write(pkt.encode('utf8'))
+        self._bus.write(pkt.encode("utf8"))
         if self.verbose or verbose:
-            print(f'send: {pkt}')
+            print(f"send: {pkt}")
 
     def send_nowait(self, pkt: str, verbose=False) -> None:
         """ Send json pkt
@@ -140,6 +140,6 @@ class SerialportTask(ConnectionTask):
         :type verbose: bool
         :return: None
         """
-        self._bus.write(pkt.encode('utf8'))
+        self._bus.write(pkt.encode("utf8"))
         if self.verbose or verbose:
-            print(f'send: {pkt}')
+            print(f"send: {pkt}")

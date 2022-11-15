@@ -135,8 +135,8 @@ class Module:
     @property
     def app_version(self):
         version_string = ""
-        version_string += str(self.__app_version >> 13) + '.'
-        version_string += str(self.__app_version % (2 ** 13) >> 8) + '.'
+        version_string += str(self.__app_version >> 13) + "."
+        version_string += str(self.__app_version % (2 ** 13) >> 8) + "."
         version_string += str(self.__app_version % (2 ** 8))
         return version_string
 
@@ -147,8 +147,8 @@ class Module:
     @property
     def os_version(self):
         version_string = ""
-        version_string += str(self.__os_version >> 13) + '.'
-        version_string += str(self.__os_version % (2 ** 13) >> 8) + '.'
+        version_string += str(self.__os_version >> 13) + "."
+        version_string += str(self.__os_version % (2 ** 13) >> 8) + "."
         version_string += str(self.__os_version % (2 ** 8))
         return version_string
 
@@ -169,24 +169,24 @@ class Module:
         root_path = (
             path.join(
                 path.dirname(__file__),
-                '..', 'assets'
+                "..", "assets"
             )
         )
-        version_path = path.join(root_path, 'version.txt')
+        version_path = path.join(root_path, "version.txt")
         with open(version_path, "r") as version_file:
             try:
                 version_info = json.loads(version_file.read())
             except Exception as e:
                 pass
 
-        app_version_info = version_info[self.module_type].lstrip('v').rstrip('\n')
-        if self.module_type in ['env', 'display', 'speaker']:
-            os_version_info = version_info['os_e103'].lstrip('v').rstrip('\n')
+        app_version_info = version_info[self.module_type].lstrip("v").rstrip("\n")
+        if self.module_type in ["env", "display", "speaker"]:
+            os_version_info = version_info["os_e103"].lstrip("v").rstrip("\n")
         else:
-            os_version_info = version_info['os_e230'].lstrip('v').rstrip('\n')
+            os_version_info = version_info["os_e230"].lstrip("v").rstrip("\n")
 
-        app_version_digits = [int(digit) for digit in app_version_info.split('.')]
-        os_version_digits = [int(digit) for digit in os_version_info.split('.')]
+        app_version_digits = [int(digit) for digit in app_version_info.split(".")]
+        os_version_digits = [int(digit) for digit in os_version_info.split(".")]
 
         latest_app_version = (
             app_version_digits[0] << 13
