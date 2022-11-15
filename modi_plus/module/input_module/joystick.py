@@ -6,12 +6,12 @@ from modi_plus.module.input_module.input_module import InputModule
 
 class Joystick(InputModule):
 
-    PROP_POSITION_STATE = 2
-    PROP_OFFSET_X = 0
-    PROP_OFFSET_Y = 2
+    PROPERTY_POSITION_STATE = 2
+    PROPERTY_DIRECTION_STATE = 3
 
-    PROP_DIRECTION_STATE = 3
-    PROP_OFFSET_DIRECTION = 0
+    PROPERTY_OFFSET_X = 0
+    PROPERTY_OFFSET_Y = 2
+    PROPERTY_OFFSET_DIRECTION = 0
 
     @property
     def x(self) -> int:
@@ -21,8 +21,8 @@ class Joystick(InputModule):
         :rtype: int
         """
 
-        offset = Joystick.PROP_OFFSET_X
-        raw = self._get_property(Joystick.PROP_POSITION_STATE)
+        offset = Joystick.PROPERTY_OFFSET_X
+        raw = self._get_property(Joystick.PROPERTY_POSITION_STATE)
         data = struct.unpack("h", raw[offset:offset+2])[0]
         return data
 
@@ -34,20 +34,25 @@ class Joystick(InputModule):
         :rtype: int
         """
 
-        offset = Joystick.PROP_OFFSET_Y
-        raw = self._get_property(Joystick.PROP_POSITION_STATE)
+        offset = Joystick.PROPERTY_OFFSET_Y
+        raw = self._get_property(Joystick.PROPERTY_POSITION_STATE)
         data = struct.unpack("h", raw[offset:offset+2])[0]
         return data
 
     @property
     def direction(self) -> int:
-        """Returns the direction of the joystick between -100 and 100
+        """Returns the direction of the joystick
+        Up : 100
+        Down : -100
+        Right : 50
+        Left : -50
+        None : 0
 
         :return: The joystick's direction.
         :rtype: int
         """
 
-        offset = Joystick.PROP_OFFSET_DIRECTION
-        raw = self._get_property(Joystick.PROP_DIRECTION_STATE)
+        offset = Joystick.PROPERTY_OFFSET_DIRECTION
+        raw = self._get_property(Joystick.PROPERTY_DIRECTION_STATE)
         data = struct.unpack("h", raw[offset:offset+2])[0]
         return data

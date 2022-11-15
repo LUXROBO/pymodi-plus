@@ -5,13 +5,13 @@ from modi_plus.module.output_module.output_module import OutputModule
 
 class Display(OutputModule):
 
-    TEXT = 17
-    CLEAR = 21
-    DOT = 18
-    IMAGE = 19
-    VARIABLE = 22
-    OFFSET = 25
-    MOVE = 26
+    PROPERTY_DISPLAY_WRITE_TEXT = 17
+    PROPERTY_DISPLAY_DRAW_DOT = 18
+    PROPERTY_DISPLAY_DRAW_PICTURE = 19
+    PROPERTY_DISPLAY_RESET = 21
+    PROPERTY_DISPLAY_WRITE_VARIABLE = 22
+    PROPERTY_DISPLAY_SET_PROPERTY = 25
+    PROPERTY_DISPLAY_MOVE_SCREEN = 26
 
     def __init__(self, id_, uuid, msg_send_q):
         super().__init__(id_, uuid, msg_send_q)
@@ -40,36 +40,34 @@ class Display(OutputModule):
             for num in range(len(encoding_data)//24):
                 self._set_property(
                     self._id,
-                    Display.TEXT,
+                    Display.PROPERTY_DISPLAY_WRITE_TEXT,
                     property_values=(("bytes", encoding_data[string_cursor:string_cursor+24]),) # 24 characters can be sent per one packet
                 )
                 string_cursor += 24
 
         self._set_property(
             self._id,
-            Display.TEXT,
+            Display.PROPERTY_DISPLAY_WRITE_TEXT,
             property_values=(("bytes", encoding_data[string_cursor:] + bytes(0)),)
         )
         self._text = text
 
-    def write_variable(self, variable: float, position_x: int,
-                      position_y: int) -> None:
+    def write_variable(self, position_x: int, position_y: int, variable: float) -> None:
         """Clears the display and show the input variable on the display.
         Returns the json serialized signal sent to
         the module to display the text
 
-        :param variable: variable to display.
-        :type variable: float
         :param position_x: x coordinate of the desired position
         :type position_x: int
         :param position_y: y coordinate of te desired position
         :type position_y: int
-        :return: A json serialized signal to module
-        :rtype: string
+        :param variable: variable to display.
+        :type variable: float
+        :return: None
         """
         self._set_property(
             self._id,
-            Display.VARIABLE,
+            Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
             property_values=(("u8", position_x), 
                              ("u8", position_y),
                              ("float",variable))
@@ -81,18 +79,17 @@ class Display(OutputModule):
         Returns the json serialized signal sent to
         the module to display the text
 
-        :param variable: variable to display.
-        :type variable: float
         :param position_x: x coordinate of the desired position
         :type position_x: int
         :param position_y: y coordinate of te desired position
         :type position_y: int
-        :return: A json serialized signal to module
-        :rtype: string
+        :param variable: picture name to display.
+        :type variable: float
+        :return: None
         """
         self._set_property(
             self._id,
-            Display.IMAGE,
+            Display.PROPERTY_DISPLAY_DRAW_PICTURE,
             property_values=(("u8", position_x),
                              ("u8", position_y),
                              ("u8", 96),
@@ -112,7 +109,7 @@ class Display(OutputModule):
         """
         self._set_property(
             self.id,
-            Display.OFFSET,
+            Display.PROPERTY_DISPLAY_SET_PROPERTY,
             property_values=(("s8", position_x),
                              ("s8", position_y) )
         )
@@ -128,7 +125,7 @@ class Display(OutputModule):
         """
         self._set_property(
             self.id,
-            Display.MOVE,
+            Display.PROPERTY_DISPLAY_MOVE_SCREEN,
             property_values=(("s8", move_x),
                              ("s8", move_y) )
         )
@@ -136,12 +133,11 @@ class Display(OutputModule):
     def reset(self) -> None:
         """Clear the screen.
 
-        :return: json serialized message to te module
-        :rtype: string
+        :return: None
         """
         self._set_property(
             self._id,
-            Display.CLEAR,
+            Display.PROPERTY_DISPLAY_RESET,
             property_values=(("u8", 0),)
         )
         self._text = ""

@@ -1,17 +1,9 @@
-import time
-
 from typing import Tuple, List, Union
 from modi_plus.module.module import Module
 from modi_plus.util.message_util import parse_message, parse_data
 
 
 class OutputModule(Module):
-
-    INT = 0
-    FLOAT = 1
-    STRING = 2
-    RAW = 3
-    DISPLAY_VAR = 4
 
     @staticmethod
     def __parse_set_message(destination_id: int,

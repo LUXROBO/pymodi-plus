@@ -1,16 +1,20 @@
 """Led module."""
 
+import struct
+
 from typing import Tuple
 from modi_plus.module.output_module.output_module import OutputModule
 
 
 class Led(OutputModule):
 
-    RED = 2
-    GREEN = 3
-    BLUE = 4
+    PROPERTY_LED_STATE = 2
 
-    SET_RGB = 16
+    PROPERTY_LED_SET_RGB = 16
+
+    PROPERTY_OFFSET_RED = 0
+    PROPERTY_OFFSET_GREEN = 2
+    PROPERTY_OFFSET_BLUE = 4
 
     @property
     def rgb(self) -> Tuple[float, float, float]:
@@ -28,41 +32,47 @@ class Led(OutputModule):
             return
         self._set_property(
             destination_id=self._id,
-            property_num=Led.SET_RGB,
-            property_values=(('u16', red),
-                             ('u16', green),
-                             ('u16', blue))
+            property_num=Led.PROPERTY_LED_SET_RGB,
+            property_values=(("u16", red),
+                             ("u16", green),
+                             ("u16", blue))
         )
-        self.update_property(Led.RED, red)
-        self.update_property(Led.GREEN, green)
-        self.update_property(Led.BLUE, blue)
 
     @property
-    def red(self) -> float:
+    def red(self) -> int:
         """Returns the current value of the red component of the LED
 
         :return: Red component
-        :rtype: float
+        :rtype: int
         """
-        return self._get_property(Led.RED)
+        offset = Led.PROPERTY_OFFSET_RED
+        raw = self._get_property(Led.PROPERTY_LED_STATE)
+        data = struct.unpack("H", raw[offset:offset+2])[0]
+        return data
 
     @property
-    def green(self) -> float:
+    def green(self) -> int:
         """Returns the current value of the green component of the LED
 
         :return: Green component
-        :rtype: float
+        :rtype: int
         """
-        return self._get_property(Led.GREEN)
+        offset = Led.PROPERTY_OFFSET_GREEN
+        raw = self._get_property(Led.PROPERTY_LED_STATE)
+        data = struct.unpack("H", raw[offset:offset+2])[0]
+        return data
 
     @property
-    def blue(self) -> float:
+    def blue(self) -> int:
         """Returns the current value of the blue component of the LED
 
         :return: Blue component
-        :rtype: float
+        :rtype: int
         """
-        return self._get_property(Led.BLUE)
+        offset = Led.PROPERTY_OFFSET_BLUE
+        raw = self._get_property(Led.PROPERTY_LED_STATE)
+        data = struct.unpack("H", raw[offset:offset+2])[0]
+        return data
 
     #
     # Legacy Support
@@ -73,11 +83,11 @@ class Led(OutputModule):
         :return: RGB value of the LED set to maximum brightness
         :rtype: None
         """
-        self.rgb = 100, 100, 100
+        self.set_rgb(100, 100, 100)
 
     def turn_off(self) -> None:
         """Turn off led.
 
         :return: None
         """
-        self.rgb = 0, 0, 0
+        self.set_rgb(0, 0, 0)
