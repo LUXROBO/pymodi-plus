@@ -16,7 +16,7 @@ class SerialportTask(ConnectionTask):
         super().__init__(verbose)
         self.__port = port
         self.__json_buffer = b""
-        self.__recv_queue = Queue()
+        self._recv_queue = Queue()
         self.__recv_thread = None
         self.__stop_signal = False
 
@@ -62,7 +62,7 @@ class SerialportTask(ConnectionTask):
 
     def __open_recv_thread(self):
         self.__json_buffer = b""
-        self.__recv_queue = Queue()
+        self._recv_queue = Queue()
         self.__stop_signal = False
         self.__recv_thread = th.Thread(target=self.__recv_handler, daemon=True)
         self.__recv_thread.start()
@@ -90,7 +90,7 @@ class SerialportTask(ConnectionTask):
 
             json_pkt = self.__json_buffer[:tail_index + 1].decode("utf8")
             self.__json_buffer = self.__json_buffer[tail_index + 1:]
-            self.__recv_queue.put(json_pkt)
+            self._recv_queue.put(json_pkt)
 
     def close_connection(self) -> None:
         """ Close serial port
@@ -105,10 +105,10 @@ class SerialportTask(ConnectionTask):
 
         :return: str
         """
-        if self.__recv_queue.empty():
+        if self._recv_queue.empty():
             return None
 
-        json_pkt = self.__recv_queue.get()
+        json_pkt = self._recv_queue.get()
         if json_pkt is None:
             return None
 

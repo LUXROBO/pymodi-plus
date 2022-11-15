@@ -59,3 +59,13 @@ def ask_modi_device(devices):
 
 class MODIConnectionError(Exception):
     pass
+
+class MockConn:
+    def __init__(self):
+        self.send_list = []
+
+    def send(self, pkt):
+        self.send_list.append(pkt)
+
+    def recv(self):
+        return 'Test'
