@@ -80,6 +80,15 @@ for _ in range(5):
     time.sleep(0.5)
 ```
 
+If you are still not sure how to use PyMODI, you can play PyMODI tutorial over REPL:
+```commandline
+$ python -m modi --tutorial
+```
+As well as an interactive usage examples:
+```commandline
+$ python -m modi --usage
+```
+
 Additional Usage
 ----------------
 To diagnose MODI+ modules (helpful to find existing malfunctioning modules),
