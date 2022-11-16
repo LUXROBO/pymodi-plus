@@ -113,7 +113,7 @@ class SerialportTask(ConnectionTask):
             return None
 
         if self.verbose:
-            print(f'recv: {json_pkt}')
+            print(f"recv: {json_pkt}")
 
         return json_pkt
 

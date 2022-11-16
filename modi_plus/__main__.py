@@ -66,18 +66,18 @@ if __name__ == "__main__":
         os._exit(2)
 
     # Print help page
-    if check_option('-h', '--help'):
+    if check_option("-h", "--help"):
         print(help_page)
         os._exit(0)
 
     # Start interactive pymodi+ tutorial
-    if check_option('-t', '--tutorial'):
+    if check_option("-t", "--tutorial"):
         pymodi_tutor = Tutor()
         pymodi_tutor.run_introduction()
         os._exit(0)
 
     # Time message transfer between local machine and network module
-    if check_option('-p', '--performance'):
+    if check_option("-p", "--performance"):
         print("[PyMODI+ Performance Test]" + "\n" + "=" * 25)
         init_time = time.time()
         bundle = modi_plus.MODIPlus()
@@ -104,13 +104,13 @@ if __name__ == "__main__":
         os._exit(0)
 
     # Initialize modules implicitly
-    if check_option('-a', '--initialize'):
+    if check_option("-a", "--initialize"):
         # TODO: Handle when there are more than one module with the same type
         print(">>> bundle = modi_plus.MODIPlus()")
         init_time = time.time()
-        bundle = modi_plus.MODIPlus(verbose=check_option('-v', '--verbose'))
+        bundle = modi_plus.MODIPlus(verbose=check_option("-v", "--verbose"))
         fin_time = time.time()
-        print(f'Took {fin_time - init_time:.2f} seconds to init MODI+ modules')
+        print(f"Took {fin_time - init_time:.2f} seconds to init MODI+ modules")
 
         for module in bundle.modules:
             module_name = module.module_type.lower()
@@ -118,13 +118,13 @@ if __name__ == "__main__":
             exec(module_name + " = module")
 
     # Run inspection mode
-    if check_option('-i', '--inspect'):
+    if check_option("-i", "--inspect"):
         pymodi_inspector = Inspector()
         pymodi_inspector.run_inspection()
         os._exit(0)
 
     # Show each module usage
-    if check_option('-u', '--usage'):
+    if check_option("-u", "--usage"):
         usage = UsageInstructor()
         usage.run_usage_manual()
         os._exit(0)
