@@ -1,7 +1,7 @@
 import unittest
 
 from modi_plus.module.input_module.imu import Imu
-from modi_plus.util.message_util import parse_message
+from modi_plus.util.message_util import parse_get_property_message
 from modi_plus.util.connection_util import MockConn
 
 
@@ -23,9 +23,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.roll
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1, (Imu.PROPERTY_ANGLE_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_ANGLE_STATE, self.imu.prop_samp_freq)
         )
 
     def test_get_pitch(self):
@@ -33,9 +31,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.pitch
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1, (Imu.PROPERTY_ANGLE_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_ANGLE_STATE, self.imu.prop_samp_freq)
         )
 
     def test_get_yaw(self):
@@ -43,9 +39,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.yaw
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1, (Imu.PROPERTY_ANGLE_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_ANGLE_STATE, self.imu.prop_samp_freq)
         )
 
     def test_get_angular_vel_x(self):
@@ -53,10 +47,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.angular_vel_x
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Imu.PROPERTY_GYRO_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_GYRO_STATE, self.imu.prop_samp_freq)
         )
 
     def test_get_angular_vel_y(self):
@@ -64,10 +55,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.angular_vel_y
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Imu.PROPERTY_GYRO_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_GYRO_STATE, self.imu.prop_samp_freq)
         )
 
     def test_get_angular_vel_z(self):
@@ -75,10 +63,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.angular_vel_z
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Imu.PROPERTY_GYRO_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_GYRO_STATE, self.imu.prop_samp_freq)
         )
 
     def test_get_acceleration_x(self):
@@ -86,10 +71,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.acceleration_x
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Imu.PROPERTY_ACC_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_ACC_STATE, self.imu.prop_samp_freq)
         )
 
     def test_get_acceleration_y(self):
@@ -97,10 +79,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.acceleration_y
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Imu.PROPERTY_ACC_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_ACC_STATE, self.imu.prop_samp_freq)
         )
 
     def test_get_acceleration_z(self):
@@ -108,10 +87,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.acceleration_z
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Imu.PROPERTY_ACC_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_ACC_STATE, self.imu.prop_samp_freq)
         )
 
     def test_get_vibration(self):
@@ -119,10 +95,7 @@ class TestImu(unittest.TestCase):
         _ = self.imu.vibration
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Imu.PROPERTY_VIBRATION_STATE, None, self.imu.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Imu.PROPERTY_VIBRATION_STATE, self.imu.prop_samp_freq)
         )
 
 

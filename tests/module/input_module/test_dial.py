@@ -1,7 +1,7 @@
 import unittest
 
 from modi_plus.module.input_module.dial import Dial
-from modi_plus.util.message_util import parse_message
+from modi_plus.util.message_util import parse_get_property_message
 from modi_plus.util.connection_util import MockConn
 
 
@@ -23,10 +23,7 @@ class TestDial(unittest.TestCase):
         _ = self.dial.turn
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Dial.PROPERTY_DIAL_STATE, None, self.dial.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Dial.PROPERTY_DIAL_STATE, self.dial.prop_samp_freq)
         )
 
     def test_get_speed(self):
@@ -34,10 +31,7 @@ class TestDial(unittest.TestCase):
         _ = self.dial.speed
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Dial.PROPERTY_DIAL_STATE, None, self.dial.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Dial.PROPERTY_DIAL_STATE, self.dial.prop_samp_freq)
         )
 
 

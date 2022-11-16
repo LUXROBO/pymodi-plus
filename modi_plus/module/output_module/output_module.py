@@ -1,31 +1,9 @@
-from typing import Tuple, List, Union
+from typing import Tuple, Union
 from modi_plus.module.module import Module
-from modi_plus.util.message_util import parse_message, parse_data
+from modi_plus.util.message_util import parse_set_property_message
 
 
 class OutputModule(Module):
-
-    @staticmethod
-    def __parse_set_message(destination_id: int,
-                            property_num: int,
-                            property_values: Tuple) -> List[str]:
-
-        """Generate set_property json serialized message
-        :param destination_id: Id of the destination module
-        :type destination_id: int
-        :param property_num: Property Type
-        :type property_num: int
-        :param property_values: Property values
-        :type property_values: Tuple
-        :return: List of json messages
-        :rtype: List[str]
-        """
-
-        data = []
-        for value_type, value in property_values:
-            data += parse_data(value, value_type)
-            # TODO: exception need
-        return parse_message(0x04, property_num, destination_id, data)
 
     def _set_property(self, destination_id: int,
                       property_num: int,
@@ -40,7 +18,7 @@ class OutputModule(Module):
         :type property_values: Tuple
         :return: None
         """
-        message = self.__parse_set_message(
+        message = parse_set_property_message(
             destination_id,
             property_num,
             property_values,

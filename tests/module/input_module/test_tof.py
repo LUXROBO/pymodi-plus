@@ -1,7 +1,7 @@
 import unittest
 
 from modi_plus.module.input_module.tof import Tof
-from modi_plus.util.message_util import parse_message
+from modi_plus.util.message_util import parse_get_property_message
 from modi_plus.util.connection_util import MockConn
 
 
@@ -23,10 +23,7 @@ class TestTof(unittest.TestCase):
         _ = self.tof.distance
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Tof.PROPERTY_DISTANCE_STATE, None, self.tof.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Tof.PROPERTY_DISTANCE_STATE, self.tof.prop_samp_freq)
         )
 
 

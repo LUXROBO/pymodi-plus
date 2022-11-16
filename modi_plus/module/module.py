@@ -5,7 +5,7 @@ import json
 from os import path
 from importlib.util import find_spec
 
-from modi_plus.util.message_util import parse_message
+from modi_plus.util.message_util import parse_get_property_message
 
 BROADCAST_ID = 0xFFF
 
@@ -243,5 +243,5 @@ class Module:
         :return: None
         """
         self._properties[property_type].last_update_time = time.time()
-        req_prop_msg = parse_message(0x03, 0, destination_id, (property_type, 0x00, self.prop_samp_freq, 0x00))
+        req_prop_msg = parse_get_property_message(destination_id, property_type, self.prop_samp_freq)
         self._conn.send(req_prop_msg)

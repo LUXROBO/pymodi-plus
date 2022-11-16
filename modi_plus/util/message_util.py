@@ -5,6 +5,17 @@ from typing import Optional
 from typing import Tuple
 
 
+def parse_get_property_message(destination_id: int, property_type: int, property_frequency: int):
+    return parse_message(0x03, 0, destination_id, (property_type, 0x00, property_frequency, 0x00))
+
+
+def parse_set_property_message(destination_id: int, property_type: int, property_values: Tuple):
+    data = []
+    for value_type, value in property_values:
+        data += parse_data(value, value_type)
+    return parse_message(0x04, property_type, destination_id, data)
+
+
 def parse_message(command: int, source: int, destination: int,
                   byte_data: Tuple =
                   (None, None, None, None, None, None, None, None)):

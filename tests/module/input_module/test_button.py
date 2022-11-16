@@ -1,7 +1,7 @@
 import unittest
 
 from modi_plus.module.input_module.button import Button
-from modi_plus.util.message_util import parse_message
+from modi_plus.util.message_util import parse_get_property_message
 from modi_plus.util.connection_util import MockConn
 
 
@@ -23,10 +23,7 @@ class TestButton(unittest.TestCase):
         _ = self.button.clicked
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Button.PROPERTY_BUTTON_STATE, None, self.button.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Button.PROPERTY_BUTTON_STATE, self.button.prop_samp_freq)
         )
 
     def test_get_double_clicked(self):
@@ -34,10 +31,7 @@ class TestButton(unittest.TestCase):
         _ = self.button.double_clicked
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Button.PROPERTY_BUTTON_STATE, None, self.button.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Button.PROPERTY_BUTTON_STATE, self.button.prop_samp_freq)
         )
 
     def test_get_pressed(self):
@@ -45,10 +39,7 @@ class TestButton(unittest.TestCase):
         _ = self.button.pressed
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Button.PROPERTY_BUTTON_STATE, None, self.button.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Button.PROPERTY_BUTTON_STATE, self.button.prop_samp_freq)
         )
 
     def test_get_toggled(self):
@@ -56,10 +47,7 @@ class TestButton(unittest.TestCase):
         _ = self.button.toggled
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Button.PROPERTY_BUTTON_STATE, None, self.button.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Button.PROPERTY_BUTTON_STATE, self.button.prop_samp_freq)
         )
 
 

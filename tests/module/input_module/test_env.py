@@ -1,7 +1,7 @@
 import unittest
 
 from modi_plus.module.input_module.env import Env
-from modi_plus.util.message_util import parse_message
+from modi_plus.util.message_util import parse_get_property_message
 from modi_plus.util.connection_util import MockConn
 
 
@@ -23,10 +23,7 @@ class TestEnv(unittest.TestCase):
         _ = self.env.temperature
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Env.PROPERTY_ENV_STATE, None, self.env.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
         )
 
     def test_get_humidity(self):
@@ -34,10 +31,7 @@ class TestEnv(unittest.TestCase):
         _ = self.env.humidity
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Env.PROPERTY_ENV_STATE, None, self.env.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
         )
 
     def test_get_intensity(self):
@@ -45,10 +39,7 @@ class TestEnv(unittest.TestCase):
         _ = self.env.intensity
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Env.PROPERTY_ENV_STATE, None, self.env.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
         )
 
     def test_get_volume(self):
@@ -56,10 +47,7 @@ class TestEnv(unittest.TestCase):
         _ = self.env.volume
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Env.PROPERTY_ENV_STATE, None, self.env.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
         )
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import unittest
 
 from modi_plus.module.input_module.joystick import Joystick
-from modi_plus.util.message_util import parse_message
+from modi_plus.util.message_util import parse_get_property_message
 from modi_plus.util.connection_util import MockConn
 
 
@@ -23,10 +23,7 @@ class TestJoystick(unittest.TestCase):
         _ = self.joystick.x
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Joystick.PROPERTY_POSITION_STATE, None, self.joystick.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Joystick.PROPERTY_POSITION_STATE, self.joystick.prop_samp_freq)
         )
 
     def test_get_y(self):
@@ -34,10 +31,7 @@ class TestJoystick(unittest.TestCase):
         _ = self.joystick.y
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Joystick.PROPERTY_POSITION_STATE, None, self.joystick.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Joystick.PROPERTY_POSITION_STATE, self.joystick.prop_samp_freq)
         )
 
     def test_get_dirction(self):
@@ -45,10 +39,7 @@ class TestJoystick(unittest.TestCase):
         _ = self.joystick.direction
         self.assertEqual(
             self.conn.send_list[0],
-            parse_message(
-                0x03, 0, -1,
-                (Joystick.PROPERTY_DIRECTION_STATE, None, self.joystick.prop_samp_freq, None)
-            )
+            parse_get_property_message(-1, Joystick.PROPERTY_DIRECTION_STATE, self.joystick.prop_samp_freq)
         )
 
 
