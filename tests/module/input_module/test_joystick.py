@@ -25,7 +25,7 @@ class TestJoystick(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Joystick.PROP_POSITION_STATE, None, self.joystick.prop_samp_freq, None)
+                (Joystick.PROPERTY_POSITION_STATE, None, self.joystick.prop_samp_freq, None)
             )
         )
 
@@ -36,7 +36,7 @@ class TestJoystick(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Joystick.PROP_POSITION_STATE, None, self.joystick.prop_samp_freq, None)
+                (Joystick.PROPERTY_POSITION_STATE, None, self.joystick.prop_samp_freq, None)
             )
         )
 
@@ -47,7 +47,7 @@ class TestJoystick(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Joystick.PROP_DIRECTION_STATE, None, self.joystick.prop_samp_freq, None)
+                (Joystick.PROPERTY_DIRECTION_STATE, None, self.joystick.prop_samp_freq, None)
             )
         )
 

@@ -25,7 +25,7 @@ class TestTof(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Tof.PROP_DISTANCE_STATE, None, self.tof.prop_samp_freq, None)
+                (Tof.PROPERTY_DISTANCE_STATE, None, self.tof.prop_samp_freq, None)
             )
         )
 

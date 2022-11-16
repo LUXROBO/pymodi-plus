@@ -24,7 +24,7 @@ class TestImu(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(
-                0x03, 0, -1, (Imu.PROP_ANGLE_STATE, None, self.imu.prop_samp_freq, None)
+                0x03, 0, -1, (Imu.PROPERTY_ANGLE_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 
@@ -34,7 +34,7 @@ class TestImu(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(
-                0x03, 0, -1, (Imu.PROP_ANGLE_STATE, None, self.imu.prop_samp_freq, None)
+                0x03, 0, -1, (Imu.PROPERTY_ANGLE_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 
@@ -44,7 +44,7 @@ class TestImu(unittest.TestCase):
         self.assertEqual(
             self.conn.send_list[0],
             parse_message(
-                0x03, 0, -1, (Imu.PROP_ANGLE_STATE, None, self.imu.prop_samp_freq, None)
+                0x03, 0, -1, (Imu.PROPERTY_ANGLE_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 
@@ -55,7 +55,7 @@ class TestImu(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Imu.PROP_GYRO_STATE, None, self.imu.prop_samp_freq, None)
+                (Imu.PROPERTY_GYRO_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 
@@ -66,7 +66,7 @@ class TestImu(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Imu.PROP_GYRO_STATE, None, self.imu.prop_samp_freq, None)
+                (Imu.PROPERTY_GYRO_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 
@@ -77,7 +77,7 @@ class TestImu(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Imu.PROP_GYRO_STATE, None, self.imu.prop_samp_freq, None)
+                (Imu.PROPERTY_GYRO_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 
@@ -88,7 +88,7 @@ class TestImu(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Imu.PROP_ACC_STATE, None, self.imu.prop_samp_freq, None)
+                (Imu.PROPERTY_ACC_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 
@@ -99,7 +99,7 @@ class TestImu(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Imu.PROP_ACC_STATE, None, self.imu.prop_samp_freq, None)
+                (Imu.PROPERTY_ACC_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 
@@ -110,7 +110,7 @@ class TestImu(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Imu.PROP_ACC_STATE, None, self.imu.prop_samp_freq, None)
+                (Imu.PROPERTY_ACC_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 
@@ -121,7 +121,7 @@ class TestImu(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Imu.PROP_VIBRATION_STATE, None, self.imu.prop_samp_freq, None)
+                (Imu.PROPERTY_VIBRATION_STATE, None, self.imu.prop_samp_freq, None)
             )
         )
 

@@ -25,7 +25,7 @@ class TestButton(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Button.PROP_BUTTON_STATE, None, self.button.prop_samp_freq, None)
+                (Button.PROPERTY_BUTTON_STATE, None, self.button.prop_samp_freq, None)
             )
         )
 
@@ -36,7 +36,7 @@ class TestButton(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Button.PROP_BUTTON_STATE, None, self.button.prop_samp_freq, None)
+                (Button.PROPERTY_BUTTON_STATE, None, self.button.prop_samp_freq, None)
             )
         )
 
@@ -47,7 +47,7 @@ class TestButton(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Button.PROP_BUTTON_STATE, None, self.button.prop_samp_freq, None)
+                (Button.PROPERTY_BUTTON_STATE, None, self.button.prop_samp_freq, None)
             )
         )
 
@@ -58,7 +58,7 @@ class TestButton(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Button.PROP_BUTTON_STATE, None, self.button.prop_samp_freq, None)
+                (Button.PROPERTY_BUTTON_STATE, None, self.button.prop_samp_freq, None)
             )
         )
 

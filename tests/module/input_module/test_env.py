@@ -25,7 +25,7 @@ class TestEnv(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Env.PROP_ENV_STATE, None, self.env.prop_samp_freq, None)
+                (Env.PROPERTY_ENV_STATE, None, self.env.prop_samp_freq, None)
             )
         )
 
@@ -36,7 +36,7 @@ class TestEnv(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Env.PROP_ENV_STATE, None, self.env.prop_samp_freq, None)
+                (Env.PROPERTY_ENV_STATE, None, self.env.prop_samp_freq, None)
             )
         )
 
@@ -47,7 +47,7 @@ class TestEnv(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Env.PROP_ENV_STATE, None, self.env.prop_samp_freq, None)
+                (Env.PROPERTY_ENV_STATE, None, self.env.prop_samp_freq, None)
             )
         )
 
@@ -58,7 +58,7 @@ class TestEnv(unittest.TestCase):
             self.conn.send_list[0],
             parse_message(
                 0x03, 0, -1,
-                (Env.PROP_ENV_STATE, None, self.env.prop_samp_freq, None)
+                (Env.PROPERTY_ENV_STATE, None, self.env.prop_samp_freq, None)
             )
         )
 
