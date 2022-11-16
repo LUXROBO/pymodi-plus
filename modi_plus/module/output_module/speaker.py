@@ -75,12 +75,17 @@ class Speaker(OutputModule):
         self._set_property(
             destination_id=self._id,
             property_num=Speaker.PROPERTY_SPEAKER_SET_TUNE,
-            property_values=(('u16', tune_value[0]),
-                             ('u16', tune_value[1]))
+            property_values=(("u16", tune_value[0]),
+                             ("u16", tune_value[1]))
         )
 
     @property
     def frequency(self) -> int:
+        """Returns current frequency
+
+        :return: frequency value
+        :rtype: int
+        """
         offset = Speaker.PROPERTY_OFFSET_CURRENT_FREQUENCY
         raw = self._get_property(Speaker.PROPERTY_SPEAKER_STATE)
         data = struct.unpack("H", raw[offset:offset+2])[0]
@@ -99,7 +104,7 @@ class Speaker(OutputModule):
         return data
 
     def play_melody(self, cmd: int, volume: int, melody_name: str = "") -> None:
-        """Play 
+        """Play mid file in speaker module
 
         :param cmd: cmd to play melody (Stop, Start, Pause, Resume).
         :type cmd: int
@@ -121,7 +126,7 @@ class Speaker(OutputModule):
         )
 
     def play_music(self, cmd: int, volume: int, music_name: str = "") -> None:
-        """Play 
+        """Play wav file in speaker module
 
         :param cmd: cmd to play music (Stop, Start, Pause, Resume).
         :type cmd: int

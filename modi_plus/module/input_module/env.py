@@ -6,11 +6,12 @@ from modi_plus.module.input_module.input_module import InputModule
 
 class Env(InputModule):
 
-    PROP_ENV_STATE = 2
-    PROP_OFFSET_INTENSICY = 0
-    PROP_OFFSET_TEMPERATURE = 2
-    PROP_OFFSET_HUMIDITY = 4
-    PROP_OFFSET_VOLUME = 6
+    PROPERTY_ENV_STATE = 2
+
+    PROPERTY_OFFSET_INTENSICY = 0
+    PROPERTY_OFFSET_TEMPERATURE = 2
+    PROPERTY_OFFSET_HUMIDITY = 4
+    PROPERTY_OFFSET_VOLUME = 6
 
     @property
     def intensity(self) -> int:
@@ -20,8 +21,8 @@ class Env(InputModule):
         :rtype: int
         """
 
-        offset = Env.PROP_OFFSET_INTENSICY
-        raw = self._get_property(Env.PROP_ENV_STATE)
+        offset = Env.PROPERTY_OFFSET_INTENSICY
+        raw = self._get_property(Env.PROPERTY_ENV_STATE)
         data = struct.unpack("h", raw[offset:offset+2])[0]
         return data
 
@@ -33,8 +34,8 @@ class Env(InputModule):
         :rtype: int
         """
 
-        offset = Env.PROP_OFFSET_TEMPERATURE
-        raw = self._get_property(Env.PROP_ENV_STATE)
+        offset = Env.PROPERTY_OFFSET_TEMPERATURE
+        raw = self._get_property(Env.PROPERTY_ENV_STATE)
         data = struct.unpack("h", raw[offset:offset+2])[0]
         return data
 
@@ -46,8 +47,8 @@ class Env(InputModule):
         :rtype: int
         """
 
-        offset = Env.PROP_OFFSET_HUMIDITY
-        raw = self._get_property(Env.PROP_ENV_STATE)
+        offset = Env.PROPERTY_OFFSET_HUMIDITY
+        raw = self._get_property(Env.PROPERTY_ENV_STATE)
         data = struct.unpack("h", raw[offset:offset+2])[0]
         return data
 
@@ -59,7 +60,7 @@ class Env(InputModule):
         :rtype: int
         """
 
-        offset = Env.PROP_OFFSET_VOLUME
-        raw = self._get_property(Env.PROP_ENV_STATE)
+        offset = Env.PROPERTY_OFFSET_VOLUME
+        raw = self._get_property(Env.PROPERTY_ENV_STATE)
         data = struct.unpack("h", raw[offset:offset+2])[0]
         return data
