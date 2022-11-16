@@ -6,8 +6,9 @@ from modi_plus.module.input_module.input_module import InputModule
 
 class Tof(InputModule):
 
-    PROP_DISTANCE_STATE = 2
-    PROP_DISTANCE = 0
+    PROPERTY_DISTANCE_STATE = 2
+
+    PROPERTY_OFFSET_DISTANCE = 0
 
     @property
     def distance(self) -> float:
@@ -17,7 +18,7 @@ class Tof(InputModule):
         :rtype: float
         """
 
-        offset = Tof.PROP_DISTANCE
-        raw = self._get_property(Tof.PROP_DISTANCE_STATE)
+        offset = Tof.PROPERTY_OFFSET_DISTANCE
+        raw = self._get_property(Tof.PROPERTY_DISTANCE_STATE)
         data = struct.unpack("f", raw[offset:offset+4])[0]
         return data
