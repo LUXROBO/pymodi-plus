@@ -20,5 +20,5 @@ class Tof(InputModule):
 
         offset = Tof.PROPERTY_OFFSET_DISTANCE
         raw = self._get_property(Tof.PROPERTY_DISTANCE_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data

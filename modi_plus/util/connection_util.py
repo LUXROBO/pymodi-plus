@@ -3,7 +3,6 @@ import sys
 from typing import List
 
 import serial.tools.list_ports as stl
-from serial.tools.list_ports_common import ListPortInfo
 
 
 def list_modi_ports() -> List[str]:
@@ -45,6 +44,7 @@ def is_network_module_connected() -> bool:
     """
     return bool(list_modi_ports())
 
+
 def ask_modi_device(devices):
     if not devices:
         raise ValueError(
@@ -59,6 +59,7 @@ def ask_modi_device(devices):
 
 class MODIConnectionError(Exception):
     pass
+
 
 class MockConn:
     def __init__(self):

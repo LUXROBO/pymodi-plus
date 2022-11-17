@@ -50,5 +50,6 @@ class TestEnv(unittest.TestCase):
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
         )
 
+
 if __name__ == "__main__":
     unittest.main()

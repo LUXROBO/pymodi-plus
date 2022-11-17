@@ -32,7 +32,7 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_ROLL
         raw = self._get_property(Imu.PROPERTY_ANGLE_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data
 
     @property
@@ -45,7 +45,7 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_PITCH
         raw = self._get_property(Imu.PROPERTY_ANGLE_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data
 
     @property
@@ -58,7 +58,7 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_YAW
         raw = self._get_property(Imu.PROPERTY_ANGLE_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data
 
     @property
@@ -81,7 +81,7 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_GYRO_X
         raw = self._get_property(Imu.PROPERTY_GYRO_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data
 
     @property
@@ -94,7 +94,7 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_GYRO_Y
         raw = self._get_property(Imu.PROPERTY_GYRO_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data
 
     @property
@@ -107,7 +107,7 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_GYRO_Z
         raw = self._get_property(Imu.PROPERTY_GYRO_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data
 
     @property
@@ -130,7 +130,7 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_ACC_X
         raw = self._get_property(Imu.PROPERTY_ACC_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data
 
     @property
@@ -143,7 +143,7 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_ACC_Y
         raw = self._get_property(Imu.PROPERTY_ACC_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data
 
     @property
@@ -156,7 +156,7 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_ACC_Z
         raw = self._get_property(Imu.PROPERTY_ACC_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data
 
     @property
@@ -179,5 +179,5 @@ class Imu(InputModule):
 
         offset = Imu.PROPERTY_OFFSET_VIBRATION
         raw = self._get_property(Imu.PROPERTY_VIBRATION_STATE)
-        data = struct.unpack("f", raw[offset:offset+4])[0]
+        data = struct.unpack("f", raw[offset:offset + 4])[0]
         return data

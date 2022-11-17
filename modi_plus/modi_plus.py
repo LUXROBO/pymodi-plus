@@ -24,8 +24,6 @@ from modi_plus.module.output_module.speaker import Speaker
 from modi_plus.module.module import get_module_type_from_uuid, ModuleList
 from modi_plus._exe_thread import ExeThread
 
-from modi_plus.about import __version__
-
 
 class MODIPlus:
     network_uuids = {}
