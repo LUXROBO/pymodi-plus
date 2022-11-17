@@ -111,4 +111,4 @@ git will automatically run the tests when you push your changes.
 
 Contact Us
 --
-If you have any questions regarding PyMODI+, contact us at <mailto> tech@luxrobo.com </mailto>
+If you have any questions regarding PyMODI+, contact us at <mailto> module.dev@luxrobo.com </mailto>

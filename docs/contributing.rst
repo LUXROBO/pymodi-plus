@@ -118,7 +118,7 @@ Contact Us
 ----------
 
 If you have any questions regarding PyMODI+, contact us at
-tech@luxrobo.com
+module.dev@luxrobo.com
 
 .. |Fork PyMOD+| image:: https://github.com/LUXROBO/pymodi-plus/blob/master/docs/_static/img/fork_button.jpg?raw=true
    :target: https://github.com/LUXROBO/pymodi-plus/fork
