@@ -1,4 +1,4 @@
-import modi
+import modi_plus
 import time
 
 """
@@ -8,15 +8,15 @@ network module
 """
 
 if __name__ == "__main__":
-    bundle = modi.MODI()
+    bundle = modi_plus.MODIPlus()
     button = bundle.buttons[0]
 
     while True:
         if button.pressed:
-            print("pressed       ", end='\r')
+            print("pressed       ", end="\r")
         else:
-            print("not pressed   ", end='\r')
+            print("not pressed   ", end="\r")
         if button.double_clicked:
-            print("double clicked", end='\r')
+            print("double clicked", end="\r")
             break
         time.sleep(0.02)

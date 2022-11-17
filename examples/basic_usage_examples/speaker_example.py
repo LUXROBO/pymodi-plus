@@ -1,4 +1,4 @@
-import modi
+import modi_plus
 import time
 
 """
@@ -7,14 +7,14 @@ Make sure you connect 1 speaker module to your network module
 """
 
 if __name__ == "__main__":
-    bundle = modi.MODI()
+    bundle = modi_plus.MODIPlus()
     speak = bundle.speakers[0]
 
-    speak.tune = 800, 70
+    speak.set_tune(800, 70)
     time.sleep(3)
-    speak.frequency = 700
+    speak.set_tune(700, 70)
     time.sleep(3)
-    speak.volume = 100
+    speak.set_tune(700, 100)
     time.sleep(3)
-    speak.turn_off()
+    speak.reset()
     time.sleep(3)

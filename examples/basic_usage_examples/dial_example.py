@@ -1,4 +1,4 @@
-import modi
+import modi_plus
 import time
 
 """
@@ -7,10 +7,10 @@ Make sure you connect 1 dial module and 1 speaker module to your network module
 """
 
 if __name__ == "__main__":
-    bundle = modi.MODI()
+    bundle = modi_plus.MODIPlus()
     dial = bundle.dials[0]
     speak = bundle.speakers[0]
 
     while True:
-        speak.tune = 800, dial.degree
+        speak.set_tune("DO6", dial.degree)
         time.sleep(0.02)
