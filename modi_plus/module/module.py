@@ -99,6 +99,7 @@ class Module:
         self.prop_samp_freq = 91
 
         self.is_connected = True
+        self.is_usb_connected = False
         self.has_printed = False
         self.last_updated = time.time()
         self.first_connected = None
@@ -245,3 +246,41 @@ class Module:
         self._properties[property_type].last_update_time = time.time()
         req_prop_msg = parse_get_property_message(destination_id, property_type, self.prop_samp_freq)
         self._conn.send(req_prop_msg)
+
+class ModuleList(list):
+
+    def __init__(self, src, module_type=None):
+        self.__src = src
+        self.__module_type = module_type
+        super().__init__(self.sublist())
+
+    def __len__(self):
+        return len(self.sublist())
+
+    def __eq__(self, other):
+        return super().__eq__(other)
+
+    def get(self, module_id):
+        for module in self.sublist():
+            if module.id == module_id:
+                return module
+        raise Exception("Module with given id does not exits!!")
+
+    def sublist(self):
+        """ When accessing the module, the modules are sorted in an ascending order of
+        1. the connected time from network module
+
+        :return: Module
+        """
+        if self.__module_type:
+            modules = list(filter(lambda module: module.module_type == self.__module_type, self.__src))
+        else:
+            modules = self.__src
+        modules.sort()
+        return modules
+
+    def find(self, module_id):
+        for idx, module in enumerate(self.sublist()):
+            if module_id == module.id:
+                return idx
+        return -1
