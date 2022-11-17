@@ -3,7 +3,7 @@ import ctypes
 from winusbcdc import WinUSBApi
 from winusbcdc import UsbSetupPacket
 from winusbcdc.usb_cdc import CDC_CMDS
-from winusbcdc import GUID, DIGCF_ALLCLASSES, DIGCF_DEFAULT, DIGCF_PRESENT, DIGCF_PROFILE, DIGCF_DEVICE_INTERFACE, \
+from winusbcdc import GUID, DIGCF_PRESENT, DIGCF_DEVICE_INTERFACE, \
     SpDeviceInterfaceData, SpDeviceInterfaceDetailData, SpDevinfoData, GENERIC_WRITE, GENERIC_READ, FILE_SHARE_WRITE, \
     FILE_SHARE_READ, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, FILE_FLAG_OVERLAPPED, INVALID_HANDLE_VALUE, \
     UsbInterfaceDescriptor, PipeInfo, ERROR_IO_INCOMPLETE, ERROR_IO_PENDING, Overlapped
@@ -12,12 +12,14 @@ from ctypes.wintypes import DWORD
 from winusbcdc import SetupDiGetClassDevs, SetupDiEnumDeviceInterfaces, SetupDiGetDeviceInterfaceDetail, is_device, \
     CreateFile, WinUsb_Initialize, Close_Handle, WinUsb_Free, GetLastError, WinUsb_QueryDeviceInformation, \
     WinUsb_GetAssociatedInterface, WinUsb_QueryInterfaceSettings, WinUsb_QueryPipe, WinUsb_ControlTransfer, \
-    WinUsb_WritePipe, WinUsb_ReadPipe, WinUsb_GetOverlappedResult, SetupDiGetDeviceRegistryProperty, \
-    WinUsb_SetPipePolicy, WinUsb_FlushPipe, SPDRP_FRIENDLYNAME
+    WinUsb_WritePipe, WinUsb_ReadPipe, WinUsb_GetOverlappedResult, \
+    WinUsb_SetPipePolicy, WinUsb_FlushPipe
+
 
 def list_modi_winusb_paths():
     api = ModiWinUsb()
     return api.list_usb_devices()
+
 
 class ModiWinUsb(object):
 
@@ -68,7 +70,7 @@ class ModiWinUsb(object):
             if path is None:
                 raise ctypes.WinError()
 
-            if self.find_device(path) and not path in device_paths:
+            if self.find_device(path) and path not in device_paths:
                 device_paths.append(path)
 
             i += 1
@@ -90,7 +92,7 @@ class ModiWinUsb(object):
             return False
         result = self.api.exec_function_winusb(WinUsb_Initialize, self.handle_file, byref(self.handle_winusb[0]))
         if result == 0:
-            err = self.get_last_error_code()
+            self.get_last_error_code()
             raise ctypes.WinError()
             # return False
         else:
@@ -154,7 +156,7 @@ class ModiWinUsb(object):
             return None
 
     def control_transfer(self, setup_packet, buff=None):
-        if buff != None:
+        if buff is not None:
             if setup_packet.length > 0:  # Host 2 Device
                 buff = (c_ubyte * setup_packet.length)(*buff)
                 buffer_length = setup_packet.length
@@ -206,7 +208,7 @@ class ModiWinUsb(object):
         result = self.api.exec_function_winusb(WinUsb_FlushPipe, self.handle_winusb[self._index], c_ubyte(pipe_id))
         return result
 
-    def _overlapped_read_do(self,pipe_id):
+    def _overlapped_read_do(self, pipe_id):
         self.olread_ol.Internal = 0
         self.olread_ol.InternalHigh = 0
         self.olread_ol.Offset = 0
@@ -228,7 +230,7 @@ class ModiWinUsb(object):
     def overlapped_read(self, pipe_id):
         """ keep on reading overlapped, return bytearray, empty if nothing to read, None if err"""
         rl = c_ulong(0)
-        result = self.api.exec_function_winusb(WinUsb_GetOverlappedResult, self.handle_winusb[self._index], byref(self.olread_ol),byref(rl),False)
+        result = self.api.exec_function_winusb(WinUsb_GetOverlappedResult, self.handle_winusb[self._index], byref(self.olread_ol), byref(rl), False)
         if result == 0:
             if self.get_last_error_code() == ERROR_IO_PENDING or self.get_last_error_code() == ERROR_IO_INCOMPLETE:
                 return ""
@@ -324,15 +326,15 @@ class ModiWinUsbComPort:
         orig_size = len(buf)
         read = 0
         if self._rxremaining:
-            l = len(self._rxremaining)
-            read = min(l, orig_size)
+            remain_len = len(self._rxremaining)
+            read = min(remain_len, orig_size)
             buf[0:read] = self._rxremaining[0:read]
             self._rxremaining = self._rxremaining[read:]
         end_timeout = time.time() + (self._timeout or 0.2)
         self.device.set_timeout(self._ep_in, 2)
         while read < orig_size:
-            remaining = orig_size-read
-            c = self.device.read(self._ep_in, min(remaining, 1024*4))
+            remaining = orig_size - read
+            c = self.device.read(self._ep_in, min(remaining, 1024 * 4))
             if c is not None and len(c):
                 if len(c) > remaining:
                     end_timeout += 0.2
@@ -356,7 +358,7 @@ class ModiWinUsbComPort:
         if size:
             self.device.set_timeout(self._ep_in, self._timeout)
             while length < size:
-                c = self.device.read(self._ep_in, size-length)
+                c = self.device.read(self._ep_in, size - length)
                 if c is not None and len(c):
                     end_timeout += 0.2
                     rx.append(c)
@@ -384,7 +386,7 @@ class ModiWinUsbComPort:
             chunk = chunk[0:size]
         return chunk
 
-    def readline(self, size=64*1024):
+    def readline(self, size=64 * 1024):
         if not self.is_open:
             return None
         rx = [self._rxremaining]
@@ -393,7 +395,7 @@ class ModiWinUsbComPort:
         end_timeout = time.time() + self.timeout
         self.device.set_timeout(self._ep_in, 0.2)
         while b"\n" not in rx[-1]:  # 10 == b"\n"
-            c = self.device.read(self._ep_in, size-length)
+            c = self.device.read(self._ep_in, size - length)
             if c is not None and len(c):
                 end_timeout += 0.2
                 length += len(c)
@@ -401,7 +403,7 @@ class ModiWinUsbComPort:
             if time.time() > end_timeout:
                 break
         line = b"".join(rx)
-        i = line.find(b"\n")+1
+        i = line.find(b"\n") + 1
         self._rxremaining = line[i:]
         return line[0:i]
 
@@ -412,8 +414,8 @@ class ModiWinUsbComPort:
         if not self.is_open:
             return None
         try:
-            ret = self.device.write(self._ep_out, data)
-        except Exception as e:
+            self.device.write(self._ep_out, data)
+        except Exception:
             # print("USB Error on write {}".format(e))
             return
 
@@ -440,11 +442,9 @@ class ModiWinUsbComPort:
             index=0x00,
             length=0x00
         )
-        # buff = [0xc0, 0x12, 0x00, 0x00, 0x00, 0x00, 0x08]
         buff = None
 
-        wlen = self.device.control_transfer(pkt, buff)
-        # print("Linecoding set, {}b sent".format(wlen))
+        self.device.control_transfer(pkt, buff)
 
     def setLineCoding(self, baudrate=None, parity=None, databits=None, stopbits=None):
         if not self.is_open:
@@ -504,12 +504,9 @@ class ModiWinUsbComPort:
             index=0x00,
             length=len(linecode)
         )
-        # buff = [0xc0, 0x12, 0x00, 0x00, 0x00, 0x00, 0x08]
         buff = linecode
 
-
-        wlen = self.device.control_transfer(pkt, buff)
-        # print("Linecoding set, {}b sent".format(wlen))
+        self.device.control_transfer(pkt, buff)
 
     def disconnect(self):
         if not self.is_open:
@@ -555,6 +552,7 @@ class ModiWinUsbComPort:
             return None
 
         return api
+
 
 # main
 if __name__ == "__main__":

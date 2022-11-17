@@ -71,7 +71,7 @@ def decode_message(message: str):
     return command, source, destination, data, length
 
 
-def unpack_data(data: str, structure: Tuple=(1, 1, 1, 1, 1, 1, 1, 1)):
+def unpack_data(data: str, structure: Tuple = (1, 1, 1, 1, 1, 1, 1, 1)):
     data = bytearray(b64decode(data.encode("utf8")))
     idx = 0
     result = []

@@ -26,7 +26,7 @@ class Button(InputModule):
 
         offset = Button.PROPERTY_OFFSET_CLICKED
         raw = self._get_property(Button.PROPERTY_BUTTON_STATE)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data == Button.STATE_TRUE
 
     @property
@@ -39,7 +39,7 @@ class Button(InputModule):
 
         offset = Button.PROPERTY_OFFSET_DOUBLE_CLICKED
         raw = self._get_property(Button.PROPERTY_BUTTON_STATE)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data == Button.STATE_TRUE
 
     @property
@@ -52,7 +52,7 @@ class Button(InputModule):
 
         offset = Button.PROPERTY_OFFSET_PRESSED
         raw = self._get_property(Button.PROPERTY_BUTTON_STATE)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data == Button.STATE_TRUE
 
     @property
@@ -65,5 +65,5 @@ class Button(InputModule):
 
         offset = Button.PROPERTY_OFFSET_TOGGLED
         raw = self._get_property(Button.PROPERTY_BUTTON_STATE)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data == Button.STATE_TRUE
