@@ -244,7 +244,7 @@ class ModiWinUsbComPort:
     def __init__(self, path=None, baudrate=921600, timeout=0.2, write_timeout=0, start=True):
         self.device = None
         self.path = path
-        self._rxremaining = b''
+        self._rxremaining = b""
         self.parity = 0
         self.stopbits = 1
         self.databits = 8
@@ -351,7 +351,7 @@ class ModiWinUsbComPort:
             return None
         rx = [self._rxremaining]
         length = len(self._rxremaining)
-        self._rxremaining = b''
+        self._rxremaining = b""
         end_timeout = time.time() + (self._timeout or 0.2)
         if size:
             self.device.set_timeout(self._ep_in, self._timeout)
@@ -375,7 +375,7 @@ class ModiWinUsbComPort:
                     break
                 if time.time() > end_timeout:
                     break
-        chunk = b''.join(rx)
+        chunk = b"".join(rx)
         if size and len(chunk) >= size:
             if self._rxremaining:
                 self._rxremaining = chunk[size:] + self._rxremaining
@@ -389,10 +389,10 @@ class ModiWinUsbComPort:
             return None
         rx = [self._rxremaining]
         length = len(self._rxremaining)
-        self._rxremaining = b''
+        self._rxremaining = b""
         end_timeout = time.time() + self.timeout
         self.device.set_timeout(self._ep_in, 0.2)
-        while b'\n' not in rx[-1]:  # 10 == b'\n'
+        while b"\n" not in rx[-1]:  # 10 == b"\n"
             c = self.device.read(self._ep_in, size-length)
             if c is not None and len(c):
                 end_timeout += 0.2
@@ -400,8 +400,8 @@ class ModiWinUsbComPort:
                 rx.append(c)
             if time.time() > end_timeout:
                 break
-        line = b''.join(rx)
-        i = line.find(b'\n')+1
+        line = b"".join(rx)
+        i = line.find(b"\n")+1
         self._rxremaining = line[i:]
         return line[0:i]
 
@@ -523,7 +523,7 @@ class ModiWinUsbComPort:
     def reset_input_buffer(self):
         if self.is_open:
             self.device.flush(self._ep_in)
-            self._rxremaining = b''
+            self._rxremaining = b""
 
     def reset_output_buffer(self):
         pass

@@ -1,6 +1,7 @@
 """Main MODI+ module."""
 
 import sys
+import time
 import platform
 import atexit
 from typing import Optional
@@ -20,49 +21,11 @@ from modi_plus.module.output_module.motor import Motor
 from modi_plus.module.output_module.led import Led
 from modi_plus.module.output_module.speaker import Speaker
 
-from modi_plus.module.module import get_module_type_from_uuid
+from modi_plus.module.module import get_module_type_from_uuid, ModuleList
 from modi_plus._exe_thread import ExeThread
 
 from modi_plus.about import __version__
 
-
-class ModuleList(list):
-
-    def __init__(self, src, module_type=None):
-        self.__src = src
-        self.__module_type = module_type
-        super().__init__(self.sublist())
-
-    def __len__(self):
-        return len(self.sublist())
-
-    def __eq__(self, other):
-        return super().__eq__(other)
-
-    def get(self, module_id):
-        for module in self.sublist():
-            if module.id == module_id:
-                return module
-        raise Exception("Module with given id does not exits!!")
-
-    def sublist(self):
-        """ When accessing the module, the modules are sorted in an ascending order of
-        1. the connected time from network module
-
-        :return: Module
-        """
-        if self.__module_type:
-            modules = list(filter(lambda module: module.module_type == self.__module_type, self.__src))
-        else:
-            modules = self.__src
-        modules.sort()
-        return modules
-
-    def find(self, module_id):
-        for idx, module in enumerate(self.sublist()):
-            if module_id == module.id:
-                return idx
-        return -1
 
 class MODIPlus:
     network_uuids = {}
@@ -85,6 +48,15 @@ class MODIPlus:
 
         print("Start initializing connected MODI+ modules")
         self._exe_thread.start()
+
+        # check usb connected module
+        init_time = time.time()
+        while not self.__is_usb_connected():
+            time.sleep(0.1)
+            if time.time() - init_time > 3:
+                print("MODI init timeout over. Check your module connection.")
+                break
+
         print("MODI+ modules are initialized!")
 
         atexit.register(self.close)
@@ -143,6 +115,12 @@ class MODIPlus:
             if module.uuid == module_uuid:
                 return module
         return None
+
+    def __is_usb_connected(self):
+        for module in self._modules:
+            if module.is_usb_connected:
+                return True
+        return False
 
     def network(self, uuid: int) -> Optional[Network]:
         """Module Class of connected Network module.

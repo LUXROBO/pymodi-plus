@@ -10,7 +10,7 @@ class ExeTask:
 
     def __init__(self, modules, connection_task):
         self._modules = modules
-        self._conn = connection_task
+        self._connection = connection_task
 
         # Reboot all modules
         self.__request_reboot(BROADCAST_ID)
@@ -21,7 +21,7 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
-        json_pkt = self._conn.recv()
+        json_pkt = self._connection.recv()
         if not json_pkt:
             time.sleep(delay)
         else:
@@ -68,6 +68,11 @@ class ExeTask:
             module.last_updated = curr_time
             module.is_connected = True
 
+            if module.module_type == "network" and message["l"] == 5:
+                _, dir = unpack_data(message["b"], (4, 1))
+                if dir == 1:
+                    module.is_usb_connected = True
+
             # Reset disconnection alert status
             if module.has_printed:
                 module.has_printed = False
@@ -103,13 +108,13 @@ class ExeTask:
             if not module.is_connected:
                 # Handle Reconnected modules
                 module.is_connected = True
-                self.__request_pnp_off(BROADCAST_ID)
+                self.__request_pnp_off()
                 print(f"{str(module)} has been reconnected!")
 
     def __add_new_module(self, module_type, module_id, module_uuid, module_app_version_info, module_os_version_info):
         module_template = get_module_from_name(module_type)
-        module_instance = module_template(module_id, module_uuid, self._conn)
-        self.__request_pnp_off(BROADCAST_ID)
+        module_instance = module_template(module_id, module_uuid, self._connection)
+        self.__request_pnp_off()
         module_instance.app_version = module_app_version_info
         module_instance.os_version = module_os_version_info
         self._modules.append(module_instance)
@@ -161,22 +166,22 @@ class ExeTask:
         :type pnp_state: int
         :return: None
         """
-        self._conn.send_nowait(parse_message(0x09, 0, destination_id, (module_state, pnp_state)))
+        self._connection.send_nowait(parse_message(0x09, 0, destination_id, (module_state, pnp_state)))
 
-    def __request_reboot(self, id):
+    def __request_reboot(self, id=BROADCAST_ID):
         self.__set_module_state(id, Module.REBOOT, Module.PNP_OFF)
 
-    def __request_pnp_on(self, id):
+    def __request_pnp_on(self, id=BROADCAST_ID):
         self.__set_module_state(id, Module.RUN, Module.PNP_ON)
 
-    def __request_pnp_off(self, id):
+    def __request_pnp_off(self, id=BROADCAST_ID):
         self.__set_module_state(id, Module.RUN, Module.PNP_OFF)
 
-    def __request_find_id(self, id):
-        self._conn.send_nowait(parse_message(0x08, 0x00, id, (0xFF, 0x0F)))
+    def __request_find_id(self, id=BROADCAST_ID):
+        self._connection.send_nowait(parse_message(0x08, 0x00, id, (0xFF, 0x0F)))
 
-    def __request_find_network_id(self, id):
-        self._conn.send_nowait(parse_message(0x28, 0x00, id, (0xFF, 0x0F)))
+    def __request_find_network_id(self, id=BROADCAST_ID):
+        self._connection.send_nowait(parse_message(0x28, 0x00, id, (0xFF, 0x0F)))
 
     def __request_esp_version(self, id):
-        self._conn.send_nowait(parse_message(0xA0, 25, id, (0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF)))
+        self._connection.send_nowait(parse_message(0xA0, 25, id, (0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF)))

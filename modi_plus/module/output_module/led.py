@@ -28,8 +28,6 @@ class Led(OutputModule):
         :type color: Tuple[int, int, int]
         :return: None
         """
-        if (red, green, blue) == self.rgb:
-            return
         self._set_property(
             destination_id=self._id,
             property_num=Led.PROPERTY_LED_SET_RGB,

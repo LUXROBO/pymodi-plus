@@ -3,10 +3,9 @@
 import time
 import json
 from os import path
-from typing import Union
 from importlib.util import find_spec
 
-from modi_plus.util.message_util import parse_message
+from modi_plus.util.message_util import parse_get_property_message
 
 BROADCAST_ID = 0xFFF
 
@@ -100,6 +99,7 @@ class Module:
         self.prop_samp_freq = 91
 
         self.is_connected = True
+        self.is_usb_connected = False
         self.has_printed = False
         self.last_updated = time.time()
         self.first_connected = None
@@ -136,8 +136,8 @@ class Module:
     @property
     def app_version(self):
         version_string = ""
-        version_string += str(self.__app_version >> 13) + '.'
-        version_string += str(self.__app_version % (2 ** 13) >> 8) + '.'
+        version_string += str(self.__app_version >> 13) + "."
+        version_string += str(self.__app_version % (2 ** 13) >> 8) + "."
         version_string += str(self.__app_version % (2 ** 8))
         return version_string
 
@@ -148,8 +148,8 @@ class Module:
     @property
     def os_version(self):
         version_string = ""
-        version_string += str(self.__os_version >> 13) + '.'
-        version_string += str(self.__os_version % (2 ** 13) >> 8) + '.'
+        version_string += str(self.__os_version >> 13) + "."
+        version_string += str(self.__os_version % (2 ** 13) >> 8) + "."
         version_string += str(self.__os_version % (2 ** 8))
         return version_string
 
@@ -170,24 +170,24 @@ class Module:
         root_path = (
             path.join(
                 path.dirname(__file__),
-                '..', 'assets'
+                "..", "assets"
             )
         )
-        version_path = path.join(root_path, 'version.txt')
+        version_path = path.join(root_path, "version.txt")
         with open(version_path, "r") as version_file:
             try:
                 version_info = json.loads(version_file.read())
             except Exception as e:
                 pass
 
-        app_version_info = version_info[self.module_type].lstrip('v').rstrip('\n')
-        if self.module_type in ['env', 'display', 'speaker']:
-            os_version_info = version_info['os_e103'].lstrip('v').rstrip('\n')
+        app_version_info = version_info[self.module_type].lstrip("v").rstrip("\n")
+        if self.module_type in ["env", "display", "speaker"]:
+            os_version_info = version_info["os_e103"].lstrip("v").rstrip("\n")
         else:
-            os_version_info = version_info['os_e230'].lstrip('v').rstrip('\n')
+            os_version_info = version_info["os_e230"].lstrip("v").rstrip("\n")
 
-        app_version_digits = [int(digit) for digit in app_version_info.split('.')]
-        os_version_digits = [int(digit) for digit in os_version_info.split('.')]
+        app_version_digits = [int(digit) for digit in app_version_info.split(".")]
+        os_version_digits = [int(digit) for digit in os_version_info.split(".")]
 
         latest_app_version = (
             app_version_digits[0] << 13
@@ -244,5 +244,43 @@ class Module:
         :return: None
         """
         self._properties[property_type].last_update_time = time.time()
-        req_prop_msg = parse_message(0x03, 0, destination_id, (property_type, 0x00, self.prop_samp_freq, 0x00))
+        req_prop_msg = parse_get_property_message(destination_id, property_type, self.prop_samp_freq)
         self._conn.send(req_prop_msg)
+
+class ModuleList(list):
+
+    def __init__(self, src, module_type=None):
+        self.__src = src
+        self.__module_type = module_type
+        super().__init__(self.sublist())
+
+    def __len__(self):
+        return len(self.sublist())
+
+    def __eq__(self, other):
+        return super().__eq__(other)
+
+    def get(self, module_id):
+        for module in self.sublist():
+            if module.id == module_id:
+                return module
+        raise Exception("Module with given id does not exits!!")
+
+    def sublist(self):
+        """ When accessing the module, the modules are sorted in an ascending order of
+        1. the connected time from network module
+
+        :return: Module
+        """
+        if self.__module_type:
+            modules = list(filter(lambda module: module.module_type == self.__module_type, self.__src))
+        else:
+            modules = self.__src
+        modules.sort()
+        return modules
+
+    def find(self, module_id):
+        for idx, module in enumerate(self.sublist()):
+            if module_id == module.id:
+                return idx
+        return -1

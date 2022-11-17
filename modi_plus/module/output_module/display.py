@@ -68,7 +68,7 @@ class Display(OutputModule):
         self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
-            property_values=(("u8", position_x), 
+            property_values=(("u8", position_x),
                              ("u8", position_y),
                              ("float",variable))
         )
