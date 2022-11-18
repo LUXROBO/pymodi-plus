@@ -13,7 +13,7 @@ def list_modi_ports() -> List[str]:
     info_list = []
 
     def __is_modi_port(port):
-        return (port.vid == 0x2FDE and port.pid == 0x0003)
+        return (port.vid == 0x2FDE and port.pid == 0x0003) or port.description == "MODI+ Network Module"
     modi_ports = [port for port in stl.comports() if __is_modi_port(port)]
     for modi_port in modi_ports:
         info_list.append(modi_port.device)
