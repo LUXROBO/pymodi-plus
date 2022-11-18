@@ -1,7 +1,7 @@
 ---
 name: Develop [Only Member]
 about: Development for this project
-title: "[Develop]"
+title: ""
 labels: ''
 assignees: ''
 
