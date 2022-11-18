@@ -66,6 +66,7 @@ def ask_modi_plus_device(devices):
     i = input("Choose your device index (ex: 0) : ")
     return devices[int(i)].lstrip("MODI+_")
 
+
 class Module:
     """
     :param int id_: The id of the module.
@@ -177,7 +178,7 @@ class Module:
         with open(version_path, "r") as version_file:
             try:
                 version_info = json.loads(version_file.read())
-            except Exception as e:
+            except Exception:
                 pass
 
         app_version_info = version_info[self.module_type].lstrip("v").rstrip("\n")
@@ -246,6 +247,7 @@ class Module:
         self._properties[property_type].last_update_time = time.time()
         req_prop_msg = parse_get_property_message(destination_id, property_type, self.prop_samp_freq)
         self._conn.send(req_prop_msg)
+
 
 class ModuleList(list):
 

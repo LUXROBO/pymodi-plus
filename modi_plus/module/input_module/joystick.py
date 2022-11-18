@@ -23,7 +23,7 @@ class Joystick(InputModule):
 
         offset = Joystick.PROPERTY_OFFSET_X
         raw = self._get_property(Joystick.PROPERTY_POSITION_STATE)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -36,7 +36,7 @@ class Joystick(InputModule):
 
         offset = Joystick.PROPERTY_OFFSET_Y
         raw = self._get_property(Joystick.PROPERTY_POSITION_STATE)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -54,5 +54,5 @@ class Joystick(InputModule):
 
         offset = Joystick.PROPERTY_OFFSET_DIRECTION
         raw = self._get_property(Joystick.PROPERTY_DIRECTION_STATE)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data

@@ -37,11 +37,11 @@ class Display(OutputModule):
         string_cursor = 0
         encoding_data = str.encode(text)
         if len(encoding_data) >= 24:
-            for num in range(len(encoding_data)//24):
+            for num in range(len(encoding_data) // 24):
                 self._set_property(
                     self._id,
                     Display.PROPERTY_DISPLAY_WRITE_TEXT,
-                    property_values=(("bytes", encoding_data[string_cursor:string_cursor+24]),) # 24 characters can be sent per one packet
+                    property_values=(("bytes", encoding_data[string_cursor:string_cursor + 24]), )
                 )
                 string_cursor += 24
 
@@ -70,7 +70,7 @@ class Display(OutputModule):
             Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
             property_values=(("u8", position_x),
                              ("u8", position_y),
-                             ("float",variable))
+                             ("float", variable), )
         )
         self._text += str(variable)
 
@@ -97,7 +97,6 @@ class Display(OutputModule):
                              ("string", "res/" + image_name))
         )
 
-
     def set_offset(self, position_x: int, position_y: int) -> None:
         """Set origin point on the screen
 
@@ -111,7 +110,7 @@ class Display(OutputModule):
             self.id,
             Display.PROPERTY_DISPLAY_SET_PROPERTY,
             property_values=(("s8", position_x),
-                             ("s8", position_y) )
+                             ("s8", position_y), )
         )
 
     def move_screen(self, move_x: int, move_y: int) -> None:
@@ -127,7 +126,7 @@ class Display(OutputModule):
             self.id,
             Display.PROPERTY_DISPLAY_MOVE_SCREEN,
             property_values=(("s8", move_x),
-                             ("s8", move_y) )
+                             ("s8", move_y), )
         )
 
     def reset(self) -> None:

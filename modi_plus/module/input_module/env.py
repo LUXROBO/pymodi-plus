@@ -23,7 +23,7 @@ class Env(InputModule):
 
         offset = Env.PROPERTY_OFFSET_INTENSICY
         raw = self._get_property(Env.PROPERTY_ENV_STATE)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -36,7 +36,7 @@ class Env(InputModule):
 
         offset = Env.PROPERTY_OFFSET_TEMPERATURE
         raw = self._get_property(Env.PROPERTY_ENV_STATE)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -49,7 +49,7 @@ class Env(InputModule):
 
         offset = Env.PROPERTY_OFFSET_HUMIDITY
         raw = self._get_property(Env.PROPERTY_ENV_STATE)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -62,5 +62,5 @@ class Env(InputModule):
 
         offset = Env.PROPERTY_OFFSET_VOLUME
         raw = self._get_property(Env.PROPERTY_ENV_STATE)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data

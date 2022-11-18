@@ -1,7 +1,6 @@
 """Speaker module."""
 
 import struct
-from typing import Tuple
 from modi_plus.module.output_module.output_module import OutputModule
 
 
@@ -88,7 +87,7 @@ class Speaker(OutputModule):
         """
         offset = Speaker.PROPERTY_OFFSET_CURRENT_FREQUENCY
         raw = self._get_property(Speaker.PROPERTY_SPEAKER_STATE)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -100,7 +99,7 @@ class Speaker(OutputModule):
         """
         offset = Speaker.PROPERTY_OFFSET_CURRENT_VOLUME
         raw = self._get_property(Speaker.PROPERTY_SPEAKER_STATE)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
     def play_melody(self, cmd: int, volume: int, melody_name: str = "") -> None:
@@ -136,7 +135,7 @@ class Speaker(OutputModule):
         :type melody_name: str
         :return: None
         """
-        
+
         if len(music_name) != 0:
             self.playing_file_name = music_name
         self._set_property(

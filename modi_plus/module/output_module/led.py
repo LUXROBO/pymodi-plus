@@ -45,7 +45,7 @@ class Led(OutputModule):
         """
         offset = Led.PROPERTY_OFFSET_RED
         raw = self._get_property(Led.PROPERTY_LED_STATE)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -57,7 +57,7 @@ class Led(OutputModule):
         """
         offset = Led.PROPERTY_OFFSET_GREEN
         raw = self._get_property(Led.PROPERTY_LED_STATE)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -69,7 +69,7 @@ class Led(OutputModule):
         """
         offset = Led.PROPERTY_OFFSET_BLUE
         raw = self._get_property(Led.PROPERTY_LED_STATE)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
     #
