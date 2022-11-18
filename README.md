@@ -16,8 +16,8 @@ Installation
 
 [Optional] Once you install [Anaconda](https://docs.anaconda.com/anaconda/install/), then:
 ```
-# Install new python environment for PyMODI+ package, choose python version >= 3.10
-conda create --name pymodi_plus python=3.10
+# Install new python environment for PyMODI+ package, choose python version >= 3.9
+conda create --name pymodi_plus python=3.9
 
 # After you properly install the python environment, activate it
 conda activate pymodi_plus
