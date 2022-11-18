@@ -98,13 +98,13 @@ tutorial over REPL:
 
 ::
 
-   $ python -m modi --tutorial
+   $ python -m modi_plus --tutorial
 
 As well as an interactive usage examples:
 
 ::
 
-   $ python -m modi --usage
+   $ python -m modi_plus --usage
 
 Additional Usage
 ----------------
