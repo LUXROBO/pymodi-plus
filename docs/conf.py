@@ -70,7 +70,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pymodi_plus'
-copyright = "2023, LUXROBO"
+copyright = "2018, LUXROBO"
 author = "LUXROBO"
 
 # The version info for the project you're documenting, acts as replacement
