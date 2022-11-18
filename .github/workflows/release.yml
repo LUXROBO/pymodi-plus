@@ -35,15 +35,3 @@ jobs:
       run: |
         python setup.py sdist bdist_wheel
         twine upload --skip-existing dist/*
-
-    - name: create-release
-      id: create_release
-      uses: actions/create-release@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-        body_path: ReleaseNotes.md
-        draft: false
-        prerelease: false
