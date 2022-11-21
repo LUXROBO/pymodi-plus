@@ -1,7 +1,7 @@
 """Speaker module."""
 
 import struct
-from modi_plus.module.output_module.output_module import OutputModule
+from modi_plus.module.module import OutputModule
 
 
 class Speaker(OutputModule):

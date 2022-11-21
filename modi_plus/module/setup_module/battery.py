@@ -1,7 +1,7 @@
 """Battery module."""
 
 import struct
-from modi_plus.module.setup_module.setup_module import SetupModule
+from modi_plus.module.module import SetupModule
 
 
 class Battery(SetupModule):

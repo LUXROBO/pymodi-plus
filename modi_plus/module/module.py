@@ -3,9 +3,10 @@
 import time
 import json
 from os import path
+from typing import Tuple, Union
 from importlib.util import find_spec
 
-from modi_plus.util.message_util import parse_get_property_message
+from modi_plus.util.message_util import parse_get_property_message, parse_set_property_message
 
 BROADCAST_ID = 0xFFF
 
@@ -222,6 +223,26 @@ class Module:
 
         return self._properties[property_type].value
 
+    def _set_property(self, destination_id: int,
+                      property_num: int,
+                      property_values: Union[Tuple, str]) -> None:
+        """Send the message of set_property command to the module
+
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param property_num: Property Type
+        :type property_num: int
+        :param property_values: Property Values
+        :type property_values: Tuple
+        :return: None
+        """
+        message = parse_set_property_message(
+            destination_id,
+            property_num,
+            property_values,
+        )
+        self._conn.send(message)
+
     def update_property(self, property_type: int, property_value: bytearray) -> None:
         """ Update property value and time
 
@@ -247,6 +268,41 @@ class Module:
         self._properties[property_type].last_update_time = time.time()
         req_prop_msg = parse_get_property_message(destination_id, property_type, self.prop_samp_freq)
         self._conn.send(req_prop_msg)
+
+    @staticmethod
+    def _validate_property(nb_values: int, value_range: Tuple = None):
+        def check_value(setter):
+            def set_property(self, value):
+                if nb_values > 1 and isinstance(value, int):
+                    raise ValueError(f"{setter.__name__} needs {nb_values} "
+                                     f"values")
+                elif value_range and nb_values == 1 and not (
+                        value_range[1] >= value >= value_range[0]):
+                    raise ValueError(f"{setter.__name__} should be in range "
+                                     f"{value_range[0]}~{value_range[1]}")
+                elif value_range and nb_values > 1:
+                    for val in value:
+                        if not (value_range[1] >= val >= value_range[0]):
+                            raise ValueError(f"{setter.__name__} "
+                                             f"should be in range"
+                                             f" {value_range[0]}~"
+                                             f"{value_range[1]}")
+                setter(self, value)
+
+            return set_property
+        return check_value
+
+
+class SetupModule(Module):
+    pass
+
+
+class InputModule(Module):
+    pass
+
+
+class OutputModule(Module):
+    pass
 
 
 class ModuleList(list):

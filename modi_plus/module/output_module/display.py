@@ -1,6 +1,6 @@
 """Display module."""
 
-from modi_plus.module.output_module.output_module import OutputModule
+from modi_plus.module.module import OutputModule
 
 
 class Display(OutputModule):
