@@ -1,6 +1,12 @@
 .PHONY: clean clean-test clean-pyc clean-build docs help
 .DEFAULT_GOAL := help
 
+ifeq ($(shell which python3),)
+	MODI_PYTHON = python
+else
+	MODI_PYTHON = python3
+endif
+
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 
@@ -24,10 +30,10 @@ for line in sys.stdin:
 endef
 export PRINT_HELP_PYSCRIPT
 
-BROWSER := python -c "$$BROWSER_PYSCRIPT"
+BROWSER := $(MODI_PYTHON) -c "$$BROWSER_PYSCRIPT"
 
 help:
-	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+	$(MODI_PYTHON) -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 # remove all build, test, coverage and Python artifacts
 clean: clean-build clean-pyc clean-test
@@ -59,7 +65,7 @@ lint:
 
 # run tests quickly with the default Python
 test:
-	python setup.py test
+	$(MODI_PYTHON) setup.py test
 
 # run tests on every Python version with tox
 test-all:
@@ -91,10 +97,10 @@ release: dist
 
 # builds source and wheel package
 dist: clean
-	python setup.py sdist
-	python setup.py bdist_wheel
+	$(MODI_PYTHON) setup.py sdist
+	$(MODI_PYTHON) setup.py bdist_wheel
 	ls -l dist
 
 # install the package to the active Python's site-packages
 install: clean
-	python setup.py install
+	$(MODI_PYTHON) setup.py install

@@ -66,11 +66,16 @@ class MODIPlus:
             if not network_uuid:
                 raise ValueError("Network UUID not specified!")
             self.network_uuids[network_uuid] = self
+
+            os = self.__get_platform()
+            if os == "chrome":
+                raise ValueError(f"Invalid conn mode: {connection_type}")
+
             mod_path = {
                 "win32": "modi_plus.task.ble_task.ble_task_win",
                 "darwin": "modi_plus.task.ble_task.ble_task_mac",
                 "rpi": "modi_plus.task.ble_task.ble_task_rpi",
-            }.get(self.__get_platform())
+            }.get(os)
             return im(mod_path).BleTask(verbose, network_uuid)
         else:
             raise ValueError(f"Invalid conn mode: {connection_type}")
@@ -106,6 +111,8 @@ class MODIPlus:
     def __get_platform(self):
         if platform.uname().node == "raspberrypi":
             return "rpi"
+        elif platform.uname().node == "penguin":
+            return "chrome"
         return sys.platform
 
     def __get_module_by_uuid(self, module_uuid):
