@@ -1,6 +1,7 @@
 import unittest
 
 from modi_plus.module.output_module.led import Led
+from modi_plus.module.module import Module
 from modi_plus.util.message_util import parse_set_property_message, parse_get_property_message
 from modi_plus.util.connection_util import MockConn
 
@@ -10,16 +11,19 @@ class TestLed(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
+
         self.conn = MockConn()
         self.mock_kwargs = -1, -1, self.conn
         self.led = Led(*self.mock_kwargs)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
+
         del self.led
 
     def test_set_rgb(self):
         """Test set_rgb method with user-defined inputs."""
+
         red = 10
         green = 20
         blue = 100
@@ -35,10 +39,12 @@ class TestLed(unittest.TestCase):
 
     def test_get_red(self):
         """Test get_red method with none input."""
+
         try:
             _ = self.led.red
-        except self.led.PropertyInitTimeout:
+        except Module.GetValueInitTimeout:
             pass
+
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Led.PROPERTY_LED_STATE, self.led.prop_samp_freq)
@@ -46,10 +52,12 @@ class TestLed(unittest.TestCase):
 
     def test_get_green(self):
         """Test set_green method with none input."""
+
         try:
             _ = self.led.green
-        except self.led.PropertyInitTimeout:
+        except Module.GetValueInitTimeout:
             pass
+
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Led.PROPERTY_LED_STATE, self.led.prop_samp_freq)
@@ -57,10 +65,12 @@ class TestLed(unittest.TestCase):
 
     def test_get_blue(self):
         """Test get blue method with none input."""
+
         try:
             _ = self.led.blue
-        except self.led.PropertyInitTimeout:
+        except Module.GetValueInitTimeout:
             pass
+
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Led.PROPERTY_LED_STATE, self.led.prop_samp_freq)
@@ -68,6 +78,7 @@ class TestLed(unittest.TestCase):
 
     def test_on(self):
         """Test on method."""
+
         red = 100
         green = 100
         blue = 100
@@ -83,6 +94,7 @@ class TestLed(unittest.TestCase):
 
     def test_off(self):
         """Test off method."""
+
         red = 0
         green = 0
         blue = 0

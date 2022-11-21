@@ -1,6 +1,7 @@
 import unittest
 
 from modi_plus.module.input_module.env import Env
+from modi_plus.module.module import Module
 from modi_plus.util.message_util import parse_get_property_message
 from modi_plus.util.connection_util import MockConn
 
@@ -22,8 +23,9 @@ class TestEnv(unittest.TestCase):
         """Test get_temperature method."""
         try:
             _ = self.env.temperature
-        except self.env.PropertyInitTimeout:
+        except Module.GetValueInitTimeout:
             pass
+
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
@@ -33,8 +35,9 @@ class TestEnv(unittest.TestCase):
         """Test get_humidity method."""
         try:
             _ = self.env.humidity
-        except self.env.PropertyInitTimeout:
+        except Module.GetValueInitTimeout:
             pass
+
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
@@ -44,8 +47,9 @@ class TestEnv(unittest.TestCase):
         """Test get_intensity method."""
         try:
             _ = self.env.intensity
-        except self.env.PropertyInitTimeout:
+        except Module.GetValueInitTimeout:
             pass
+
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
@@ -55,8 +59,9 @@ class TestEnv(unittest.TestCase):
         """Test get_volume method."""
         try:
             _ = self.env.volume
-        except self.env.PropertyInitTimeout:
+        except Module.GetValueInitTimeout:
             pass
+
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)

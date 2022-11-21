@@ -10,16 +10,19 @@ class TestDisplay(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
+
         self.conn = MockConn()
         self.mock_kwargs = [-1, -1, self.conn]
         self.display = Display(*self.mock_kwargs)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
+
         del self.display
 
     def test_set_text(self):
         """Test set_text method."""
+
         mock_text = "abcd"
         self.display.write_text(mock_text)
         set_message = parse_set_property_message(
@@ -33,6 +36,7 @@ class TestDisplay(unittest.TestCase):
 
     def test_show_variable(self):
         """Test set_variable method."""
+
         mock_variable = 123
         mock_position = 5
         self.display.write_variable(mock_position, mock_position, mock_variable)
@@ -47,6 +51,7 @@ class TestDisplay(unittest.TestCase):
 
     def test_reset(self):
         """Test reset method."""
+
         self.display.reset()
         set_message = parse_set_property_message(
             -1, Display.PROPERTY_DISPLAY_RESET,
