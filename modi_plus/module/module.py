@@ -78,6 +78,10 @@ class Module:
             self.value = None
             self.last_update_time = time.time()
 
+    class PropertyInitTimeout(Exception):
+        def __init__(self):
+            super().__init__('property initialization failed\nplease check the module connection')
+
     RUN = 0
     WARNING = 1
     FORCED_PAUSE = 2
@@ -226,7 +230,7 @@ class Module:
             while ((time.time() - first_request_time) < 3) and (self._properties[property_type].value is None): # 5sec timeout
                 time.sleep(0.1)
             if self._properties[property_type].value is None:
-                raise Exception("property initialization failed\nplease check the module connection")
+                raise self.PropertyInitTimeout
 
         return self._properties[property_type].value
 

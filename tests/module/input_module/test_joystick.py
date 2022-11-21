@@ -20,7 +20,10 @@ class TestJoystick(unittest.TestCase):
 
     def test_get_x(self):
         """Test get_x method."""
-        _ = self.joystick.x
+        try:
+            _ = self.joystick.x
+        except self.joystick.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_POSITION_STATE, self.joystick.prop_samp_freq)
@@ -28,7 +31,10 @@ class TestJoystick(unittest.TestCase):
 
     def test_get_y(self):
         """Test get_y method."""
-        _ = self.joystick.y
+        try:
+            _ = self.joystick.y
+        except self.joystick.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_POSITION_STATE, self.joystick.prop_samp_freq)
@@ -36,7 +42,10 @@ class TestJoystick(unittest.TestCase):
 
     def test_get_dirction(self):
         """Test get_dirction method."""
-        _ = self.joystick.direction
+        try:
+            _ = self.joystick.direction
+        except self.joystick.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_DIRECTION_STATE, self.joystick.prop_samp_freq)

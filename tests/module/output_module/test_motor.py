@@ -33,7 +33,10 @@ class TestMotor(unittest.TestCase):
 
     def test_get_speed(self):
         """Test get_speed method with none input."""
-        _ = self.motor.speed
+        try:
+            _ = self.motor.speed
+        except self.motor.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Motor.PROPERTY_MOTOR_STATE, self.motor.prop_samp_freq)
@@ -54,7 +57,10 @@ class TestMotor(unittest.TestCase):
 
     def test_get_angle(self):
         """Test get_angle method with none input."""
-        _ = self.motor.angle
+        try:
+            _ = self.motor.angle
+        except self.motor.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Motor.PROPERTY_MOTOR_STATE, self.motor.prop_samp_freq)

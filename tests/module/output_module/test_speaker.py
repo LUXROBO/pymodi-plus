@@ -21,6 +21,7 @@ class TestSpeaker(unittest.TestCase):
     def test_set_tune(self):
         """Test set_tune method."""
         frequency, volume = 500, 30
+        self.speaker.update_property(Speaker.PROPERTY_SPEAKER_STATE, bytearray(12))
         self.speaker.set_tune(frequency, volume)
         set_message = parse_set_property_message(
             -1, Speaker.PROPERTY_SPEAKER_SET_TUNE,
@@ -33,7 +34,10 @@ class TestSpeaker(unittest.TestCase):
 
     def test_get_frequency(self):
         """Test get_frequency method with none input."""
-        _ = self.speaker.frequency
+        try:
+            _ = self.speaker.frequency
+        except self.speaker.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Speaker.PROPERTY_SPEAKER_STATE, self.speaker.prop_samp_freq)
@@ -41,7 +45,10 @@ class TestSpeaker(unittest.TestCase):
 
     def test_get_volume(self):
         """Test get_volume method with none input."""
-        _ = self.speaker.volume
+        try:
+            _ = self.speaker.volume
+        except self.speaker.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Speaker.PROPERTY_SPEAKER_STATE, self.speaker.prop_samp_freq)
@@ -50,6 +57,7 @@ class TestSpeaker(unittest.TestCase):
     def test_set_off(self):
         """Test set_off method"""
         frequency, volume = 500, 0
+        self.speaker.update_property(Speaker.PROPERTY_SPEAKER_STATE, bytearray(12))
         self.speaker.set_tune(frequency, volume)
         set_message = parse_set_property_message(
             -1, Speaker.PROPERTY_SPEAKER_SET_TUNE,

@@ -20,7 +20,10 @@ class TestTof(unittest.TestCase):
 
     def test_get_distance(self):
         """Test get_distance method."""
-        _ = self.tof.distance
+        try:
+            _ = self.tof.distance
+        except self.tof.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Tof.PROPERTY_DISTANCE_STATE, self.tof.prop_samp_freq)

@@ -20,7 +20,10 @@ class TestEnv(unittest.TestCase):
 
     def test_get_temperature(self):
         """Test get_temperature method."""
-        _ = self.env.temperature
+        try:
+            _ = self.env.temperature
+        except self.env.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
@@ -28,7 +31,10 @@ class TestEnv(unittest.TestCase):
 
     def test_get_humidity(self):
         """Test get_humidity method."""
-        _ = self.env.humidity
+        try:
+            _ = self.env.humidity
+        except self.env.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
@@ -36,7 +42,10 @@ class TestEnv(unittest.TestCase):
 
     def test_get_intensity(self):
         """Test get_intensity method."""
-        _ = self.env.intensity
+        try:
+            _ = self.env.intensity
+        except self.env.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
@@ -44,7 +53,10 @@ class TestEnv(unittest.TestCase):
 
     def test_get_volume(self):
         """Test get_volume method."""
-        _ = self.env.volume
+        try:
+            _ = self.env.volume
+        except self.env.PropertyInitTimeout:
+            pass
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
