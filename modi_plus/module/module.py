@@ -110,7 +110,6 @@ class Module:
         self.connected_time = None
         self.__app_version = None
         self.__os_version = None
-        
 
     def __gt__(self, other):
         if self.connected_time is not None:
@@ -227,7 +226,9 @@ class Module:
 
         if self._properties[property_type].value is None:
             first_request_time = time.time()
-            while ((time.time() - first_request_time) < 3) and (self._properties[property_type].value is None): # 5sec timeout
+
+            # 5sec timeout
+            while ((time.time() - first_request_time) < 3) and (self._properties[property_type].value is None):
                 time.sleep(0.1)
             if self._properties[property_type].value is None:
                 raise self.PropertyInitTimeout

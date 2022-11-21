@@ -24,7 +24,7 @@ class TestDial(unittest.TestCase):
             _ = self.dial.turn
         except self.dial.PropertyInitTimeout:
             pass
-                
+
         self.assertEqual(
             self.conn.send_list[0],
             parse_get_property_message(-1, Dial.PROPERTY_DIAL_STATE, self.dial.prop_samp_freq)
