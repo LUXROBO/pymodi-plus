@@ -199,7 +199,7 @@ class Speaker(OutputModule):
         if file_name is None:
             raise ValueError(f"{file_name} is not on the list, check 'Speaker.preset_musics()'")
 
-        property_num = Speaker.PROPERTY_SPEAKER_MELODY if file_name in ".mid" else Speaker.PROPERTY_SPEAKER_MUSIC
+        property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in file_name else Speaker.PROPERTY_SPEAKER_MUSIC
         self.playing_file_name = file_name
 
         self._set_property(
@@ -219,13 +219,14 @@ class Speaker(OutputModule):
         if not len(self.playing_file_name):
             return
 
-        property_num = Speaker.PROPERTY_SPEAKER_MELODY if self.playing_file_name in ".mid" else Speaker.PROPERTY_SPEAKER_MUSIC
+        property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in self.playing_file_name else Speaker.PROPERTY_SPEAKER_MUSIC
 
         self._set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_STOP),
-                             ("u8", 0))
+                             ("u8", 0),
+                             ("string", self.playing_file_name))
         )
 
     def pause_music(self) -> None:
@@ -237,13 +238,14 @@ class Speaker(OutputModule):
         if not len(self.playing_file_name):
             return
 
-        property_num = Speaker.PROPERTY_SPEAKER_MELODY if self.playing_file_name in ".mid" else Speaker.PROPERTY_SPEAKER_MUSIC
+        property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in self.playing_file_name else Speaker.PROPERTY_SPEAKER_MUSIC
 
         self._set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_PAUSE),
-                             ("u8", 0))
+                             ("u8", 0),
+                             ("string", self.playing_file_name))
         )
 
     def resume_music(self) -> None:
@@ -255,13 +257,14 @@ class Speaker(OutputModule):
         if not len(self.playing_file_name):
             return
 
-        property_num = Speaker.PROPERTY_SPEAKER_MELODY if self.playing_file_name in ".mid" else Speaker.PROPERTY_SPEAKER_MUSIC
+        property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in self.playing_file_name else Speaker.PROPERTY_SPEAKER_MUSIC
 
         self._set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_RESUME),
-                             ("u8", 0))
+                             ("u8", 0),
+                             ("string", self.playing_file_name))
         )
 
     def reset(self) -> None:
