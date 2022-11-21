@@ -204,7 +204,7 @@ class Speaker(OutputModule):
             property_num,
             property_values=(("u8", Speaker.STATE_START),
                              ("u8", volume),
-                             ("string", "res/" + self.playing_file_name))
+                             ("string", self.playing_file_name))
         )
 
     def stop_music(self) -> None:
