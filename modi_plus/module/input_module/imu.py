@@ -26,7 +26,7 @@ class Imu(InputModule):
     def roll(self) -> float:
         """Returns the roll angle of the imu
 
-        :return: Roll angle.
+        :return: The imu's roll angle.
         :rtype: float
         """
 
@@ -39,7 +39,7 @@ class Imu(InputModule):
     def pitch(self) -> float:
         """Returns the pitch angle of the imu
 
-        :return: Pitch angle.
+        :return: The imu's pitch angle.
         :rtype: float
         """
 
@@ -52,7 +52,7 @@ class Imu(InputModule):
     def yaw(self) -> float:
         """Returns the yaw angle of the imu
 
-        :return: Yaw angle.
+        :return: The imu's yaw angle.
         :rtype: float
         """
 
@@ -65,7 +65,7 @@ class Imu(InputModule):
     def angle(self) -> tuple:
         """Returns the roll, pitch and yaw angle of the imu
 
-        :return: angle.
+        :return: The imu's angles of roll, pitch and yaw.
         :rtype: tuple
         """
 
@@ -75,7 +75,7 @@ class Imu(InputModule):
     def angular_vel_x(self) -> float:
         """Returns the roll angle of the imu
 
-        :return: Angular velocity the about x-axis.
+        :return: The imu's angular velocity the about x-axis.
         :rtype: float
         """
 
@@ -88,7 +88,7 @@ class Imu(InputModule):
     def angular_vel_y(self) -> float:
         """Returns the angular velocity about y-axis
 
-        :return: Angular velocity the about y-axis.
+        :return: The imu's angular velocity the about y-axis.
         :rtype: float
         """
 
@@ -101,7 +101,7 @@ class Imu(InputModule):
     def angular_vel_z(self) -> float:
         """Returns the angular velocity about z-axis
 
-        :return: Angular velocity the about z-axis.
+        :return: The imu's angular velocity the about z-axis.
         :rtype: float
         """
 
@@ -114,7 +114,7 @@ class Imu(InputModule):
     def angular_velocity(self) -> tuple:
         """Returns the angular velocity about x, y and z axis
 
-        :return: Angular velocity the about x, y and z axis.
+        :return: The imu's angular velocity the about x, y and z axis.
         :rtype: tuple
         """
 
@@ -124,7 +124,7 @@ class Imu(InputModule):
     def acceleration_x(self) -> float:
         """Returns the x component of the acceleration
 
-        :return: X-axis acceleration.
+        :return: The imu's x-axis acceleration.
         :rtype: float
         """
 
@@ -137,7 +137,7 @@ class Imu(InputModule):
     def acceleration_y(self) -> float:
         """Returns the y component of the acceleration
 
-        :return: Y-axis acceleration.
+        :return: The imu's y-axis acceleration.
         :rtype: float
         """
 
@@ -150,7 +150,7 @@ class Imu(InputModule):
     def acceleration_z(self) -> float:
         """Returns the z component of the acceleration
 
-        :return: Z-axis acceleration.
+        :return: The imu's z-axis acceleration.
         :rtype: float
         """
 
@@ -163,7 +163,7 @@ class Imu(InputModule):
     def acceleration(self) -> tuple:
         """Returns the acceleration about x, y and z axis
 
-        :return: Acceleration the about x, y and z axis.
+        :return: The imu's acceleration the about x, y and z axis.
         :rtype: tuple
         """
 
@@ -173,7 +173,7 @@ class Imu(InputModule):
     def vibration(self) -> float:
         """Returns the vibration value
 
-        :return: Vibration.
+        :return: The imu's vibration.
         :rtype: float
         """
 

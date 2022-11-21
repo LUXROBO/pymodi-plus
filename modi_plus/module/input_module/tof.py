@@ -14,7 +14,7 @@ class Tof(InputModule):
     def distance(self) -> float:
         """Returns the distance of the object between 0cm and 100cm
 
-        :return: Distance to object.
+        :return: The tof's distance to object.
         :rtype: float
         """
 
