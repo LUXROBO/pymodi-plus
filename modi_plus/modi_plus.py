@@ -135,7 +135,7 @@ class MODIPlus:
                 target = self.__get_module_by_uuid(uuid)
                 time.sleep(0.1)
             if target is None:
-                raise Exception("Module with given id does not exits!!")
+                raise Exception("Module with given uuid does not exits!!")
         return target
 
     def network(self, uuid: int) -> Optional[Network]:
