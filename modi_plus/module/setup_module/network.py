@@ -2,7 +2,18 @@
 
 import time
 import struct
+from modi_plus.task.serialport_task import SerialportTask
 from modi_plus.module.module import SetupModule
+
+
+def check_connection(func):
+    """Check connection decorator
+    """
+    def wrapper(*args, **kwargs):
+        if not isinstance(args[0]._connection, SerialportTask):
+            raise ValueError(f"{func.__name__} doen't supported except for serialport connection")
+        return func(*args, **kwargs)
+    return wrapper
 
 
 class Network(SetupModule):
@@ -68,6 +79,7 @@ class Network(SetupModule):
     def esp_version(self, version):
         self.__esp_version = version
 
+    @check_connection
     def received_data(self, index):
         """Returns received data from MODI Play
 
@@ -84,6 +96,7 @@ class Network(SetupModule):
         data = struct.unpack("i", raw[offset:offset + 4])[0]
         return data
 
+    @check_connection
     def button_pressed(self, index):
         """Returns whether MODI Play button is pressed
 
@@ -100,6 +113,7 @@ class Network(SetupModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @check_connection
     def button_clicked(self, index):
         """Returns whether MODI Play button is clicked
 
@@ -116,6 +130,7 @@ class Network(SetupModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @check_connection
     def button_double_clicked(self, index):
         """Returns whether MODI Play button is double clicked
 
@@ -132,6 +147,7 @@ class Network(SetupModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @check_connection
     def switch_toggled(self, index):
         """Returns whether MODI Play switch is toggled
 
@@ -148,6 +164,7 @@ class Network(SetupModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @check_connection
     def dial_turn(self, index):
         """Returns the current degree of MODI Play dial
 
@@ -164,6 +181,7 @@ class Network(SetupModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @check_connection
     def joystick_direction(self, index):
         """Returns the direction of the MODI Play joystick
 
@@ -187,6 +205,7 @@ class Network(SetupModule):
             Network.STATE_JOYSTICK_UNPRESSED: "unpressed"
         }.get(data)
 
+    @check_connection
     def slider_position(self, index):
         """Returns the current percentage of MODI Play slider
 
@@ -204,6 +223,7 @@ class Network(SetupModule):
         return data
 
     @property
+    @check_connection
     def time_up(self):
         """Returns if the MODI Play timer ticks
 
@@ -219,6 +239,7 @@ class Network(SetupModule):
         return data == Network.STATE_TIMER_REACHED
 
     @property
+    @check_connection
     def imu_roll(self):
         """Returns the roll angle of the MODI Play imu
 
@@ -234,6 +255,7 @@ class Network(SetupModule):
         return data
 
     @property
+    @check_connection
     def imu_pitch(self):
         """Returns the pitch angle of the MODI Play imu
 
@@ -249,6 +271,7 @@ class Network(SetupModule):
         return data
 
     @property
+    @check_connection
     def imu_yaw(self):
         """Returns the yaw angle of the MODI Play imu
 
@@ -264,6 +287,7 @@ class Network(SetupModule):
         return data
 
     @property
+    @check_connection
     def imu_direction(self):
         """Returns the direction of the MODI Play imu
 
@@ -291,6 +315,7 @@ class Network(SetupModule):
             Network.STATE_IMU_ORIGIN: "origin"
         }.get(data)
 
+    @check_connection
     def send_data(self, index, data):
         """Send text to MODI Play
 
@@ -309,6 +334,7 @@ class Network(SetupModule):
             property_values=(("s32", data),)
         )
 
+    @check_connection
     def send_text(self, text):
         """Send text to MODI Play
 
@@ -323,6 +349,7 @@ class Network(SetupModule):
             property_values=(("string", text),)
         )
 
+    @check_connection
     def buzzer_on(self):
         """Turns on MODI Play buzzer
 
@@ -339,6 +366,7 @@ class Network(SetupModule):
             property_values=(("u8", Network.STATE_BUZZER_ON),)
         )
 
+    @check_connection
     def buzzer_off(self):
         """Turns off MODI Play buzzer
 
@@ -352,6 +380,7 @@ class Network(SetupModule):
         )
         self.__buzzer_flag = False
 
+    @check_connection
     def take_picture(self):
         """Takes a picture on MODI Play
 

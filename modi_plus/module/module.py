@@ -92,7 +92,7 @@ class Module:
     def __init__(self, id_, uuid, connection_task):
         self._id = id_
         self._uuid = uuid
-        self._conn = connection_task
+        self._connection = connection_task
 
         self.module_type = str()
         self._properties = dict()
@@ -242,7 +242,7 @@ class Module:
             property_num,
             property_values,
         )
-        self._conn.send(message)
+        self._connection.send(message)
 
     def update_property(self, property_type: int, property_value: bytearray) -> None:
         """ Update property value and time
@@ -270,25 +270,7 @@ class Module:
 
         self._properties[property_type].last_update_time = time.time()
         req_prop_msg = parse_get_property_message(destination_id, property_type, self.prop_samp_freq)
-        self._conn.send(req_prop_msg)
-
-    @staticmethod
-    def _validate_property(nb_values: int, value_range: Tuple = None):
-        def check_value(setter):
-            def set_property(self, value):
-                if nb_values > 1 and isinstance(value, int):
-                    raise ValueError(f"{setter.__name__} needs {nb_values} values")
-                elif value_range and nb_values == 1 and not (
-                        value_range[1] >= value >= value_range[0]):
-                    raise ValueError(f"{setter.__name__} should be in range {value_range[0]}~{value_range[1]}")
-                elif value_range and nb_values > 1:
-                    for val in value:
-                        if not (value_range[1] >= val >= value_range[0]):
-                            raise ValueError(f"{setter.__name__} should be in range {value_range[0]}~{value_range[1]}")
-                setter(self, value)
-
-            return set_property
-        return check_value
+        self._connection.send(req_prop_msg)
 
 
 class SetupModule(Module):

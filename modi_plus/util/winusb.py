@@ -479,8 +479,7 @@ class ModiWinUsbComPort:
                 brs = sorted(brates)
                 dif = [abs(br - baudrate) for br in brs]
                 best = brs[dif.index(min(dif))]
-                raise ValueError(
-                    "Invalid baudrates, nearest valid is {}".format(best))
+                raise ValueError("Invalid baudrates, nearest valid is {}".format(best))
             self._baudrate = baudrate
 
         linecode = [
