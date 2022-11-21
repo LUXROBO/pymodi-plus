@@ -127,89 +127,100 @@ class MODIPlus:
                 return True
         return False
 
+    def __module_connection_check(self, uuid):
+        target = self.__get_module_by_uuid(uuid)
+        if target is None:
+            start_time = time.time()
+            while ((time.time() - start_time) < 3) and (target is None):
+                target = self.__get_module_by_uuid(uuid)
+                time.sleep(0.1)
+            if target is None:
+                raise Exception("Module with given uuid does not exits!!")
+        return target
+
     def network(self, uuid: int) -> Optional[Network]:
         """Module Class of connected Network module.
         """
         if get_module_type_from_uuid(uuid) != "network":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def battery(self, uuid: int) -> Optional[Battery]:
         """Module Class of connected Battery module.
         """
         if get_module_type_from_uuid(uuid) != "battery":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def env(self, uuid: int) -> Optional[Env]:
         """Module Class of connected Environment modules.
         """
         if get_module_type_from_uuid(uuid) != "env":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def imu(self, uuid: int) -> Optional[Imu]:
         """Module Class of connected IMU modules.
         """
         if get_module_type_from_uuid(uuid) != "imu":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def button(self, uuid: int) -> Optional[Button]:
         """Module Class of connected Button modules.
         """
         if get_module_type_from_uuid(uuid) != "button":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def dial(self, uuid: int) -> Optional[Dial]:
         """Module Class of connected Dial modules.
         """
         if get_module_type_from_uuid(uuid) != "dial":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def joystick(self, uuid: int) -> Optional[Joystick]:
         """Module Class of connected Joystick modules.
         """
         if get_module_type_from_uuid(uuid) != "joystick":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def tof(self, uuid: int) -> Optional[Tof]:
         """Module Class of connected ToF modules.
         """
         if get_module_type_from_uuid(uuid) != "tof":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def display(self, uuid: int) -> Optional[Display]:
         """Module Class of connected Display modules.
         """
         if get_module_type_from_uuid(uuid) != "display":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def motor(self, uuid: int) -> Optional[Motor]:
         """Module Class of connected Motor modules.
         """
         if get_module_type_from_uuid(uuid) != "motor":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def led(self, uuid: int) -> Optional[Led]:
         """Module Class of connected Led modules.
         """
         if get_module_type_from_uuid(uuid) != "led":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     def speaker(self, uuid: int) -> Optional[Speaker]:
         """Module Class of connected Speaker modules.
         """
         if get_module_type_from_uuid(uuid) != "speaker":
             return None
-        return self.__get_module_by_uuid(uuid)
+        return self.__module_connection_check(uuid)
 
     @property
     def modules(self) -> ModuleList:
