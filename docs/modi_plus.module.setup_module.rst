@@ -20,14 +20,6 @@ modi\_plus.module.setup\_module.network module
    :undoc-members:
    :show-inheritance:
 
-modi\_plus.module.setup\_module.setup\_module module
-----------------------------------------------------
-
-.. automodule:: modi_plus.module.setup_module.setup_module
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

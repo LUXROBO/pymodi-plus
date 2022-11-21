@@ -36,14 +36,6 @@ modi\_plus.module.input\_module.imu module
    :undoc-members:
    :show-inheritance:
 
-modi\_plus.module.input\_module.input\_module module
-----------------------------------------------------
-
-.. automodule:: modi_plus.module.input_module.input_module
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 modi\_plus.module.input\_module.joystick module
 -----------------------------------------------
 

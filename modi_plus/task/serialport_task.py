@@ -28,6 +28,7 @@ class SerialportTask(ConnectionTask):
 
         :return: None
         """
+
         modi_ports = list_modi_ports()
         if not modi_ports:
             raise SerialException("No MODI+ network module is available")
@@ -97,6 +98,7 @@ class SerialportTask(ConnectionTask):
 
         :return: None
         """
+
         self.__close_recv_thread()
         self._bus.close()
 
@@ -105,6 +107,7 @@ class SerialportTask(ConnectionTask):
 
         :return: str
         """
+
         if self._recv_queue.empty():
             return None
 
@@ -127,6 +130,7 @@ class SerialportTask(ConnectionTask):
         :type verbose: bool
         :return: None
         """
+
         self._bus.write(pkt.encode("utf8"))
         if self.verbose or verbose:
             print(f"send: {pkt}")
@@ -140,6 +144,7 @@ class SerialportTask(ConnectionTask):
         :type verbose: bool
         :return: None
         """
+
         self._bus.write(pkt.encode("utf8"))
         if self.verbose or verbose:
             print(f"send: {pkt}")

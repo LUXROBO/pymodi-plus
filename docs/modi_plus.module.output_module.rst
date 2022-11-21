@@ -28,14 +28,6 @@ modi\_plus.module.output\_module.motor module
    :undoc-members:
    :show-inheritance:
 
-modi\_plus.module.output\_module.output\_module module
-------------------------------------------------------
-
-.. automodule:: modi_plus.module.output_module.output_module
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 modi\_plus.module.output\_module.speaker module
 -----------------------------------------------
 

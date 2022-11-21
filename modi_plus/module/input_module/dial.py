@@ -1,7 +1,7 @@
 """Dial module."""
 
 import struct
-from modi_plus.module.input_module.input_module import InputModule
+from modi_plus.module.module import InputModule
 
 
 class Dial(InputModule):

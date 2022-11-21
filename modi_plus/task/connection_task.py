@@ -45,6 +45,7 @@ class ConnectionTask(ABC):
         """Wait decorator
         Make sure this is attached to inherited send method
         """
+
         def decorator(self, pkt: str) -> None:
             init_time = time.perf_counter()
             func(self, pkt)
