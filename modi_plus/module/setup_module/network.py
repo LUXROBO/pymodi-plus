@@ -81,7 +81,7 @@ class Network(SetupModule):
         offset = 0
 
         raw = self._get_property(property_num)
-        data = struct.unpack("i", raw[offset:offset+4])[0]
+        data = struct.unpack("i", raw[offset:offset + 4])[0]
         return data
 
     def button_pressed(self, index):
@@ -113,7 +113,7 @@ class Network(SetupModule):
         offset = Network.PROPERTY_OFFSET_BUTTON_CLICKED
 
         raw = self._get_property(property_num)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
     def button_double_clicked(self, index):
@@ -129,7 +129,7 @@ class Network(SetupModule):
         offset = Network.PROPERTY_OFFSET_BUTTON_DOUBLE_CLICKED
 
         raw = self._get_property(property_num)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
     def switch_toggled(self, index):
@@ -145,7 +145,7 @@ class Network(SetupModule):
         offset = 0
 
         raw = self._get_property(property_num)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
     def dial_turn(self, index):
@@ -161,7 +161,7 @@ class Network(SetupModule):
         offset = 0
 
         raw = self._get_property(property_num)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
     def joystick_direction(self, index):
@@ -177,7 +177,7 @@ class Network(SetupModule):
         offset = 0
 
         raw = self._get_property(property_num)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
 
         return {
             Network.STATE_JOYSTICK_UP: "up",
@@ -200,7 +200,7 @@ class Network(SetupModule):
         offset = 0
 
         raw = self._get_property(property_num)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -215,7 +215,7 @@ class Network(SetupModule):
         offset = 0
 
         raw = self._get_property(property_num)
-        data = struct.unpack("H", raw[offset:offset+2])[0]
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data == Network.STATE_TIMER_REACHED
 
     @property
@@ -230,7 +230,7 @@ class Network(SetupModule):
         offset = Network.PROPERTY_OFFSET_IMU_ROLL
 
         raw = self._get_property(property_num)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -245,7 +245,7 @@ class Network(SetupModule):
         offset = Network.PROPERTY_OFFSET_IMU_PITCH
 
         raw = self._get_property(property_num)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -260,7 +260,7 @@ class Network(SetupModule):
         offset = Network.PROPERTY_OFFSET_IMU_YAW
 
         raw = self._get_property(property_num)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
         return data
 
     @property
@@ -281,7 +281,7 @@ class Network(SetupModule):
         offset = 0
 
         raw = self._get_property(property_num)
-        data = struct.unpack("h", raw[offset:offset+2])[0]
+        data = struct.unpack("h", raw[offset:offset + 2])[0]
 
         return {
             Network.STATE_IMU_FRONT: "front",

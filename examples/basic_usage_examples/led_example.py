@@ -21,7 +21,7 @@ if __name__ == "__main__":
     led.set_rgb(255, 0, 0)
     time.sleep(3)
     for c in range(255):
-        led.set_rgb(255-c, c, 0)
+        led.set_rgb(255 - c, c, 0)
         time.sleep(0.02)
 
     led.turn_on()

@@ -1,6 +1,6 @@
 """Motor module."""
 import struct
-from modi_plus.module.module  import OutputModule
+from modi_plus.module.module import OutputModule
 
 
 class Motor(OutputModule):
