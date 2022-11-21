@@ -24,6 +24,7 @@ class Motor(OutputModule):
         :return: Current angle value
         :rtype: int
         """
+
         offset = Motor.PROPERTY_OFFSET_CURRENT_ANGLE
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -36,6 +37,7 @@ class Motor(OutputModule):
         :return: Target angle value
         :rtype: int
         """
+
         offset = Motor.PROPERTY_OFFSET_TARGET_ANGLE
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -48,6 +50,7 @@ class Motor(OutputModule):
         :return: Current speed value
         :rtype: int
         """
+
         offset = Motor.PROPERTY_OFFSET_CURRENT_SPEED
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -60,6 +63,7 @@ class Motor(OutputModule):
         :return: Target speed value
         :rtype: int
         """
+
         offset = Motor.PROPERTY_OFFSET_TARGET_SPEED
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -74,6 +78,7 @@ class Motor(OutputModule):
         :type target_angle: int
         :return: None
         """
+
         self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE,
@@ -106,6 +111,7 @@ class Motor(OutputModule):
         :type target_angle: int
         :return: None
         """
+
         self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE_APPEND,
@@ -118,6 +124,7 @@ class Motor(OutputModule):
 
         :return: None
         """
+
         self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_STOP,

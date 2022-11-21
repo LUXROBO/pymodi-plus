@@ -80,6 +80,7 @@ class BleTask(ConnectionTask):
         handle -- integer, characteristic read handle the data was received on
         value -- bytearray, the data returned in the notification
         """
+
         while True:
             try:
                 self._bus.expect("value: .*?\r", timeout=0.5)

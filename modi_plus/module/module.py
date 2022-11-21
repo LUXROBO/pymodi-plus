@@ -44,6 +44,7 @@ def get_module_from_name(module_type: str):
     :return: Module corresponding to the type
     :rtype: Module
     """
+
     module_type = module_type[0].lower() + module_type[1:]
     module_name = module_type[0].upper() + module_type[1:]
     module_module = find_spec(f"modi_plus.module.input_module.{module_type}")
@@ -235,6 +236,7 @@ class Module:
         :type property_values: Tuple
         :return: None
         """
+
         message = parse_set_property_message(
             destination_id,
             property_num,
@@ -250,6 +252,7 @@ class Module:
         :param property_value: Value to update the property
         :type property_value: bytearray
         """
+
         if property_type not in self._properties:
             self._properties[property_type] = self.Property()
         self._properties[property_type].value = property_value
@@ -264,6 +267,7 @@ class Module:
         :type property_type: int
         :return: None
         """
+
         self._properties[property_type].last_update_time = time.time()
         req_prop_msg = parse_get_property_message(destination_id, property_type, self.prop_samp_freq)
         self._conn.send(req_prop_msg)
@@ -273,19 +277,14 @@ class Module:
         def check_value(setter):
             def set_property(self, value):
                 if nb_values > 1 and isinstance(value, int):
-                    raise ValueError(f"{setter.__name__} needs {nb_values} "
-                                     f"values")
+                    raise ValueError(f"{setter.__name__} needs {nb_values} values")
                 elif value_range and nb_values == 1 and not (
                         value_range[1] >= value >= value_range[0]):
-                    raise ValueError(f"{setter.__name__} should be in range "
-                                     f"{value_range[0]}~{value_range[1]}")
+                    raise ValueError(f"{setter.__name__} should be in range {value_range[0]}~{value_range[1]}")
                 elif value_range and nb_values > 1:
                     for val in value:
                         if not (value_range[1] >= val >= value_range[0]):
-                            raise ValueError(f"{setter.__name__} "
-                                             f"should be in range"
-                                             f" {value_range[0]}~"
-                                             f"{value_range[1]}")
+                            raise ValueError(f"{setter.__name__} should be in range {value_range[0]}~{value_range[1]}")
                 setter(self, value)
 
             return set_property
@@ -329,6 +328,7 @@ class ModuleList(list):
 
         :return: Module
         """
+
         if self.__module_type:
             modules = list(filter(lambda module: module.module_type == self.__module_type, self.__src))
         else:

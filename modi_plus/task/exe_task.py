@@ -21,6 +21,7 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
+
         json_pkt = self._connection.recv()
         if not json_pkt:
             time.sleep(delay)
@@ -39,6 +40,7 @@ class ExeTask:
         :return: a function the corresponds to the command code
         :rtype: Callable[[Dict[str, int]], None]
         """
+
         return {
             0x00: self.__update_health,
             0x05: self.__update_assign_id,
@@ -58,6 +60,7 @@ class ExeTask:
         :type message: Dictionary
         :return: None
         """
+
         # Record battery information and user code state
         module_id = message["s"]
         curr_time = time.time()
@@ -92,6 +95,7 @@ class ExeTask:
         :type message: Dictionary
         :return: None
         """
+
         module_id = message["s"]
         module_uuid, module_os_version_info, module_app_version_info = unpack_data(message["b"], (6, 2, 2))
         module_type = get_module_type_from_uuid(module_uuid)
@@ -166,6 +170,7 @@ class ExeTask:
         :type pnp_state: int
         :return: None
         """
+
         self._connection.send_nowait(parse_message(0x09, 0, destination_id, (module_state, pnp_state)))
 
     def __request_reboot(self, id=BROADCAST_ID):

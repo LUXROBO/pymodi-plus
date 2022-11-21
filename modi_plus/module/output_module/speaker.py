@@ -146,6 +146,7 @@ class Speaker(OutputModule):
         :type frequency: int
         :return: None
         """
+
         if isinstance(frequency, str):
             frequency = Speaker.SCALE_TABLE.get(frequency, -1)
 
@@ -165,6 +166,7 @@ class Speaker(OutputModule):
         :return: Frequency value
         :rtype: int
         """
+
         offset = Speaker.PROPERTY_OFFSET_CURRENT_FREQUENCY
         raw = self._get_property(Speaker.PROPERTY_SPEAKER_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -177,6 +179,7 @@ class Speaker(OutputModule):
         :return: Volume value
         :rtype: int
         """
+
         offset = Speaker.PROPERTY_OFFSET_CURRENT_VOLUME
         raw = self._get_property(Speaker.PROPERTY_SPEAKER_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -266,4 +269,5 @@ class Speaker(OutputModule):
 
         :return: None
         """
+
         self.set_tune(0, 0)

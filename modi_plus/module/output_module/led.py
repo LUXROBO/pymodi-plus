@@ -28,6 +28,7 @@ class Led(OutputModule):
         :type color: Tuple[int, int, int]
         :return: None
         """
+
         self._set_property(
             destination_id=self._id,
             property_num=Led.PROPERTY_LED_SET_RGB,
@@ -43,6 +44,7 @@ class Led(OutputModule):
         :return: Red component
         :rtype: int
         """
+
         offset = Led.PROPERTY_OFFSET_RED
         raw = self._get_property(Led.PROPERTY_LED_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -55,6 +57,7 @@ class Led(OutputModule):
         :return: Green component
         :rtype: int
         """
+
         offset = Led.PROPERTY_OFFSET_GREEN
         raw = self._get_property(Led.PROPERTY_LED_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -67,6 +70,7 @@ class Led(OutputModule):
         :return: Blue component
         :rtype: int
         """
+
         offset = Led.PROPERTY_OFFSET_BLUE
         raw = self._get_property(Led.PROPERTY_LED_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -81,6 +85,7 @@ class Led(OutputModule):
         :return: RGB value of the LED set to maximum brightness
         :rtype: None
         """
+
         self.set_rgb(100, 100, 100)
 
     def turn_off(self) -> None:
@@ -88,4 +93,5 @@ class Led(OutputModule):
 
         :return: None
         """
+
         self.set_rgb(0, 0, 0)
