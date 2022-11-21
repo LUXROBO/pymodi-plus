@@ -12,7 +12,7 @@ class Tof(InputModule):
 
     @property
     def distance(self) -> float:
-        """Returns the distance of te object between 0cm and 100cm
+        """Returns the distance of the object between 0cm and 100cm
 
         :return: Distance to object.
         :rtype: float

@@ -57,11 +57,11 @@ class Display(OutputModule):
         Returns the json serialized signal sent to
         the module to display the text
 
-        :param position_x: x coordinate of the desired position
+        :param position_x: X coordinate of the desired position
         :type position_x: int
-        :param position_y: y coordinate of te desired position
+        :param position_y: Y coordinate of te desired position
         :type position_y: int
-        :param variable: variable to display.
+        :param variable: Variable to display.
         :type variable: float
         :return: None
         """
@@ -79,11 +79,11 @@ class Display(OutputModule):
         Returns the json serialized signal sent to
         the module to display the text
 
-        :param position_x: x coordinate of the desired position
+        :param position_x: X coordinate of the desired position
         :type position_x: int
-        :param position_y: y coordinate of te desired position
+        :param position_y: Y coordinate of te desired position
         :type position_y: int
-        :param variable: picture name to display.
+        :param variable: Picture name to display.
         :type variable: float
         :return: None
         """
@@ -100,9 +100,9 @@ class Display(OutputModule):
     def set_offset(self, position_x: int, position_y: int) -> None:
         """Set origin point on the screen
 
-        :param position_x: Xaxis offset on screen
+        :param position_x: X-axis offset on screen
         :type position_x: int
-        :param position_y: Yaxis offset on screen
+        :param position_y: Y-axis offset on screen
         :type position_y: int
         :return: None
         """
@@ -116,9 +116,9 @@ class Display(OutputModule):
     def move_screen(self, move_x: int, move_y: int) -> None:
         """Move the screen by move_x and move_y
 
-        :param move_x: Xaxis movement value
+        :param move_x: X-axis movement value
         :type move_x: int
-        :param move_y: Yaxis movement value
+        :param move_y: Y-axis movement value
         :type move_y: int
         :return: None
         """

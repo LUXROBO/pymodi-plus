@@ -80,9 +80,9 @@ class Speaker(OutputModule):
 
     @property
     def frequency(self) -> int:
-        """Returns current frequency
+        """Returns Current frequency
 
-        :return: frequency value
+        :return: Frequency value
         :rtype: int
         """
         offset = Speaker.PROPERTY_OFFSET_CURRENT_FREQUENCY
@@ -92,7 +92,7 @@ class Speaker(OutputModule):
 
     @property
     def volume(self) -> int:
-        """Returns current volume
+        """Returns Current volume
 
         :return: Volume value
         :rtype: int
@@ -105,11 +105,11 @@ class Speaker(OutputModule):
     def play_melody(self, cmd: int, volume: int, melody_name: str = "") -> None:
         """Play mid file in speaker module
 
-        :param cmd: cmd to play melody (Stop, Start, Pause, Resume).
+        :param cmd: Command to play melody (Stop, Start, Pause, Resume).
         :type cmd: int
-        :param volume: volume of speaker
+        :param volume: Volume of speaker
         :type volume: int
-        :param melody_name: melody file name for playing
+        :param melody_name: Melody file name for playing
         :type melody_name: str
         :return: None
         """
@@ -127,11 +127,11 @@ class Speaker(OutputModule):
     def play_music(self, cmd: int, volume: int, music_name: str = "") -> None:
         """Play wav file in speaker module
 
-        :param cmd: cmd to play music (Stop, Start, Pause, Resume).
+        :param cmd: Command to play music (Stop, Start, Pause, Resume).
         :type cmd: int
-        :param volume: volume of speaker
+        :param volume: Volume of speaker
         :type volume: int
-        :param melody_name: music file name for playing
+        :param melody_name: Music file name for playing
         :type melody_name: str
         :return: None
         """
