@@ -106,31 +106,31 @@ class Module:
         self.is_connected = True
         self.is_usb_connected = False
         self.has_printed = False
-        self.last_updated = time.time()
-        self.connected_time = None
+        self.last_updated_time = time.time()
+        self.first_connected_time = None
         self.__app_version = None
         self.__os_version = None
 
     def __gt__(self, other):
-        if self.connected_time is not None:
-            if other.connected_time is not None:
-                return self.connected_time > other.connected_time
+        if self.first_connected_time is not None:
+            if other.first_connected_time is not None:
+                return self.first_connected_time > other.first_connected_time
             else:
                 return False
         else:
-            if other.connected_time is not None:
+            if other.first_connected_time is not None:
                 return True
             else:
                 return False
 
     def __lt__(self, other):
-        if self.connected_time is not None:
-            if other.connected_time is not None:
-                return self.connected_time < other.connected_time
+        if self.first_connected_time is not None:
+            if other.first_connected_time is not None:
+                return self.first_connected_time < other.first_connected_time
             else:
                 return True
         else:
-            if other.connected_time is not None:
+            if other.first_connected_time is not None:
                 return False
             else:
                 return True

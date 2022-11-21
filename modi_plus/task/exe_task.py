@@ -65,7 +65,7 @@ class ExeTask:
         # Checking starts only when module is registered
         if module_id in (module.id for module in self._modules):
             module = self.__get_module_by_id(module_id)
-            module.last_updated = curr_time
+            module.last_updated_time = curr_time
             module.is_connected = True
 
             if module.module_type == "network" and message["l"] == 5:
@@ -82,7 +82,7 @@ class ExeTask:
 
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
-            if curr_time - module.last_updated > 2:
+            if curr_time - module.last_updated_time > 2:
                 module.is_connected = False
                 module._last_set_message = None
 
@@ -100,7 +100,7 @@ class ExeTask:
         if module_id not in (module.id for module in self._modules):
             new_module = self.__add_new_module(module_type, module_id, module_uuid, module_app_version_info, module_os_version_info)
             new_module.module_type = module_type
-            new_module.connected_time = time.time()
+            new_module.first_connected_time = time.time()
             if module_type == "network":
                 self.__request_esp_version(module_id)
         else:
