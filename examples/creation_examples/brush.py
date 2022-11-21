@@ -6,7 +6,7 @@ from math import sin, radians
 class BrushManager(GameManager):
     def __init__(self, size, imu, button):
         super().__init__(size)
-        self.cursor = Brush(pos=(size[0] // 2, size[1] // 2), render='o')
+        self.cursor = Brush(pos=(size[0] // 2, size[1] // 2), render="o")
         self.imu = imu
         self.button = button
 
@@ -18,7 +18,7 @@ class BrushManager(GameManager):
         self.cursor.y = h - h * sin(radians(-self.imu.roll))
         self.cursor.x = w - w * sin(radians(-self.imu.pitch))
         if self.button.pressed:
-            self.add_object(Brush((self.cursor.x, self.cursor.y), 'x'))
+            self.add_object(Brush((self.cursor.x, self.cursor.y), "x"))
 
 
 class Brush(GameObject):

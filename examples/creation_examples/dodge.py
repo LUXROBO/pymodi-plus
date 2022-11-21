@@ -44,7 +44,7 @@ class DodgeManager(GameManager):
             self.fire.x, self.fire.y = randint(0, 40), 25
         if self.fire.y < 3 and (self.fire.x - 4 <= self.player.x <= self.fire.x + 4):
             self.set_title("GAME OVER")
-            self.set_flag('quit', True)
+            self.set_flag("quit", True)
 
     class GameObject(GameObject):
         def update(self):
