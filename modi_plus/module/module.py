@@ -278,13 +278,11 @@ class ModuleList(list):
     def __getitem__(self, key):
         if int(key) >= len(self):
             start_time = time.time()
-
             # 3s timeout
             while ((time.time() - start_time) < 3) and (int(key) >= len(self)):
                 time.sleep(0.1)
             if int(key) >= len(self):
                 raise Exception("Not enough modules exits!!")
-
         return self.sublist()[key]
 
     def get(self, module_id):
