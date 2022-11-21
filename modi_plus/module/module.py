@@ -75,7 +75,7 @@ class Module:
 
     class Property:
         def __init__(self):
-            self.value = bytearray(12)
+            self.value = None
             self.last_update_time = time.time()
 
     RUN = 0
@@ -103,30 +103,31 @@ class Module:
         self.is_usb_connected = False
         self.has_printed = False
         self.last_updated = time.time()
-        self.first_connected = None
+        self.connected_time = None
         self.__app_version = None
         self.__os_version = None
+        
 
     def __gt__(self, other):
-        if self.first_connected is not None:
-            if other.first_connected is not None:
-                return self.first_connected > other.first_connected
+        if self.connected_time is not None:
+            if other.connected_time is not None:
+                return self.connected_time > other.connected_time
             else:
                 return False
         else:
-            if other.first_connected is not None:
+            if other.connected_time is not None:
                 return True
             else:
                 return False
 
     def __lt__(self, other):
-        if self.first_connected is not None:
-            if other.first_connected is not None:
-                return self.first_connected < other.first_connected
+        if self.connected_time is not None:
+            if other.connected_time is not None:
+                return self.connected_time < other.connected_time
             else:
                 return True
         else:
-            if other.first_connected is not None:
+            if other.connected_time is not None:
                 return False
             else:
                 return True
@@ -219,6 +220,13 @@ class Module:
         last_update = self._properties[property_type].last_update_time
         if time.time() - last_update > 1.5:
             self.__request_property(self._id, property_type)
+
+        if self._properties[property_type].value is None:
+            first_request_time = time.time()
+            while ((time.time() - first_request_time) < 3) and (self._properties[property_type].value is None): # 5sec timeout
+                time.sleep(0.1)
+            if self._properties[property_type].value is None:
+                raise Exception("property initialization failed\nplease check the module connection")
 
         return self._properties[property_type].value
 

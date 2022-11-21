@@ -100,7 +100,7 @@ class ExeTask:
         if module_id not in (module.id for module in self._modules):
             new_module = self.__add_new_module(module_type, module_id, module_uuid, module_app_version_info, module_os_version_info)
             new_module.module_type = module_type
-            new_module.first_connected = time.time()
+            new_module.connection_time = time.time()
             if module_type == "network":
                 self.__request_esp_version(module_id)
         else:
