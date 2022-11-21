@@ -1,7 +1,7 @@
 import unittest
 
-from modi_plus.module.input_module.joystick import Joystick
 from modi_plus.module.module import Module
+from modi_plus.module.input_module.joystick import Joystick
 from modi_plus.util.message_util import parse_get_property_message
 from modi_plus.util.connection_util import MockConn
 

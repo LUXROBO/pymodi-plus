@@ -227,7 +227,7 @@ class Module:
         if self._properties[property_type].value is None:
             first_request_time = time.time()
 
-            # 5sec timeout
+            # 3s timeout
             while ((time.time() - first_request_time) < 3) and (self._properties[property_type].value is None):
                 time.sleep(0.1)
             if self._properties[property_type].value is None:
