@@ -75,8 +75,12 @@ class Module:
 
     class Property:
         def __init__(self):
-            self.value = bytearray(12)
+            self.value = None
             self.last_update_time = time.time()
+
+    class GetValueInitTimeout(Exception):
+        def __init__(self):
+            super().__init__('property initialization failed\nplease check the module connection')
 
     RUN = 0
     WARNING = 1
@@ -102,31 +106,31 @@ class Module:
         self.is_connected = True
         self.is_usb_connected = False
         self.has_printed = False
-        self.last_updated = time.time()
-        self.first_connected = None
+        self.last_updated_time = time.time()
+        self.first_connected_time = None
         self.__app_version = None
         self.__os_version = None
 
     def __gt__(self, other):
-        if self.first_connected is not None:
-            if other.first_connected is not None:
-                return self.first_connected > other.first_connected
+        if self.first_connected_time is not None:
+            if other.first_connected_time is not None:
+                return self.first_connected_time > other.first_connected_time
             else:
                 return False
         else:
-            if other.first_connected is not None:
+            if other.first_connected_time is not None:
                 return True
             else:
                 return False
 
     def __lt__(self, other):
-        if self.first_connected is not None:
-            if other.first_connected is not None:
-                return self.first_connected < other.first_connected
+        if self.first_connected_time is not None:
+            if other.first_connected_time is not None:
+                return self.first_connected_time < other.first_connected_time
             else:
                 return True
         else:
-            if other.first_connected is not None:
+            if other.first_connected_time is not None:
                 return False
             else:
                 return True
@@ -219,6 +223,15 @@ class Module:
         last_update = self._properties[property_type].last_update_time
         if time.time() - last_update > 1.5:
             self.__request_property(self._id, property_type)
+
+        if self._properties[property_type].value is None:
+            first_request_time = time.time()
+
+            # 3s timeout
+            while ((time.time() - first_request_time) < 3) and (self._properties[property_type].value is None):
+                time.sleep(0.1)
+            if self._properties[property_type].value is None:
+                raise Module.GetValueInitTimeout
 
         return self._properties[property_type].value
 
