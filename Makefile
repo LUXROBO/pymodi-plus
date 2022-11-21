@@ -61,7 +61,7 @@ clean-test:
 	rm -fr .pytest_cache
 # check style with flake8
 lint:
-	flake8 modi_plus tests
+	flake8 modi_plus examples tests
 
 # run tests quickly with the default Python
 test:

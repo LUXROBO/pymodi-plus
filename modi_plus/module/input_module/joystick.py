@@ -1,10 +1,16 @@
 """Joystick module."""
 
 import struct
-from modi_plus.module.input_module.input_module import InputModule
+from modi_plus.module.module import InputModule
 
 
 class Joystick(InputModule):
+
+    STATE_UP = 100
+    STATE_DOWN = -100
+    STATE_LEFT = -50
+    STATE_RIGHT = 50
+    STATE_UNPRESSED = 0
 
     PROPERTY_POSITION_STATE = 2
     PROPERTY_DIRECTION_STATE = 3
@@ -40,19 +46,21 @@ class Joystick(InputModule):
         return data
 
     @property
-    def direction(self) -> int:
+    def direction(self) -> str:
         """Returns the direction of the joystick
-        Up : 100
-        Down : -100
-        Right : 50
-        Left : -50
-        None : 0
 
-        :return: The joystick's direction.
-        :rtype: int
+        :return: 'up', 'down', 'left', 'right', 'unpressed'
+        :rtype: str
         """
 
         offset = Joystick.PROPERTY_OFFSET_DIRECTION
         raw = self._get_property(Joystick.PROPERTY_DIRECTION_STATE)
         data = struct.unpack("h", raw[offset:offset + 2])[0]
-        return data
+
+        return {
+            Joystick.STATE_UP: "up",
+            Joystick.STATE_DOWN: "down",
+            Joystick.STATE_LEFT: "left",
+            Joystick.STATE_RIGHT: "right",
+            Joystick.STATE_UNPRESSED: "unpressed"
+        }.get(data)

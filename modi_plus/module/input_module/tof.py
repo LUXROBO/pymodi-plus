@@ -1,7 +1,7 @@
 """Tof module."""
 
 import struct
-from modi_plus.module.input_module.input_module import InputModule
+from modi_plus.module.module import InputModule
 
 
 class Tof(InputModule):
@@ -12,9 +12,9 @@ class Tof(InputModule):
 
     @property
     def distance(self) -> float:
-        """Returns the distance of te object between 0cm and 100cm
+        """Returns the distance of the object between 0cm and 100cm
 
-        :return: Distance to object.
+        :return: The tof's distance to object.
         :rtype: float
         """
 
