@@ -1,6 +1,6 @@
 """Motor module."""
 import struct
-from modi_plus.module.output_module.output_module import OutputModule
+from modi_plus.module.module import OutputModule
 
 
 class Motor(OutputModule):
@@ -21,9 +21,10 @@ class Motor(OutputModule):
     def angle(self) -> int:
         """Returns current angle
 
-        :return: current angle value
+        :return: Current angle value
         :rtype: int
         """
+
         offset = Motor.PROPERTY_OFFSET_CURRENT_ANGLE
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -33,9 +34,10 @@ class Motor(OutputModule):
     def target_angle(self) -> int:
         """Returns target angle
 
-        :return: target angle value
+        :return: Target angle value
         :rtype: int
         """
+
         offset = Motor.PROPERTY_OFFSET_TARGET_ANGLE
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -45,9 +47,10 @@ class Motor(OutputModule):
     def speed(self) -> int:
         """Returns current speed
 
-        :return: current speed value
+        :return: Current speed value
         :rtype: int
         """
+
         offset = Motor.PROPERTY_OFFSET_CURRENT_SPEED
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -57,9 +60,10 @@ class Motor(OutputModule):
     def target_speed(self) -> int:
         """Returns target speed
 
-        :return: target speed value
+        :return: Target speed value
         :rtype: int
         """
+
         offset = Motor.PROPERTY_OFFSET_TARGET_SPEED
         raw = self._get_property(Motor.PROPERTY_MOTOR_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
@@ -74,6 +78,7 @@ class Motor(OutputModule):
         :type target_angle: int
         :return: None
         """
+
         self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE,
@@ -85,7 +90,7 @@ class Motor(OutputModule):
     def set_speed(self, target_speed: int) -> None:
         """Sets the speed of the motor
 
-        :param target_speed: Velocity to set the motor.
+        :param target_speed: Speed to set the motor.
         :type target_speed: int
         :return: None
         """
@@ -106,6 +111,7 @@ class Motor(OutputModule):
         :type target_angle: int
         :return: None
         """
+
         self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE_APPEND,
@@ -118,6 +124,7 @@ class Motor(OutputModule):
 
         :return: None
         """
+
         self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_STOP,

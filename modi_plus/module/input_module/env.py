@@ -1,7 +1,7 @@
 """Env module."""
 
 import struct
-from modi_plus.module.input_module.input_module import InputModule
+from modi_plus.module.module import InputModule
 
 
 class Env(InputModule):
@@ -17,7 +17,7 @@ class Env(InputModule):
     def intensity(self) -> int:
         """Returns the value of intensity between 0 and 100
 
-        :return: Intensity.
+        :return: The environment's intensity.
         :rtype: int
         """
 
@@ -30,7 +30,7 @@ class Env(InputModule):
     def temperature(self) -> int:
         """Returns the value of temperature between 0 and 100
 
-        :return: Temperature.
+        :return: The environment's temperature.
         :rtype: int
         """
 
@@ -43,7 +43,7 @@ class Env(InputModule):
     def humidity(self) -> int:
         """Returns the value of humidity between 0 and 100
 
-        :return: Humidity.
+        :return: The environment's humidity.
         :rtype: int
         """
 
@@ -56,7 +56,7 @@ class Env(InputModule):
     def volume(self) -> int:
         """Returns the value of volume between 0 and 100
 
-        :return: Volume.
+        :return: The environment's volume.
         :rtype: int
         """
 

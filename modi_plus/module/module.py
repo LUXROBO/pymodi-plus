@@ -3,36 +3,36 @@
 import time
 import json
 from os import path
+from typing import Tuple, Union
 from importlib.util import find_spec
 
-from modi_plus.util.message_util import parse_get_property_message
+from modi_plus.util.message_util import parse_get_property_message, parse_set_property_message
 
 BROADCAST_ID = 0xFFF
 
 
 def get_module_type_from_uuid(uuid):
-    hexadecimal = hex(uuid).lstrip("0x")
-    type_indicator = str(hexadecimal)[:4]
+    module_type_num = uuid >> 32
     module_type = {
         # Setup modules
-        "0000": "network",
-        "0010": "battery",
+        0: "network",
+        0x10: "battery",
 
         # Input modules
-        "2000": "env",
-        "2010": "imu",
-        "2030": "button",
-        "2040": "dial",
-        "2070": "joystick",
-        "2080": "tof",
+        0x2000: "env",
+        0x2010: "imu",
+        0x2030: "button",
+        0x2040: "dial",
+        0x2070: "joystick",
+        0x2080: "tof",
 
         # Output modules
-        "4000": "display",
-        "4010": "motor",
-        "4011": "motor",
-        "4020": "led",
-        "4030": "speaker",
-    }.get(type_indicator)
+        0x4000: "display",
+        0x4010: "motor",
+        0x4011: "motor",
+        0x4020: "led",
+        0x4030: "speaker",
+    }.get(module_type_num)
     return "network" if module_type is None else module_type
 
 
@@ -44,6 +44,7 @@ def get_module_from_name(module_type: str):
     :return: Module corresponding to the type
     :rtype: Module
     """
+
     module_type = module_type[0].lower() + module_type[1:]
     module_name = module_type[0].upper() + module_type[1:]
     module_module = find_spec(f"modi_plus.module.input_module.{module_type}")
@@ -75,8 +76,12 @@ class Module:
 
     class Property:
         def __init__(self):
-            self.value = bytearray(12)
+            self.value = None
             self.last_update_time = time.time()
+
+    class GetValueInitTimeout(Exception):
+        def __init__(self):
+            super().__init__('property initialization failed\nplease check the module connection')
 
     RUN = 0
     WARNING = 1
@@ -91,7 +96,7 @@ class Module:
     def __init__(self, id_, uuid, connection_task):
         self._id = id_
         self._uuid = uuid
-        self._conn = connection_task
+        self._connection = connection_task
 
         self.module_type = str()
         self._properties = dict()
@@ -102,31 +107,31 @@ class Module:
         self.is_connected = True
         self.is_usb_connected = False
         self.has_printed = False
-        self.last_updated = time.time()
-        self.first_connected = None
+        self.last_updated_time = time.time()
+        self.first_connected_time = None
         self.__app_version = None
         self.__os_version = None
 
     def __gt__(self, other):
-        if self.first_connected is not None:
-            if other.first_connected is not None:
-                return self.first_connected > other.first_connected
+        if self.first_connected_time is not None:
+            if other.first_connected_time is not None:
+                return self.first_connected_time > other.first_connected_time
             else:
                 return False
         else:
-            if other.first_connected is not None:
+            if other.first_connected_time is not None:
                 return True
             else:
                 return False
 
     def __lt__(self, other):
-        if self.first_connected is not None:
-            if other.first_connected is not None:
-                return self.first_connected < other.first_connected
+        if self.first_connected_time is not None:
+            if other.first_connected_time is not None:
+                return self.first_connected_time < other.first_connected_time
             else:
                 return True
         else:
-            if other.first_connected is not None:
+            if other.first_connected_time is not None:
                 return False
             else:
                 return True
@@ -220,7 +225,37 @@ class Module:
         if time.time() - last_update > 1.5:
             self.__request_property(self._id, property_type)
 
+        if self._properties[property_type].value is None:
+            first_request_time = time.time()
+
+            # 3s timeout
+            while ((time.time() - first_request_time) < 3) and (self._properties[property_type].value is None):
+                time.sleep(0.1)
+            if self._properties[property_type].value is None:
+                raise Module.GetValueInitTimeout
+
         return self._properties[property_type].value
+
+    def _set_property(self, destination_id: int,
+                      property_num: int,
+                      property_values: Union[Tuple, str]) -> None:
+        """Send the message of set_property command to the module
+
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param property_num: Property Type
+        :type property_num: int
+        :param property_values: Property Values
+        :type property_values: Tuple
+        :return: None
+        """
+
+        message = parse_set_property_message(
+            destination_id,
+            property_num,
+            property_values,
+        )
+        self._connection.send(message)
 
     def update_property(self, property_type: int, property_value: bytearray) -> None:
         """ Update property value and time
@@ -230,6 +265,7 @@ class Module:
         :param property_value: Value to update the property
         :type property_value: bytearray
         """
+
         if property_type not in self._properties:
             self._properties[property_type] = self.Property()
         self._properties[property_type].value = property_value
@@ -244,9 +280,22 @@ class Module:
         :type property_type: int
         :return: None
         """
+
         self._properties[property_type].last_update_time = time.time()
         req_prop_msg = parse_get_property_message(destination_id, property_type, self.prop_samp_freq)
-        self._conn.send(req_prop_msg)
+        self._connection.send(req_prop_msg)
+
+
+class SetupModule(Module):
+    pass
+
+
+class InputModule(Module):
+    pass
+
+
+class OutputModule(Module):
+    pass
 
 
 class ModuleList(list):
@@ -262,6 +311,16 @@ class ModuleList(list):
     def __eq__(self, other):
         return super().__eq__(other)
 
+    def __getitem__(self, key):
+        if int(key) >= len(self):
+            start_time = time.time()
+            # 3s timeout
+            while ((time.time() - start_time) < 3) and (int(key) >= len(self)):
+                time.sleep(0.1)
+            if int(key) >= len(self):
+                raise Exception("Not enough modules exits!!")
+        return self.sublist()[key]
+
     def get(self, module_id):
         for module in self.sublist():
             if module.id == module_id:
@@ -274,6 +333,7 @@ class ModuleList(list):
 
         :return: Module
         """
+
         if self.__module_type:
             modules = list(filter(lambda module: module.module_type == self.__module_type, self.__src))
         else:

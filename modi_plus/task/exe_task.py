@@ -21,6 +21,7 @@ class ExeTask:
         :param delay: time value to wait in seconds
         :type delay: float
         """
+
         json_pkt = self._connection.recv()
         if not json_pkt:
             time.sleep(delay)
@@ -39,6 +40,7 @@ class ExeTask:
         :return: a function the corresponds to the command code
         :rtype: Callable[[Dict[str, int]], None]
         """
+
         return {
             0x00: self.__update_health,
             0x05: self.__update_assign_id,
@@ -58,6 +60,7 @@ class ExeTask:
         :type message: Dictionary
         :return: None
         """
+
         # Record battery information and user code state
         module_id = message["s"]
         curr_time = time.time()
@@ -65,7 +68,7 @@ class ExeTask:
         # Checking starts only when module is registered
         if module_id in (module.id for module in self._modules):
             module = self.__get_module_by_id(module_id)
-            module.last_updated = curr_time
+            module.last_updated_time = curr_time
             module.is_connected = True
 
             if module.module_type == "network" and message["l"] == 5:
@@ -82,7 +85,7 @@ class ExeTask:
 
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
-            if curr_time - module.last_updated > 2:
+            if curr_time - module.last_updated_time > 2:
                 module.is_connected = False
                 module._last_set_message = None
 
@@ -92,6 +95,7 @@ class ExeTask:
         :type message: Dictionary
         :return: None
         """
+
         module_id = message["s"]
         module_uuid, module_os_version_info, module_app_version_info = unpack_data(message["b"], (6, 2, 2))
         module_type = get_module_type_from_uuid(module_uuid)
@@ -100,7 +104,7 @@ class ExeTask:
         if module_id not in (module.id for module in self._modules):
             new_module = self.__add_new_module(module_type, module_id, module_uuid, module_app_version_info, module_os_version_info)
             new_module.module_type = module_type
-            new_module.first_connected = time.time()
+            new_module.first_connected_time = time.time()
             if module_type == "network":
                 self.__request_esp_version(module_id)
         else:
@@ -166,6 +170,7 @@ class ExeTask:
         :type pnp_state: int
         :return: None
         """
+
         self._connection.send_nowait(parse_message(0x09, 0, destination_id, (module_state, pnp_state)))
 
     def __request_reboot(self, id=BROADCAST_ID):
