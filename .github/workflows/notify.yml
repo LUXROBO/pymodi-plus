@@ -1,0 +1,62 @@
+
+name: Notify
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: send-release-email
+      uses: dawidd6/action-send-mail@v2.2.0
+      with:
+        server_address: smtp-mail.outlook.com
+        server_port: 587
+        username: ${{ secrets.MAIL_USERNAME }}
+        password: ${{ secrets.MAIL_PASSWORD }}
+        subject: PyMODI+ ${{ github.ref_name }} is released!!
+        body: file://HISTORY.md
+        to: module.dev@luxrobo.com
+        from: PyMODI+
+
+    - name: notify-teams-edu-channel
+      uses: aliencube/microsoft-teams-actions@v0.8.0
+      with:
+        webhook_uri: ${{ secrets.EDU_TECH_TEAMS_WEBHOOK }}
+        title: PyMODI+ ${{ github.ref_name }} is released!!
+        summary: PyMODI+ ${{ github.ref_name }} is released!!
+        text: |
+          PyMODI+ ${{ github.ref_name }} 버전이 릴리즈 되었습니다.
+
+          pip install pymodi_plus --upgrade 명령어로 업데이트하여 이용하실 수 있습니다.
+
+          변경 사항은 릴리즈 노트를 참고해 주시기 바랍니다.
+
+          문서: https://pymodi-plus.readthedocs.io
+
+          릴리즈 노트: https://github.com/LUXROBO/pymodi-plus/releases
+
+    - name: notify-teams-module-channel
+      uses: aliencube/microsoft-teams-actions@v0.8.0
+      with:
+        webhook_uri: ${{ secrets.MODULE_DEV_TEAMS_WEBHOOK }}
+        title: PyMODI+ ${{ github.ref_name }} is released!!
+        summary: PyMODI+ ${{ github.ref_name }} is released!!
+        text: |
+          PyMODI+ ${{ github.ref_name }} 버전이 릴리즈 되었습니다.
+
+          pip install pymodi_plus --upgrade 명령어로 업데이트하여 이용하실 수 있습니다.
+
+          변경 사항은 릴리즈 노트를 참고해 주시기 바랍니다.
+
+          문서: https://pymodi-plus.readthedocs.io
+
+          릴리즈 노트: https://github.com/LUXROBO/pymodi-plus/releases

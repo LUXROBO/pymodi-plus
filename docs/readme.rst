@@ -79,7 +79,7 @@ Install the latest PyMODI+ if you haven’t installed it yet:
 
 ::
 
-   python -m pip install pymodi_plus --user --upgrade
+   python -m pip install pymodi-plus --user --upgrade
 
 Usage
 -----
@@ -177,8 +177,8 @@ To see what other commands are available,
    :target: https://pypi.python.org/pypi/pymodi-plus
 .. |PyPI Release (latest by date)| image:: https://img.shields.io/github/v/release/LUXROBO/pymodi-plus?style=flat-square
    :target: https://pypi.python.org/pypi/pymodi-plus
-.. |Read the Docs (version)| image:: https://img.shields.io/readthedocs/pymodi-plus/master?style=flat-square
-   :target: https://pymodi-plus.readthedocs.io/en/master/?badge=master
+.. |Read the Docs (version)| image:: https://img.shields.io/readthedocs/pymodi-plus/latest?style=flat-square
+   :target: https://pymodi-plus.readthedocs.io/en/latest/?badge=master
 .. |GitHub Workflow Status (Build)| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Build%20Status/master?style=flat-square
    :target: https://github.com/LUXROBO/pymodi-plus/actions
 .. |GitHub LICENSE| image:: https://img.shields.io/github/license/LUXROBO/pymodi-plus?style=flat-square&color=blue

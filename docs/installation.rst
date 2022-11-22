@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install pymodi_plus, run this command in your terminal:
+To install PyMODI+, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install pymodi_plus --user
+    $ pip install pymodi-plus --user
 
-This is the preferred method to install pymodi_plus, as it will always install the most recent stable release.
+This is the preferred method to install PyMODI+, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,7 +26,7 @@ you through the process.
 From sources
 ------------
 
-The sources for pymodi_plus can be downloaded from the `Github repo`_.
+The sources for PyMODI+ can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
