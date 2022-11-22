@@ -61,7 +61,7 @@ python --version
 
 Install the latest PyMODI+ if you haven't installed it yet:
 ```
-python -m pip install pymodi_plus --user --upgrade
+python -m pip install pymodi-plus --user --upgrade
 ```
 
 Usage

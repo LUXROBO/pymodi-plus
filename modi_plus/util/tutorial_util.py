@@ -346,7 +346,7 @@ class Tutor:
             """
         )
         print(
-            'You can check more functions at "pymodi_plus.readthedocs.io/en/latest"'
+            'You can check more functions at "pymodi-plus.readthedocs.io/en/latest"'
         )
 
         input("You have completed the tutorial. Press ENTER to exit: ")
