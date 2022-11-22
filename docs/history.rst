@@ -4,7 +4,7 @@ History
 0.0.1 (2022-11-15)
 ------------------
 
-1. Release initial version of the package on in-house GitHub
+-  Release initial version of the package on in-house GitHub
 
 .. _section-1:
 
@@ -13,4 +13,17 @@ History
 
 -  Feature
 
-1. change python minimum version to v3.9
+1. Change python minimum version to 3.9
+
+.. _section-2:
+
+0.1.0 (2022-11-22)
+------------------
+
+-  Feature
+
+1. Add creation examples (brush, dodge)
+2. Add network, battery module functions
+3. Fix ``play_music`` function on speaker module
+4. Add preset resource on speaker and display module
+5. Add search module time and timeout exception
