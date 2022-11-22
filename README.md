@@ -2,7 +2,7 @@
 
 [![Python Versions](https://img.shields.io/pypi/pyversions/pymodi-plus.svg?style=flat-square)](https://pypi.python.org/pypi/pymodi-plus)
 [![PyPI Release (latest by date)](https://img.shields.io/github/v/release/LUXROBO/pymodi-plus?style=flat-square)](https://pypi.python.org/pypi/pymodi-plus)
-[![Read the Docs (version)](https://img.shields.io/readthedocs/pymodi-plus/master?style=flat-square)](https://pymodi-plus.readthedocs.io/en/master/?badge=master)
+[![Read the Docs (version)](https://img.shields.io/readthedocs/pymodi-plus/latest?style=flat-square)](https://pymodi-plus.readthedocs.io/en/latest/?badge=master)
 [![GitHub Workflow Status (Build)](https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Build%20Status/master?style=flat-square)](https://github.com/LUXROBO/pymodi-plus/actions)
 [![GitHub LICENSE](https://img.shields.io/github/license/LUXROBO/pymodi-plus?style=flat-square&color=blue)](https://github.com/LUXROBO/pymodi-plus/blob/master/LICENSE)
 [![Lines of Code](https://img.shields.io/tokei/lines/github/LUXROBO/pymodi-plus?style=flat-square)](https://github.com/LUXROBO/pymodi-plus/tree/master/modi_plus)
