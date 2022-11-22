@@ -80,7 +80,7 @@ coverage:
 
 # generate Sphinx HTML documentation, including API docs
 docs:
-	rm -f docs/modi_plus.md
+	rm -f docs/modi_plus.*
 	rm -f docs/modules.md
 	sphinx-apidoc -o docs/ modi_plus
 	$(MAKE) -C docs clean
