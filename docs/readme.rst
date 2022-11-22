@@ -1,3 +1,9 @@
+.. container::
+
+   |Python Versions| |PyPI Release (latest by date)| |Read the Docs
+   (version)| |GitHub Workflow Status (Build)| |GitHub LICENSE| |Lines
+   of Code|
+
 Description
 ===========
 
@@ -9,6 +15,44 @@ Features
 PyMODI+ provides a control of modular electronics. \* Platform agnostic
 control of modules through serial connection \* Utilities of wireless
 connection with BLE (Bluetooth Low Engery)
+
+Build Status
+------------
+
++-----------------------------------+-----------------------------------+
+| master                            | develop                           |
++===================================+===================================+
+| |GitHub Workflow Status|          | |image1|                          |
++-----------------------------------+-----------------------------------+
+
+System Support
+--------------
+
++-----------------+-----------------+-----------------+-----------------+
+| System          | 3.9             | 3.10            | 3.11            |
++=================+=================+=================+=================+
+| Linux           | |GitHub         | |GitHub         | |GitHub         |
+|                 | Workflow Status | Workflow Status | Workflow Status |
+|                 | (branch)|       | (branch)|       | (branch)|       |
++-----------------+-----------------+-----------------+-----------------+
+| Mac OS          | |image2|        | |image3|        | |image4|        |
++-----------------+-----------------+-----------------+-----------------+
+| Windows         | |image5|        | |image6|        | |image7|        |
++-----------------+-----------------+-----------------+-----------------+
+
+Contribution Guidelines
+-----------------------
+
+We appreciate all contributions. If you are planning to report bugs,
+please do so `here <https://github.com/LUXROBO/pymodi/issues>`__. Feel
+free to fork our repository to your local environment, and please send
+us feedback by filing an issue.
+
+If you want to contribute to pymodi, be sure to review the contribution
+guidelines. This project adheres to pymodi’s code of conduct. By
+participating, you are expected to uphold this code.
+
+|Contributor Covenant|
 
 Installation
 ------------
@@ -128,3 +172,36 @@ To see what other commands are available,
 ::
 
    $ python -m modi_plus --help
+
+.. |Python Versions| image:: https://img.shields.io/pypi/pyversions/pymodi-plus.svg?style=flat-square
+   :target: https://pypi.python.org/pypi/pymodi-plus
+.. |PyPI Release (latest by date)| image:: https://img.shields.io/github/v/release/LUXROBO/pymodi-plus?style=flat-square
+   :target: https://pypi.python.org/pypi/pymodi-plus
+.. |Read the Docs (version)| image:: https://img.shields.io/readthedocs/pymodi-plus/master?style=flat-square
+   :target: https://pymodi-plus.readthedocs.io/en/master/?badge=master
+.. |GitHub Workflow Status (Build)| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Build%20Status/master?style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |GitHub LICENSE| image:: https://img.shields.io/github/license/LUXROBO/pymodi-plus?style=flat-square&color=blue
+   :target: https://github.com/LUXROBO/pymodi-plus/blob/master/LICENSE
+.. |Lines of Code| image:: https://img.shields.io/tokei/lines/github/LUXROBO/pymodi-plus?style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/tree/master/modi_plus
+.. |GitHub Workflow Status| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Build%20Status?label=master&branch=master&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image1| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Build%20Status?label=develop&branch=develop&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |GitHub Workflow Status (branch)| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Ubuntu)/master?label=Unit%20Test%20%28Ubuntu%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image2| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image3| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image4| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image5| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image6| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image7| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |Contributor Covenant| image:: https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg?style=flat-square
+   :target: CODE_OF_CONDUCT.md
