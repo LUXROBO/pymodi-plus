@@ -28,17 +28,18 @@ Build Status
 System Support
 --------------
 
-+-----------------+-----------------+-----------------+-----------------+
-| System          | 3.9             | 3.10            | 3.11            |
-+=================+=================+=================+=================+
-| Linux           | |GitHub         | |GitHub         | |GitHub         |
-|                 | Workflow Status | Workflow Status | Workflow Status |
-|                 | (branch)|       | (branch)|       | (branch)|       |
-+-----------------+-----------------+-----------------+-----------------+
-| Mac OS          | |image2|        | |image3|        | |image4|        |
-+-----------------+-----------------+-----------------+-----------------+
-| Windows         | |image5|        | |image6|        | |image7|        |
-+-----------------+-----------------+-----------------+-----------------+
++-----------+-----------+-----------+-----------+-----------+-----------+
+| System    | 3.7       | 3.8       | 3.9       | 3.10      | 3.11      |
++===========+===========+===========+===========+===========+===========+
+| Linux     | |GitHub   | |GitHub   | |GitHub   | |GitHub   | |GitHub   |
+|           | Workflow  | Workflow  | Workflow  | Workflow  | Workflow  |
+|           | Status    | Status    | Status    | Status    | Status    |
+|           | (branch)| | (branch)| | (branch)| | (branch)| | (branch)| |
++-----------+-----------+-----------+-----------+-----------+-----------+
+| Mac OS    | |image2|  | |image3|  | |image4|  | |image5|  | |image6|  |
++-----------+-----------+-----------+-----------+-----------+-----------+
+| Windows   | |image7|  | |image8|  | |image9|  | |image10| | |image11| |
++-----------+-----------+-----------+-----------+-----------+-----------+
 
 Contribution Guidelines
 -----------------------
@@ -66,8 +67,8 @@ Installation
 
 ::
 
-   # Install new python environment for PyMODI+ package, choose python version >= 3.9
-   conda create --name pymodi_plus python=3.9
+   # Install new python environment for PyMODI+ package, choose python version >= 3.7
+   conda create --name pymodi_plus python=3.7
 
    # After you properly install the python environment, activate it
    conda activate pymodi_plus
@@ -197,11 +198,19 @@ To see what other commands are available,
    :target: https://github.com/LUXROBO/pymodi-plus/actions
 .. |image4| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image5| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+.. |image5| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image6| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+.. |image6| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
    :target: https://github.com/LUXROBO/pymodi-plus/actions
 .. |image7| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image8| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image9| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image10| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+   :target: https://github.com/LUXROBO/pymodi-plus/actions
+.. |image11| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
    :target: https://github.com/LUXROBO/pymodi-plus/actions
 .. |Contributor Covenant| image:: https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg?style=flat-square
    :target: CODE_OF_CONDUCT.md

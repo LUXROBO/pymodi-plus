@@ -1,5 +1,6 @@
 import os
 import sys
+import platform
 from typing import List
 
 import serial.tools.list_ports as stl
@@ -57,16 +58,23 @@ def ask_modi_device(devices):
     return devices[int(i)].lstrip("MODI+_")
 
 
+def get_platform():
+    if platform.uname().node == "raspberrypi":
+        return "rpi"
+    elif platform.uname().node == "penguin":
+        return "chrome"
+    return sys.platform
+
+
+def get_ble_task_path():
+    mod_path = {
+        "win32": "modi_plus.task.ble_task.ble_task_win",
+        "darwin": "modi_plus.task.ble_task.ble_task_mac",
+        "linux": "modi_plus.task.ble_task.ble_task_linux",
+        "rpi": "modi_plus.task.ble_task.ble_task_rpi",
+    }.get(get_platform())
+    return mod_path
+
+
 class MODIConnectionError(Exception):
     pass
-
-
-class MockConn:
-    def __init__(self):
-        self.send_list = []
-
-    def send(self, pkt):
-        self.send_list.append(pkt)
-
-    def recv(self):
-        return "Test"

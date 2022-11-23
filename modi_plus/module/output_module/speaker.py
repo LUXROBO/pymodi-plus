@@ -134,9 +134,6 @@ class Speaker(OutputModule):
     def preset_musics() -> List[str]:
         return list(Speaker.PRESET_MUSIC.keys())
 
-    def __init__(self, id_, uuid, connection_task):
-        super().__init__(id_, uuid, connection_task)
-
     def set_tune(self, frequency, volume) -> None:
         """Set tune for the speaker
 

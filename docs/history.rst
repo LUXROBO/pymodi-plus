@@ -27,3 +27,12 @@ History
 3. Fix ``play_music`` function on speaker module
 4. Add preset resource on speaker and display module
 5. Add search module time and timeout exception
+
+.. _section-3:
+
+0.1.1 (2022-11-23)
+------------------
+
+-  Feature
+
+1. Change python minimum version to 3.7
