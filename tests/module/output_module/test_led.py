@@ -44,6 +44,7 @@ class TestLed(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Led.PROPERTY_LED_STATE, self.led.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_get_green(self):
         """Test set_green method with none input."""
@@ -53,6 +54,7 @@ class TestLed(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Led.PROPERTY_LED_STATE, self.led.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_get_blue(self):
         """Test get blue method with none input."""
@@ -62,6 +64,7 @@ class TestLed(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Led.PROPERTY_LED_STATE, self.led.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_turn_on(self):
         """Test turn_on method."""

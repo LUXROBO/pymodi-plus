@@ -28,6 +28,7 @@ class TestTof(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Tof.PROPERTY_DISTANCE_STATE, self.tof.prop_samp_freq)
         )
+        self.assertEqual(_, 0.0)
 
 
 if __name__ == "__main__":

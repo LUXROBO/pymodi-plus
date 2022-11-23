@@ -42,6 +42,7 @@ class TestMotor(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Motor.PROPERTY_MOTOR_STATE, self.motor.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_set_angle(self):
         """Test set_angle method."""
@@ -65,6 +66,7 @@ class TestMotor(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Motor.PROPERTY_MOTOR_STATE, self.motor.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
 
 if __name__ == "__main__":

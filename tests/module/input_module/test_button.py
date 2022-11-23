@@ -38,6 +38,7 @@ class TestButton(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Button.PROPERTY_BUTTON_STATE, self.button.prop_samp_freq)
         )
+        self.assertEqual(_, False)
 
     def test_get_pressed(self):
         """Test get_pressed method."""
@@ -47,6 +48,7 @@ class TestButton(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Button.PROPERTY_BUTTON_STATE, self.button.prop_samp_freq)
         )
+        self.assertEqual(_, False)
 
     def test_get_toggled(self):
         """Test get_toggled method."""
@@ -56,6 +58,7 @@ class TestButton(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Button.PROPERTY_BUTTON_STATE, self.button.prop_samp_freq)
         )
+        self.assertEqual(_, False)
 
 
 if __name__ == "__main__":

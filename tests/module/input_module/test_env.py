@@ -28,6 +28,7 @@ class TestEnv(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_get_humidity(self):
         """Test get_humidity method."""
@@ -37,6 +38,7 @@ class TestEnv(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_get_intensity(self):
         """Test get_intensity method."""
@@ -46,6 +48,7 @@ class TestEnv(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_get_volume(self):
         """Test get_volume method."""
@@ -55,6 +58,7 @@ class TestEnv(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
 
 if __name__ == "__main__":

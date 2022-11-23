@@ -28,6 +28,7 @@ class TestJoystick(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_POSITION_STATE, self.joystick.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_get_y(self):
         """Test get_y method."""
@@ -37,6 +38,7 @@ class TestJoystick(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_POSITION_STATE, self.joystick.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_get_dirction(self):
         """Test get_dirction method."""
@@ -46,6 +48,7 @@ class TestJoystick(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_DIRECTION_STATE, self.joystick.prop_samp_freq)
         )
+        self.assertEqual(_, "unpressed")
 
 
 if __name__ == "__main__":
