@@ -6,6 +6,7 @@ import struct
 import platform
 from importlib import import_module as im
 
+from modi_plus.task.serialport_task import SerialportTask
 from modi_plus.module.module import SetupModule
 
 
@@ -20,14 +21,20 @@ def check_connection(func):
                 return "chrome"
             return sys.platform
 
-        mod_path = {
-            "win32": "modi_plus.task.ble_task.ble_task_win",
-            "darwin": "modi_plus.task.ble_task.ble_task_mac",
-            "rpi": "modi_plus.task.ble_task.ble_task_rpi",
-        }.get(get_platform())
+        os = get_platform()
 
-        if isinstance(args[0]._connection, im(mod_path).BleTask):
-            raise ValueError(f"{func.__name__} doen't supported for BLE connection")
+        if os == "linux":
+            if not isinstance(args[0]._connection, SerialportTask):
+                raise ValueError(f"{func.__name__} doen't supported except for serialport connection")
+        else:
+            mod_path = {
+                "win32": "modi_plus.task.ble_task.ble_task_win",
+                "darwin": "modi_plus.task.ble_task.ble_task_mac",
+                "rpi": "modi_plus.task.ble_task.ble_task_rpi",
+            }.get(os)
+
+            if isinstance(args[0]._connection, im(mod_path).BleTask):
+                raise ValueError(f"{func.__name__} doen't supported for ble connection")
         return func(*args, **kwargs)
     return wrapper
 
