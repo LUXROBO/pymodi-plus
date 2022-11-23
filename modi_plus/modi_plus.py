@@ -69,8 +69,8 @@ class MODIPlus:
             self.network_uuids[network_uuid] = self
 
             os = get_platform()
-            if os == "chrome":
-                raise ValueError(f"Invalid connection type: {connection_type}")
+            if os == "chrome" or os == "linux":
+                raise ValueError(f"{os} doen't supported for ble connection")
 
             return im(get_ble_task_path()).BleTask(verbose, network_uuid)
         else:
