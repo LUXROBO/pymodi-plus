@@ -1,8 +1,6 @@
 """Main MODI+ module."""
 
-import sys
 import time
-import platform
 import atexit
 from typing import Optional
 
