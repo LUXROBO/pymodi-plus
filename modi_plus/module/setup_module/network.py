@@ -1,12 +1,10 @@
 """Network module."""
 
-import sys
 import time
 import struct
-import platform
 from importlib import import_module as im
 
-from modi_plus.task.serialport_task import SerialportTask
+from modi_plus.util.connection_util import get_ble_task_path
 from modi_plus.module.module import SetupModule
 
 
@@ -14,27 +12,8 @@ def check_connection(func):
     """Check connection decorator
     """
     def wrapper(*args, **kwargs):
-        def get_platform():
-            if platform.uname().node == "raspberrypi":
-                return "rpi"
-            elif platform.uname().node == "penguin":
-                return "chrome"
-            return sys.platform
-
-        os = get_platform()
-
-        if os == "linux":
-            if not isinstance(args[0]._connection, SerialportTask):
-                raise ValueError(f"{func.__name__} doen't supported except for serialport connection")
-        else:
-            mod_path = {
-                "win32": "modi_plus.task.ble_task.ble_task_win",
-                "darwin": "modi_plus.task.ble_task.ble_task_mac",
-                "rpi": "modi_plus.task.ble_task.ble_task_rpi",
-            }.get(os)
-
-            if isinstance(args[0]._connection, im(mod_path).BleTask):
-                raise ValueError(f"{func.__name__} doen't supported for ble connection")
+        if isinstance(args[0]._connection, im(get_ble_task_path()).BleTask):
+            raise ValueError(f"{func.__name__} doen't supported for ble connection")
         return func(*args, **kwargs)
     return wrapper
 
