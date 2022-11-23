@@ -2,7 +2,9 @@
 
 import time
 import struct
-from modi_plus.task.serialport_task import SerialportTask
+from importlib import import_module as im
+
+from modi_plus.util.connection_util import get_ble_task_path
 from modi_plus.module.module import SetupModule
 
 
@@ -10,13 +12,16 @@ def check_connection(func):
     """Check connection decorator
     """
     def wrapper(*args, **kwargs):
-        if not isinstance(args[0]._connection, SerialportTask):
-            raise ValueError(f"{func.__name__} doen't supported except for serialport connection")
+        if isinstance(args[0]._connection, im(get_ble_task_path()).BleTask):
+            raise ValueError(f"{func.__name__} doen't supported for ble connection")
         return func(*args, **kwargs)
     return wrapper
 
 
 class Network(SetupModule):
+
+    STATE_TRUE = 100
+    STATE_FALSE = 0
 
     STATE_JOYSTICK_UP = 100
     STATE_JOYSTICK_DOWN = -100
@@ -80,7 +85,7 @@ class Network(SetupModule):
         self.__esp_version = version
 
     @check_connection
-    def received_data(self, index):
+    def received_data(self, index) -> int:
         """Returns received data from MODI Play
 
         :param index: Data's index
@@ -97,7 +102,7 @@ class Network(SetupModule):
         return data
 
     @check_connection
-    def button_pressed(self, index):
+    def button_pressed(self, index) -> bool:
         """Returns whether MODI Play button is pressed
 
         :param index: Button's index
@@ -111,7 +116,7 @@ class Network(SetupModule):
 
         raw = self._get_property(property_num)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
-        return data
+        return data == Network.STATE_TRUE
 
     @check_connection
     def button_clicked(self, index):
@@ -128,7 +133,7 @@ class Network(SetupModule):
 
         raw = self._get_property(property_num)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
-        return data
+        return data == Network.STATE_TRUE
 
     @check_connection
     def button_double_clicked(self, index):
@@ -145,7 +150,7 @@ class Network(SetupModule):
 
         raw = self._get_property(property_num)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
-        return data
+        return data == Network.STATE_TRUE
 
     @check_connection
     def switch_toggled(self, index):
@@ -162,7 +167,7 @@ class Network(SetupModule):
 
         raw = self._get_property(property_num)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
-        return data
+        return data == Network.STATE_TRUE
 
     @check_connection
     def dial_turn(self, index):
@@ -326,7 +331,7 @@ class Network(SetupModule):
         :return: None
         """
 
-        property_num = Network.PROPERTY_NETWORK_SEND_TEXT + 0x100 * index
+        property_num = Network.PROPERTY_NETWORK_SEND_DATA + 0x100 * index
 
         self._set_property(
             destination_id=self._id,

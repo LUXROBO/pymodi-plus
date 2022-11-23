@@ -44,6 +44,14 @@ modi\_plus.util.tutorial\_util module
    :undoc-members:
    :show-inheritance:
 
+modi\_plus.util.unittest\_util module
+-------------------------------------
+
+.. automodule:: modi_plus.util.unittest_util
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 modi\_plus.util.usage\_util module
 ----------------------------------
 

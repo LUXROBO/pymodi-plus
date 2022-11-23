@@ -137,7 +137,7 @@ if not os.environ.get('READTHEDOCS'):
 # -- Options for HTMLHelp output ---------------------------------------
 
 # Output file base name for HTML help builder.
-# htmlhelp_basename = 'modi_plusdoc'
+htmlhelp_basename = 'modi_plusdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------

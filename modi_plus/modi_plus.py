@@ -1,8 +1,6 @@
 """Main MODI+ module."""
 
-import sys
 import time
-import platform
 import atexit
 from typing import Optional
 
@@ -23,6 +21,7 @@ from modi_plus.module.output_module.speaker import Speaker
 
 from modi_plus.module.module import get_module_type_from_uuid, ModuleList
 from modi_plus._exe_thread import ExeThread
+from modi_plus.util.connection_util import get_platform, get_ble_task_path
 
 
 class MODIPlus:
@@ -67,18 +66,13 @@ class MODIPlus:
                 raise ValueError("Network UUID not specified!")
             self.network_uuids[network_uuid] = self
 
-            os = self.__get_platform()
-            if os == "chrome":
-                raise ValueError(f"Invalid conn mode: {connection_type}")
+            os = get_platform()
+            if os == "chrome" or os == "linux":
+                raise ValueError(f"{os} doen't supported for ble connection")
 
-            mod_path = {
-                "win32": "modi_plus.task.ble_task.ble_task_win",
-                "darwin": "modi_plus.task.ble_task.ble_task_mac",
-                "rpi": "modi_plus.task.ble_task.ble_task_rpi",
-            }.get(os)
-            return im(mod_path).BleTask(verbose, network_uuid)
+            return im(get_ble_task_path()).BleTask(verbose, network_uuid)
         else:
-            raise ValueError(f"Invalid conn mode: {connection_type}")
+            raise ValueError(f"Invalid connection type: {connection_type}")
 
     def open(self):
         atexit.register(self.close)
@@ -107,13 +101,6 @@ class MODIPlus:
         :rtype: str if msg exists, else None
         """
         return self._connection.recv()
-
-    def __get_platform(self):
-        if platform.uname().node == "raspberrypi":
-            return "rpi"
-        elif platform.uname().node == "penguin":
-            return "chrome"
-        return sys.platform
 
     def __get_module_by_uuid(self, module_uuid):
         for module in self._modules:

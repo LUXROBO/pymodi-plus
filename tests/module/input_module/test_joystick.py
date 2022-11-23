@@ -1,9 +1,8 @@
 import unittest
 
-from modi_plus.module.module import Module
 from modi_plus.module.input_module.joystick import Joystick
 from modi_plus.util.message_util import parse_get_property_message
-from modi_plus.util.connection_util import MockConn
+from modi_plus.util.unittest_util import MockConnection, MockJoystick
 
 
 class TestJoystick(unittest.TestCase):
@@ -12,9 +11,9 @@ class TestJoystick(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures, if any."""
 
-        self.conn = MockConn()
-        mock_args = (-1, -1, self.conn)
-        self.joystick = Joystick(*mock_args)
+        self.connection = MockConnection()
+        mock_args = (-1, -1, self.connection)
+        self.joystick = MockJoystick(*mock_args)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -24,41 +23,32 @@ class TestJoystick(unittest.TestCase):
     def test_get_x(self):
         """Test get_x method."""
 
-        try:
-            _ = self.joystick.x
-        except Module.GetValueInitTimeout:
-            pass
-
+        _ = self.joystick.x
         self.assertEqual(
-            self.conn.send_list[0],
+            self.connection.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_POSITION_STATE, self.joystick.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_get_y(self):
         """Test get_y method."""
 
-        try:
-            _ = self.joystick.y
-        except Module.GetValueInitTimeout:
-            pass
-
+        _ = self.joystick.y
         self.assertEqual(
-            self.conn.send_list[0],
+            self.connection.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_POSITION_STATE, self.joystick.prop_samp_freq)
         )
+        self.assertEqual(_, 0)
 
     def test_get_dirction(self):
         """Test get_dirction method."""
 
-        try:
-            _ = self.joystick.direction
-        except Module.GetValueInitTimeout:
-            pass
-
+        _ = self.joystick.direction
         self.assertEqual(
-            self.conn.send_list[0],
+            self.connection.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_DIRECTION_STATE, self.joystick.prop_samp_freq)
         )
+        self.assertEqual(_, "unpressed")
 
 
 if __name__ == "__main__":
