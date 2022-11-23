@@ -111,6 +111,7 @@ class Module:
         self.first_connected_time = None
         self.__app_version = None
         self.__os_version = None
+        self._enable_get_property_timeout = True
 
     def __gt__(self, other):
         if self.first_connected_time is not None:
@@ -173,13 +174,9 @@ class Module:
 
     @property
     def is_up_to_date(self):
-        root_path = (
-            path.join(
-                path.dirname(__file__),
-                "..", "assets"
-            )
-        )
+        root_path = path.join(path.dirname(__file__), "..", "assets")
         version_path = path.join(root_path, "version.txt")
+
         with open(version_path, "r") as version_file:
             try:
                 version_info = json.loads(version_file.read())
@@ -226,13 +223,16 @@ class Module:
             self.__request_property(self._id, property_type)
 
         if self._properties[property_type].value is None:
-            first_request_time = time.time()
+            if self._enable_get_property_timeout:
+                first_request_time = time.time()
 
-            # 3s timeout
-            while ((time.time() - first_request_time) < 3) and (self._properties[property_type].value is None):
-                time.sleep(0.1)
-            if self._properties[property_type].value is None:
-                raise Module.GetValueInitTimeout
+                # 3s timeout
+                while self._properties[property_type].value is None:
+                    if time.time() - first_request_time > 3:
+                        raise Module.GetValueInitTimeout
+                    time.sleep(0.1)
+            else:
+                return bytearray(12)
 
         return self._properties[property_type].value
 

@@ -1,9 +1,8 @@
 import unittest
 
-from modi_plus.module.module import Module
 from modi_plus.module.output_module.led import Led
 from modi_plus.util.message_util import parse_set_property_message, parse_get_property_message
-from modi_plus.util.connection_util import MockConn
+from modi_plus.util.unittest_util import MockConnection, MockLed
 
 
 class TestLed(unittest.TestCase):
@@ -12,9 +11,9 @@ class TestLed(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures, if any."""
 
-        self.conn = MockConn()
-        self.mock_kwargs = -1, -1, self.conn
-        self.led = Led(*self.mock_kwargs)
+        self.connection = MockConnection()
+        self.mock_kwargs = -1, -1, self.connection
+        self.led = MockLed(*self.mock_kwargs)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
@@ -33,51 +32,39 @@ class TestLed(unittest.TestCase):
             (("u16", red), ("u16", green), ("u16", blue), )
         )
         sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
+        while self.connection.send_list:
+            sent_messages.append(self.connection.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
     def test_get_red(self):
         """Test get_red method with none input."""
 
-        try:
-            _ = self.led.red
-        except Module.GetValueInitTimeout:
-            pass
-
+        _ = self.led.red
         self.assertEqual(
-            self.conn.send_list[0],
+            self.connection.send_list[0],
             parse_get_property_message(-1, Led.PROPERTY_LED_STATE, self.led.prop_samp_freq)
         )
 
     def test_get_green(self):
         """Test set_green method with none input."""
 
-        try:
-            _ = self.led.green
-        except Module.GetValueInitTimeout:
-            pass
-
+        _ = self.led.green
         self.assertEqual(
-            self.conn.send_list[0],
+            self.connection.send_list[0],
             parse_get_property_message(-1, Led.PROPERTY_LED_STATE, self.led.prop_samp_freq)
         )
 
     def test_get_blue(self):
         """Test get blue method with none input."""
 
-        try:
-            _ = self.led.blue
-        except Module.GetValueInitTimeout:
-            pass
-
+        _ = self.led.blue
         self.assertEqual(
-            self.conn.send_list[0],
+            self.connection.send_list[0],
             parse_get_property_message(-1, Led.PROPERTY_LED_STATE, self.led.prop_samp_freq)
         )
 
-    def test_on(self):
-        """Test on method."""
+    def test_turn_on(self):
+        """Test turn_on method."""
 
         red = 100
         green = 100
@@ -88,12 +75,12 @@ class TestLed(unittest.TestCase):
             (("u16", red), ("u16", green), ("u16", blue), )
         )
         sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
+        while self.connection.send_list:
+            sent_messages.append(self.connection.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
-    def test_off(self):
-        """Test off method."""
+    def test_turn_off(self):
+        """Test turn_off method."""
 
         red = 0
         green = 0
@@ -104,8 +91,8 @@ class TestLed(unittest.TestCase):
             (("u16", red), ("u16", green), ("u16", blue), )
         )
         sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
+        while self.connection.send_list:
+            sent_messages.append(self.connection.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
 

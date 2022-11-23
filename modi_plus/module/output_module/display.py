@@ -174,8 +174,8 @@ class Display(OutputModule):
     def preset_pictures() -> List[str]:
         return list(Display.PRESET_PICTURE.keys())
 
-    def __init__(self, id_, uuid, msg_send_q):
-        super().__init__(id_, uuid, msg_send_q)
+    def __init__(self, id_, uuid, connection_task):
+        super().__init__(id_, uuid, connection_task)
         self._text = ""
 
     @property

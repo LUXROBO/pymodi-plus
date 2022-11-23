@@ -2,7 +2,7 @@ import unittest
 
 from modi_plus.module.output_module.display import Display
 from modi_plus.util.message_util import parse_set_property_message
-from modi_plus.util.connection_util import MockConn
+from modi_plus.util.unittest_util import MockConnection, MockDisplay
 
 
 class TestDisplay(unittest.TestCase):
@@ -11,17 +11,17 @@ class TestDisplay(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures, if any."""
 
-        self.conn = MockConn()
-        self.mock_kwargs = [-1, -1, self.conn]
-        self.display = Display(*self.mock_kwargs)
+        self.connection = MockConnection()
+        self.mock_kwargs = [-1, -1, self.connection]
+        self.display = MockDisplay(*self.mock_kwargs)
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
         del self.display
 
-    def test_set_text(self):
-        """Test set_text method."""
+    def test_write_text(self):
+        """Test write_text method."""
 
         mock_text = "abcd"
         self.display.write_text(mock_text)
@@ -30,12 +30,12 @@ class TestDisplay(unittest.TestCase):
             (("string", mock_text), )
         )
         sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
+        while self.connection.send_list:
+            sent_messages.append(self.connection.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
-    def test_show_variable(self):
-        """Test set_variable method."""
+    def test_write_variable(self):
+        """Test write_variable method."""
 
         mock_variable = 123
         mock_position = 5
@@ -45,8 +45,8 @@ class TestDisplay(unittest.TestCase):
             (("u8", mock_position), ("u8", mock_position), ("float", mock_variable), )
         )
         sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
+        while self.connection.send_list:
+            sent_messages.append(self.connection.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
     def test_reset(self):
@@ -58,8 +58,8 @@ class TestDisplay(unittest.TestCase):
             (("u8", 0), )
         )
         sent_messages = []
-        while self.conn.send_list:
-            sent_messages.append(self.conn.send_list.pop())
+        while self.connection.send_list:
+            sent_messages.append(self.connection.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
 
