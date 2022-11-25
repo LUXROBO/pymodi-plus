@@ -1,4 +1,5 @@
 import modi_plus
+import time
 
 """
 Example script for the usage of tof module
@@ -11,3 +12,4 @@ if __name__ == "__main__":
 
     while True:
         print(f"Distance(cm): {tof.distance:<10}                ", end="\r")
+        time.sleep(0.02)

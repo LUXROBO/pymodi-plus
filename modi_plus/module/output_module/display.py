@@ -6,6 +6,8 @@ from modi_plus.module.module import OutputModule
 
 class Display(OutputModule):
 
+    STATE_TEXT_SPLIT_LEN = 24
+
     PROPERTY_DISPLAY_WRITE_TEXT = 17
     PROPERTY_DISPLAY_DRAW_DOT = 18
     PROPERTY_DISPLAY_DRAW_PICTURE = 19
@@ -194,22 +196,20 @@ class Display(OutputModule):
         :return: None
         """
 
-        string_cursor = 0
+        n = Display.STATE_TEXT_SPLIT_LEN
         encoding_data = str.encode(text)
-        if len(encoding_data) >= 24:
-            for num in range(len(encoding_data) // 24):
-                self._set_property(
-                    self._id,
-                    Display.PROPERTY_DISPLAY_WRITE_TEXT,
-                    property_values=(("bytes", encoding_data[string_cursor:string_cursor + 24]), )
-                )
-                string_cursor += 24
+        splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
+        for index, data in enumerate(splited_data):
+            send_data = data
+            if index == len(splited_data) -1:
+                send_data = send_data + bytes(0)
 
-        self._set_property(
-            self._id,
-            Display.PROPERTY_DISPLAY_WRITE_TEXT,
-            property_values=(("bytes", encoding_data[string_cursor:] + bytes(0)), )
-        )
+            self._set_property(
+                self._id,
+                Display.PROPERTY_DISPLAY_WRITE_TEXT,
+                property_values=(("bytes", send_data), )
+            )
+
         self._text = text
 
     def write_variable(self, x: int, y: int, variable: float) -> None:
