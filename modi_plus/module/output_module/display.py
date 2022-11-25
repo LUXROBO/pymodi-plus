@@ -11,7 +11,7 @@ class Display(OutputModule):
     PROPERTY_DISPLAY_DRAW_PICTURE = 19
     PROPERTY_DISPLAY_RESET = 21
     PROPERTY_DISPLAY_WRITE_VARIABLE = 22
-    PROPERTY_DISPLAY_SET_PROPERTY = 25
+    PROPERTY_DISPLAY_SET_OFFSET = 25
     PROPERTY_DISPLAY_MOVE_SCREEN = 26
 
     PRESET_PICTURE = {
@@ -179,8 +179,12 @@ class Display(OutputModule):
         self._text = ""
 
     @property
-    def text(self):
+    def text(self) -> str:
         return self._text
+
+    @text.setter
+    def text(self, text: str) -> None:
+        self.write_text(text)
 
     def write_text(self, text: str) -> None:
         """Show the input string on the display.
@@ -197,14 +201,14 @@ class Display(OutputModule):
                 self._set_property(
                     self._id,
                     Display.PROPERTY_DISPLAY_WRITE_TEXT,
-                    property_values=(("bytes", encoding_data[string_cursor:string_cursor + 24]),)
+                    property_values=(("bytes", encoding_data[string_cursor:string_cursor + 24]), )
                 )
                 string_cursor += 24
 
         self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_WRITE_TEXT,
-            property_values=(("bytes", encoding_data[string_cursor:] + bytes(0)),)
+            property_values=(("bytes", encoding_data[string_cursor:] + bytes(0)), )
         )
         self._text = text
 
@@ -225,7 +229,7 @@ class Display(OutputModule):
             Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
             property_values=(("u8", x),
                              ("u8", y),
-                             ("float", variable),)
+                             ("float", variable), )
         )
         self._text += str(variable)
 
@@ -252,7 +256,7 @@ class Display(OutputModule):
                              ("u8", y),
                              ("u8", 96),
                              ("u8", 96),
-                             ("string", file_name),)
+                             ("string", file_name), )
         )
 
     def set_offset(self, x: int, y: int) -> None:
@@ -267,9 +271,8 @@ class Display(OutputModule):
 
         self._set_property(
             self.id,
-            Display.PROPERTY_DISPLAY_SET_PROPERTY,
-            property_values=(("s8", x),
-                             ("s8", y),)
+            Display.PROPERTY_DISPLAY_SET_OFFSET,
+            property_values=(("s8", x), ("s8", y), )
         )
 
     def move_screen(self, x: int, y: int) -> None:
@@ -285,8 +288,7 @@ class Display(OutputModule):
         self._set_property(
             self.id,
             Display.PROPERTY_DISPLAY_MOVE_SCREEN,
-            property_values=(("s8", x),
-                             ("s8", y),)
+            property_values=(("s8", x), ("s8", y), )
         )
 
     def reset(self) -> None:
@@ -298,6 +300,6 @@ class Display(OutputModule):
         self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_RESET,
-            property_values=(("u8", 0),)
+            property_values=(("u8", 0), )
         )
         self._text = ""

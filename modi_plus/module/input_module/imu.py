@@ -1,6 +1,7 @@
 """Imu module."""
 
 import struct
+from typing import Tuple
 from modi_plus.module.module import InputModule
 
 
@@ -62,14 +63,14 @@ class Imu(InputModule):
         return data
 
     @property
-    def angle(self) -> tuple:
+    def angle(self) -> Tuple[float, float, float]:
         """Returns the roll, pitch and yaw angle of the imu
 
         :return: The imu's angles of roll, pitch and yaw.
         :rtype: tuple
         """
 
-        return (self.roll, self.pitch, self.yaw)
+        return self.roll, self.pitch, self.yaw
 
     @property
     def angular_vel_x(self) -> float:
@@ -111,14 +112,14 @@ class Imu(InputModule):
         return data
 
     @property
-    def angular_velocity(self) -> tuple:
+    def angular_velocity(self) -> Tuple[float, float, float]:
         """Returns the angular velocity about x, y and z axis
 
         :return: The imu's angular velocity the about x, y and z axis.
         :rtype: tuple
         """
 
-        return (self.angular_vel_x, self.angular_vel_y, self.angular_vel_z)
+        return self.angular_vel_x, self.angular_vel_y, self.angular_vel_z
 
     @property
     def acceleration_x(self) -> float:
@@ -160,14 +161,14 @@ class Imu(InputModule):
         return data
 
     @property
-    def acceleration(self) -> tuple:
+    def acceleration(self) -> Tuple[float, float, float]:
         """Returns the acceleration about x, y and z axis
 
         :return: The imu's acceleration the about x, y and z axis.
         :rtype: tuple
         """
 
-        return (self.acceleration_x, self.acceleration_y, self.acceleration_z)
+        return self.acceleration_x, self.acceleration_y, self.acceleration_z
 
     @property
     def vibration(self) -> float:

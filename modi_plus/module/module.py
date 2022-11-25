@@ -81,7 +81,7 @@ class Module:
 
     class GetValueInitTimeout(Exception):
         def __init__(self):
-            super().__init__('property initialization failed\nplease check the module connection')
+            super().__init__("property initialization failed\nplease check the module connection")
 
     RUN = 0
     WARNING = 1

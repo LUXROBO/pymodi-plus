@@ -10,8 +10,5 @@ if __name__ == "__main__":
     env = bundle.envs[0]
 
     while True:
-        print("humidity: {0:<10} temp: {1:<10} "
-              "intensity: {2:<10} Volume: {3:<10}".format(env.humidity,
-                                                          env.temperature,
-                                                          env.intensity,
-                                                          env.volume), end="\r")
+        print(f"humidity(%): {env.humidity:<10} temperature(°C): {env.temperature:<10} "
+              f"intensity(%): {env.intensity:<10} Volume(%): {env.volume:<10}", end="\r")

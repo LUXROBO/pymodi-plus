@@ -10,7 +10,7 @@ if __name__ == "__main__":
     bundle = modi_plus.MODIPlus()
     display = bundle.displays[0]
 
-    display.write_text("Bouncing ball simulation...")
+    display.text = "Bouncing ball simulation..."
     time.sleep(3)
 
     vel = (1, 1)

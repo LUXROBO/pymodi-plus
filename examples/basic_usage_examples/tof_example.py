@@ -10,4 +10,4 @@ if __name__ == "__main__":
     tof = bundle.tofs[0]
 
     while True:
-        print("Distance: {0:<10}".format(tof.distance), end="\r")
+        print(f"Distance(cm): {tof.distance:<10}                ", end="\r")
