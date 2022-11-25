@@ -120,6 +120,36 @@ class TestImu(unittest.TestCase):
         )
         self.assertEqual(_, 0.0)
 
+    def test_get_angle(self):
+        """Test get_yaw method."""
+
+        _ = self.imu.angle
+        self.assertEqual(
+            self.connection.send_list[0],
+            parse_get_property_message(-1, Imu.PROPERTY_ANGLE_STATE, self.imu.prop_samp_freq)
+        )
+        self.assertEqual(_, (0.0, 0.0, 0.0))
+
+    def test_get_angular_velocity(self):
+        """Test get_angular_velocity method."""
+
+        _ = self.imu.angular_velocity
+        self.assertEqual(
+            self.connection.send_list[0],
+            parse_get_property_message(-1, Imu.PROPERTY_GYRO_STATE, self.imu.prop_samp_freq)
+        )
+        self.assertEqual(_, (0.0, 0.0, 0.0))
+
+    def test_get_acceleration(self):
+        """Test get_acceleration method."""
+
+        _ = self.imu.acceleration
+        self.assertEqual(
+            self.connection.send_list[0],
+            parse_get_property_message(-1, Imu.PROPERTY_ACC_STATE, self.imu.prop_samp_freq)
+        )
+        self.assertEqual(_, (0.0, 0.0, 0.0))
+
 
 if __name__ == "__main__":
     unittest.main()

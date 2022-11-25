@@ -201,7 +201,7 @@ class Display(OutputModule):
         splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
         for index, data in enumerate(splited_data):
             send_data = data
-            if index == len(splited_data) -1:
+            if index == len(splited_data) - 1:
                 send_data = send_data + bytes(0)
 
             self._set_property(

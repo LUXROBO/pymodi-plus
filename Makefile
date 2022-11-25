@@ -1,5 +1,5 @@
 .PHONY: clean clean-test clean-pyc clean-build docs
-.DEFAULT_GOAL := install
+.DEFAULT_GOAL := build
 
 ifeq ($(shell which python3),)
 	MODI_PYTHON = python
@@ -55,6 +55,13 @@ lint:
 test:
 	$(MODI_PYTHON) setup.py test
 
+# check code coverage quickly with the default Python
+coverage:
+	coverage run --source modi_plus setup.py test
+	coverage report -m
+	coverage html
+	$(BROWSER) htmlcov/index.html
+
 # generate Sphinx HTML documentation, including API docs
 docs:
 	rm -f docs/modi_plus.*
@@ -77,3 +84,5 @@ dist: clean
 # install the package to the active Python's site-packages
 install: clean
 	$(MODI_PYTHON) setup.py install
+
+build: lint test
