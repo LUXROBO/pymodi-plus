@@ -1,5 +1,7 @@
 """Motor module."""
+
 import struct
+from typing import Tuple
 from modi_plus.module.module import OutputModule
 
 
@@ -30,6 +32,17 @@ class Motor(OutputModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @angle.setter
+    def angle(self, angle_value: Tuple[int, int]) -> None:
+        """Sets the angle of the motor
+
+        :param angle_value: Value of angle and speed to reach target angle
+        :type angle_value: Tuple[int, int]
+        :return: None
+        """
+
+        self.set_angle(angle_value[0], angle_value[1])
+
     @property
     def target_angle(self) -> int:
         """Returns target angle
@@ -56,6 +69,17 @@ class Motor(OutputModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @speed.setter
+    def speed(self, target_speed: int) -> None:
+        """Sets the speed of the motor
+
+        :param target_speed: Speed to set the motor.
+        :type target_speed: int
+        :return: None
+        """
+
+        self.set_speed(target_speed)
+
     @property
     def target_speed(self) -> int:
         """Returns target speed
@@ -75,7 +99,7 @@ class Motor(OutputModule):
         :param target_angle: Angle to set the motor.
         :type target_angle: int
         :param target_speed: Speed to reach target angle.
-        :type target_angle: int
+        :type target_speed: int
         :return: None
         """
 
@@ -83,9 +107,8 @@ class Motor(OutputModule):
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE,
             property_values=(("u16", target_angle),
-                             ("u16", target_speed))
+                             ("u16", target_speed), )
         )
-        self._target_angle = target_angle
 
     def set_speed(self, target_speed: int) -> None:
         """Sets the speed of the motor
@@ -98,9 +121,8 @@ class Motor(OutputModule):
         self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_SPEED,
-            property_values=(("s32", target_speed),)
+            property_values=(("s32", target_speed), )
         )
-        self._target_speed = target_speed
 
     def append_angle(self, target_angle: int, target_speed: int = 70) -> None:
         """append the angle form current angle of the motor
@@ -108,7 +130,7 @@ class Motor(OutputModule):
         :param target_angle: Angle to append the motor angle.
         :type target_angle: int
         :param target_speed: Speed to reach target angle.
-        :type target_angle: int
+        :type target_speed: int
         :return: None
         """
 
@@ -116,7 +138,7 @@ class Motor(OutputModule):
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE_APPEND,
             property_values=(("s16", target_angle),
-                             ("u16", target_speed))
+                             ("u16", target_speed), )
         )
 
     def stop(self) -> None:

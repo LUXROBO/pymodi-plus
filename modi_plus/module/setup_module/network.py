@@ -85,7 +85,7 @@ class Network(SetupModule):
         self.__esp_version = version
 
     @check_connection
-    def received_data(self, index) -> int:
+    def received_data(self, index: int = 0) -> int:
         """Returns received data from MODI Play
 
         :param index: Data's index
@@ -102,7 +102,7 @@ class Network(SetupModule):
         return data
 
     @check_connection
-    def button_pressed(self, index) -> bool:
+    def button_pressed(self, index: int = 0) -> bool:
         """Returns whether MODI Play button is pressed
 
         :param index: Button's index
@@ -119,7 +119,7 @@ class Network(SetupModule):
         return data == Network.STATE_TRUE
 
     @check_connection
-    def button_clicked(self, index):
+    def button_clicked(self, index: int = 0) -> bool:
         """Returns whether MODI Play button is clicked
 
         :param index: Button's index
@@ -136,7 +136,7 @@ class Network(SetupModule):
         return data == Network.STATE_TRUE
 
     @check_connection
-    def button_double_clicked(self, index):
+    def button_double_clicked(self, index: int = 0) -> bool:
         """Returns whether MODI Play button is double clicked
 
         :param index: Button's index
@@ -153,7 +153,7 @@ class Network(SetupModule):
         return data == Network.STATE_TRUE
 
     @check_connection
-    def switch_toggled(self, index):
+    def switch_toggled(self, index: int = 0) -> bool:
         """Returns whether MODI Play switch is toggled
 
         :param index: Switch's index
@@ -170,7 +170,7 @@ class Network(SetupModule):
         return data == Network.STATE_TRUE
 
     @check_connection
-    def dial_turn(self, index):
+    def dial_turn(self, index: int = 0) -> int:
         """Returns the current degree of MODI Play dial
 
         :param index: Dial's index
@@ -187,7 +187,7 @@ class Network(SetupModule):
         return data
 
     @check_connection
-    def joystick_direction(self, index):
+    def joystick_direction(self, index: int = 0) -> str:
         """Returns the direction of the MODI Play joystick
 
         :param index: Joystick's index
@@ -211,7 +211,7 @@ class Network(SetupModule):
         }.get(data)
 
     @check_connection
-    def slider_position(self, index):
+    def slider_position(self, index: int = 0) -> int:
         """Returns the current percentage of MODI Play slider
 
         :param index: Slider's index
@@ -229,7 +229,7 @@ class Network(SetupModule):
 
     @property
     @check_connection
-    def time_up(self):
+    def time_up(self) -> bool:
         """Returns if the MODI Play timer ticks
 
         :return: True if timer is up
@@ -245,11 +245,11 @@ class Network(SetupModule):
 
     @property
     @check_connection
-    def imu_roll(self):
+    def imu_roll(self) -> int:
         """Returns the roll angle of the MODI Play imu
 
         :return: Roll angle.
-        :rtype: float
+        :rtype: int
         """
 
         property_num = Network.PROPERTY_NETWORK_IMU
@@ -261,11 +261,11 @@ class Network(SetupModule):
 
     @property
     @check_connection
-    def imu_pitch(self):
+    def imu_pitch(self) -> int:
         """Returns the pitch angle of the MODI Play imu
 
         :return: Pitch angle.
-        :rtype: float
+        :rtype: int
         """
 
         property_num = Network.PROPERTY_NETWORK_IMU
@@ -277,11 +277,11 @@ class Network(SetupModule):
 
     @property
     @check_connection
-    def imu_yaw(self):
+    def imu_yaw(self) -> int:
         """Returns the yaw angle of the MODI Play imu
 
         :return: Yaw angle.
-        :rtype: float
+        :rtype: int
         """
 
         property_num = Network.PROPERTY_NETWORK_IMU
@@ -293,13 +293,7 @@ class Network(SetupModule):
 
     @property
     @check_connection
-    def imu_direction(self):
-        """Returns the direction of the MODI Play imu
-
-        :return: Direction.
-        :rtype: float
-        """
-
+    def imu_direction(self) -> str:
         """Returns the direction of the MODI Play imu
 
         :return: 'front', 'rear', 'left', 'right', 'origin'
@@ -321,7 +315,7 @@ class Network(SetupModule):
         }.get(data)
 
     @check_connection
-    def send_data(self, index, data):
+    def send_data(self, index: int, data: int) -> None:
         """Send text to MODI Play
 
         :param index: Data's index
@@ -340,7 +334,7 @@ class Network(SetupModule):
         )
 
     @check_connection
-    def send_text(self, text):
+    def send_text(self, text: str) -> None:
         """Send text to MODI Play
 
         :param text: Text to send.
@@ -355,7 +349,7 @@ class Network(SetupModule):
         )
 
     @check_connection
-    def buzzer_on(self):
+    def buzzer_on(self) -> None:
         """Turns on MODI Play buzzer
 
         :return: None
@@ -372,7 +366,7 @@ class Network(SetupModule):
         )
 
     @check_connection
-    def buzzer_off(self):
+    def buzzer_off(self) -> None:
         """Turns off MODI Play buzzer
 
         :return: None
@@ -386,7 +380,7 @@ class Network(SetupModule):
         self.__buzzer_flag = False
 
     @check_connection
-    def take_picture(self):
+    def take_picture(self) -> None:
         """Takes a picture on MODI Play
 
         :return: None

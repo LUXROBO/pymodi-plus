@@ -1,7 +1,7 @@
 """Speaker module."""
 
 import struct
-from typing import List
+from typing import List, Tuple, Union
 from modi_plus.module.module import OutputModule
 
 
@@ -134,27 +134,20 @@ class Speaker(OutputModule):
     def preset_musics() -> List[str]:
         return list(Speaker.PRESET_MUSIC.keys())
 
-    def set_tune(self, frequency, volume) -> None:
+    @property
+    def tune(self) -> Tuple[int, int]:
+        return self.frequency, self.volume
+
+    @tune.setter
+    def tune(self, tune_value: Tuple[Union[int, str], int]) -> None:
         """Set tune for the speaker
 
-        :param frequency: Frequency value
-        :type frequency: int
-        :param frequency: Volume value
-        :type frequency: int
+        :param tune_value: Value of frequency and volume
+        :type tune_value: Tuple[Union[int, str], int]
         :return: None
         """
 
-        if isinstance(frequency, str):
-            frequency = Speaker.SCALE_TABLE.get(frequency, -1)
-
-        if frequency < 0:
-            raise ValueError("Not a supported frequency value")
-
-        self._set_property(
-            destination_id=self._id,
-            property_num=Speaker.PROPERTY_SPEAKER_SET_TUNE,
-            property_values=(("u16", frequency), ("u16", volume),)
-        )
+        self.set_tune(tune_value[0], tune_value[1])
 
     @property
     def frequency(self) -> int:
@@ -169,6 +162,16 @@ class Speaker(OutputModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @frequency.setter
+    def frequency(self, frequency_value: int) -> None:
+        """Set the frequency for the speaker
+
+        :param frequency_value: Frequency to set
+        :type frequency_value: int
+        :return: None
+        """
+        self.tune = frequency_value, self.volume
+
     @property
     def volume(self) -> int:
         """Returns Current volume
@@ -181,6 +184,38 @@ class Speaker(OutputModule):
         raw = self._get_property(Speaker.PROPERTY_SPEAKER_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
+
+    @volume.setter
+    def volume(self, volume_value: int) -> None:
+        """Set the volume for the speaker
+
+        :param volume_value: Volume to set
+        :type volume_value: int
+        :return: None
+        """
+        self.tune = self.frequency, volume_value
+
+    def set_tune(self, frequency: Union[int, str], volume: int) -> None:
+        """Set tune for the speaker
+
+        :param frequency: Frequency value
+        :type frequency: int
+        :param volume: Volume value
+        :type volume: int
+        :return: None
+        """
+
+        if isinstance(frequency, str):
+            frequency = Speaker.SCALE_TABLE.get(frequency, -1)
+
+        if frequency < 0:
+            raise ValueError("Not a supported frequency value")
+
+        self._set_property(
+            destination_id=self._id,
+            property_num=Speaker.PROPERTY_SPEAKER_SET_TUNE,
+            property_values=(("u16", frequency), ("u16", volume), )
+        )
 
     def play_music(self, name: str, volume: int) -> None:
         """Play music in speaker module
@@ -204,7 +239,7 @@ class Speaker(OutputModule):
             property_num,
             property_values=(("u8", Speaker.STATE_START),
                              ("u8", volume),
-                             ("string", self.playing_file_name))
+                             ("string", self.playing_file_name), )
         )
 
     def stop_music(self) -> None:
@@ -223,7 +258,7 @@ class Speaker(OutputModule):
             property_num,
             property_values=(("u8", Speaker.STATE_STOP),
                              ("u8", 0),
-                             ("string", self.playing_file_name))
+                             ("string", self.playing_file_name), )
         )
 
     def pause_music(self) -> None:
@@ -242,7 +277,7 @@ class Speaker(OutputModule):
             property_num,
             property_values=(("u8", Speaker.STATE_PAUSE),
                              ("u8", 0),
-                             ("string", self.playing_file_name))
+                             ("string", self.playing_file_name), )
         )
 
     def resume_music(self) -> None:
@@ -261,7 +296,7 @@ class Speaker(OutputModule):
             property_num,
             property_values=(("u8", Speaker.STATE_RESUME),
                              ("u8", 0),
-                             ("string", self.playing_file_name))
+                             ("string", self.playing_file_name), )
         )
 
     def reset(self) -> None:

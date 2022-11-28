@@ -10,21 +10,21 @@ if __name__ == "__main__":
     bundle = modi_plus.MODIPlus()
     led = bundle.leds[0]
 
-    led.set_rgb(0, 0, 255)
-    time.sleep(3)
-    led.set_rgb(0, 0, 0)
+    led.blue = 100
     time.sleep(1)
-    led.set_rgb(0, 255, 0)
-    time.sleep(3)
-    led.set_rgb(0, 0, 0)
+    led.blue = 0
     time.sleep(1)
-    led.set_rgb(255, 0, 0)
-    time.sleep(3)
-    for c in range(255):
-        led.set_rgb(255 - c, c, 0)
+    led.green = 255
+    time.sleep(1)
+    led.green = 0
+    time.sleep(1)
+    led.red = 100
+    time.sleep(1)
+    for c in range(100):
+        led.rgb = 100 - c, c, 0
         time.sleep(0.02)
 
     led.turn_on()
-    time.sleep(2)
+    time.sleep(1)
     led.turn_off()
     time.sleep(1)

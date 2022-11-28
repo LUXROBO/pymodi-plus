@@ -10,7 +10,7 @@ class Joystick(InputModule):
     STATE_DOWN = -100
     STATE_LEFT = -50
     STATE_RIGHT = 50
-    STATE_UNPRESSED = 0
+    STATE_ORIGIN = 0
 
     PROPERTY_POSITION_STATE = 2
     PROPERTY_DIRECTION_STATE = 3
@@ -49,7 +49,7 @@ class Joystick(InputModule):
     def direction(self) -> str:
         """Returns the direction of the joystick
 
-        :return: 'up', 'down', 'left', 'right', 'unpressed'
+        :return: 'up', 'down', 'left', 'right', 'origin'
         :rtype: str
         """
 
@@ -62,5 +62,5 @@ class Joystick(InputModule):
             Joystick.STATE_DOWN: "down",
             Joystick.STATE_LEFT: "left",
             Joystick.STATE_RIGHT: "right",
-            Joystick.STATE_UNPRESSED: "unpressed"
+            Joystick.STATE_ORIGIN: "origin"
         }.get(data)

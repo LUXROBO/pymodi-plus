@@ -7,16 +7,16 @@ Make sure you connect 1 motor module to your network module
 """
 
 if __name__ == "__main__":
-    bundle = modi_plus.MODI()
+    bundle = modi_plus.MODIPlus()
     motor = bundle.motors[0]
 
-    motor.set_angle(0, 70)
+    motor.angle = 0, 70
     time.sleep(3)
-    motor.set_angle(50, 70)
+    motor.angle = 50, 70
     time.sleep(3)
-    motor.set_speed(50)
+    motor.speed = 50
     time.sleep(3)
-    motor.set_speed(100)
+    motor.speed = 100
     time.sleep(3)
-    motor.set_speed(0)
+    motor.speed = 0
     time.sleep(1)

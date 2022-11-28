@@ -28,7 +28,7 @@ class Env(InputModule):
 
     @property
     def temperature(self) -> int:
-        """Returns the value of temperature between 0 and 100
+        """Returns the value of temperature between -10 and 60
 
         :return: The environment's temperature.
         :rtype: int

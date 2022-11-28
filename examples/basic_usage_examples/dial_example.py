@@ -12,5 +12,5 @@ if __name__ == "__main__":
     speak = bundle.speakers[0]
 
     while True:
-        speak.set_tune("DO6", dial.degree)
+        speak.tune = "DO6", dial.turn
         time.sleep(0.02)

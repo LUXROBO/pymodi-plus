@@ -6,12 +6,14 @@ from modi_plus.module.module import OutputModule
 
 class Display(OutputModule):
 
+    STATE_TEXT_SPLIT_LEN = 24
+
     PROPERTY_DISPLAY_WRITE_TEXT = 17
     PROPERTY_DISPLAY_DRAW_DOT = 18
     PROPERTY_DISPLAY_DRAW_PICTURE = 19
     PROPERTY_DISPLAY_RESET = 21
     PROPERTY_DISPLAY_WRITE_VARIABLE = 22
-    PROPERTY_DISPLAY_SET_PROPERTY = 25
+    PROPERTY_DISPLAY_SET_OFFSET = 25
     PROPERTY_DISPLAY_MOVE_SCREEN = 26
 
     PRESET_PICTURE = {
@@ -179,8 +181,12 @@ class Display(OutputModule):
         self._text = ""
 
     @property
-    def text(self):
+    def text(self) -> str:
         return self._text
+
+    @text.setter
+    def text(self, text: str) -> None:
+        self.write_text(text)
 
     def write_text(self, text: str) -> None:
         """Show the input string on the display.
@@ -190,22 +196,20 @@ class Display(OutputModule):
         :return: None
         """
 
-        string_cursor = 0
+        n = Display.STATE_TEXT_SPLIT_LEN
         encoding_data = str.encode(text)
-        if len(encoding_data) >= 24:
-            for num in range(len(encoding_data) // 24):
-                self._set_property(
-                    self._id,
-                    Display.PROPERTY_DISPLAY_WRITE_TEXT,
-                    property_values=(("bytes", encoding_data[string_cursor:string_cursor + 24]),)
-                )
-                string_cursor += 24
+        splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
+        for index, data in enumerate(splited_data):
+            send_data = data
+            if index == len(splited_data) - 1:
+                send_data = send_data + bytes(0)
 
-        self._set_property(
-            self._id,
-            Display.PROPERTY_DISPLAY_WRITE_TEXT,
-            property_values=(("bytes", encoding_data[string_cursor:] + bytes(0)),)
-        )
+            self._set_property(
+                self._id,
+                Display.PROPERTY_DISPLAY_WRITE_TEXT,
+                property_values=(("bytes", send_data), )
+            )
+
         self._text = text
 
     def write_variable(self, x: int, y: int, variable: float) -> None:
@@ -225,7 +229,7 @@ class Display(OutputModule):
             Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
             property_values=(("u8", x),
                              ("u8", y),
-                             ("float", variable),)
+                             ("float", variable), )
         )
         self._text += str(variable)
 
@@ -252,7 +256,7 @@ class Display(OutputModule):
                              ("u8", y),
                              ("u8", 96),
                              ("u8", 96),
-                             ("string", file_name),)
+                             ("string", file_name), )
         )
 
     def set_offset(self, x: int, y: int) -> None:
@@ -267,9 +271,8 @@ class Display(OutputModule):
 
         self._set_property(
             self.id,
-            Display.PROPERTY_DISPLAY_SET_PROPERTY,
-            property_values=(("s8", x),
-                             ("s8", y),)
+            Display.PROPERTY_DISPLAY_SET_OFFSET,
+            property_values=(("s8", x), ("s8", y), )
         )
 
     def move_screen(self, x: int, y: int) -> None:
@@ -285,8 +288,7 @@ class Display(OutputModule):
         self._set_property(
             self.id,
             Display.PROPERTY_DISPLAY_MOVE_SCREEN,
-            property_values=(("s8", x),
-                             ("s8", y),)
+            property_values=(("s8", x), ("s8", y), )
         )
 
     def reset(self) -> None:
@@ -298,6 +300,6 @@ class Display(OutputModule):
         self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_RESET,
-            property_values=(("u8", 0),)
+            property_values=(("u8", 0), )
         )
         self._text = ""

@@ -1,7 +1,6 @@
 """Led module."""
 
 import struct
-
 from typing import Tuple
 from modi_plus.module.module import OutputModule
 
@@ -17,10 +16,11 @@ class Led(OutputModule):
     PROPERTY_OFFSET_BLUE = 4
 
     @property
-    def rgb(self) -> Tuple[float, float, float]:
+    def rgb(self) -> Tuple[int, int, int]:
         return self.red, self.green, self.blue
 
-    def set_rgb(self, red, green, blue) -> None:
+    @rgb.setter
+    def rgb(self, color: Tuple[int, int, int]) -> None:
         """Sets the color of the LED light with given RGB values, and returns
         the current RGB values.
 
@@ -29,13 +29,7 @@ class Led(OutputModule):
         :return: None
         """
 
-        self._set_property(
-            destination_id=self._id,
-            property_num=Led.PROPERTY_LED_SET_RGB,
-            property_values=(("u16", red),
-                             ("u16", green),
-                             ("u16", blue))
-        )
+        self.set_rgb(color[0], color[1], color[2])
 
     @property
     def red(self) -> int:
@@ -50,6 +44,17 @@ class Led(OutputModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @red.setter
+    def red(self, red: int) -> None:
+        """Sets the red component of the LED light by given value
+
+        :param red: Red component to set
+        :type red: int
+        :return: None
+        """
+
+        self.rgb = red, self.green, self.blue
+
     @property
     def green(self) -> int:
         """Returns the current value of the green component of the LED
@@ -62,6 +67,17 @@ class Led(OutputModule):
         raw = self._get_property(Led.PROPERTY_LED_STATE)
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
+
+    @green.setter
+    def green(self, green: int) -> None:
+        """Sets the green component of the LED light by given value
+
+        :param green: Green component to set
+        :type green: int
+        :return: None
+        """
+
+        self.rgb = self.red, green, self.blue
 
     @property
     def blue(self) -> int:
@@ -76,6 +92,38 @@ class Led(OutputModule):
         data = struct.unpack("H", raw[offset:offset + 2])[0]
         return data
 
+    @blue.setter
+    def blue(self, blue: int) -> None:
+        """Sets the blue component of the LED light by given value
+
+        :param blue: Blue component to set
+        :type blue: int
+        :return: None
+        """
+
+        self.rgb = self.red, self.green, blue
+
+    def set_rgb(self, red: int, green: int, blue: int) -> None:
+        """Sets the color of the LED light with given RGB values, and returns
+        the current RGB values.
+
+        :param red: Red component to set
+        :type red: int
+        :param green: Green component to set
+        :type green: int
+        :param blue: Blue component to set
+        :type blue: int
+        :return: None
+        """
+
+        self._set_property(
+            destination_id=self._id,
+            property_num=Led.PROPERTY_LED_SET_RGB,
+            property_values=(("u16", red),
+                             ("u16", green),
+                             ("u16", blue), )
+        )
+
     #
     # Legacy Support
     #
@@ -86,7 +134,7 @@ class Led(OutputModule):
         :rtype: None
         """
 
-        self.set_rgb(100, 100, 100)
+        self.rgb = 100, 100, 100
 
     def turn_off(self) -> None:
         """Turn off led.
@@ -94,4 +142,4 @@ class Led(OutputModule):
         :return: None
         """
 
-        self.set_rgb(0, 0, 0)
+        self.rgb = 0, 0, 0
