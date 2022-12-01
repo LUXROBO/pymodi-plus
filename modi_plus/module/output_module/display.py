@@ -8,6 +8,7 @@ from modi_plus.module.module import OutputModule
 class Display(OutputModule):
 
     STATE_TEXT_SPLIT_LEN = 24
+    STATE_DOT_SPLIT_LEN = 23
 
     PROPERTY_DISPLAY_WRITE_TEXT = 17
     PROPERTY_DISPLAY_DRAW_DOT = 18
@@ -283,20 +284,17 @@ class Display(OutputModule):
                 return
             dot_data = bytes(dot)
 
-        n = 23
+        n = Display.STATE_DOT_SPLIT_LEN
         splited_data = [dot_data[x - n:x] for x in range(n, len(dot_data) + n, n)]
         for index, data in enumerate(splited_data):
             # send_data = data
             send_data = bytes([index]) + data
-            print(send_data)
 
             self._set_property(
                 self._id,
                 Display.PROPERTY_DISPLAY_DRAW_DOT,
                 property_values=(("bytes", send_data), )
             )
-            # time.sleep(0.001)
-
 
     def set_offset(self, x: int, y: int) -> None:
         """Set origin point on the screen
