@@ -1,4 +1,5 @@
 """Display module."""
+import time
 
 from typing import List
 from modi_plus.module.module import OutputModule
@@ -258,6 +259,44 @@ class Display(OutputModule):
                              ("u8", 96),
                              ("string", file_name), )
         )
+
+    def draw_dot(self, dot) -> None:
+        # """Clears the display and show the input picture on the display.
+
+        # :param x: X coordinate of the desired position
+        # :type x: int
+        # :param y: Y coordinate of te desired position
+        # :type y: int
+        # :param name: Picture name to display.
+        # :type name: float
+        # :return: None
+        # """
+
+        dot_data = None
+        if isinstance(dot, str):
+            if dot == "white":
+                dot_data = bytes([0 for i in range(96 * 12)])
+            else:
+                return
+        else:
+            if len(dot) != (96 * 12):
+                return
+            dot_data = bytes(dot)
+
+        n = 23
+        splited_data = [dot_data[x - n:x] for x in range(n, len(dot_data) + n, n)]
+        for index, data in enumerate(splited_data):
+            # send_data = data
+            send_data = bytes([index]) + data
+            print(send_data)
+
+            self._set_property(
+                self._id,
+                Display.PROPERTY_DISPLAY_DRAW_DOT,
+                property_values=(("bytes", send_data), )
+            )
+            # time.sleep(0.001)
+
 
     def set_offset(self, x: int, y: int) -> None:
         """Set origin point on the screen
