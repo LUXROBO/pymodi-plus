@@ -1,6 +1,15 @@
 History
 =======
 
+0.2.1 (2022-12-02)
+------------------
+
+-  Patch
+
+1. Refactor ``write_text`` input type on display module
+
+.. _section-1:
+
 0.2.0 (2022-12-02)
 ------------------
 
@@ -8,7 +17,7 @@ History
 
 1. Refactor getter/setter for each MODI+ module
 
-.. _section-1:
+.. _section-2:
 
 0.1.1 (2022-11-23)
 ------------------
@@ -17,7 +26,7 @@ History
 
 1. Change python minimum version to 3.7
 
-.. _section-2:
+.. _section-3:
 
 0.1.0 (2022-11-22)
 ------------------
@@ -30,7 +39,7 @@ History
 4. Add preset resource on speaker and display module
 5. Add search module time and timeout exception
 
-.. _section-3:
+.. _section-4:
 
 0.0.2 (2022-11-18)
 ------------------
@@ -39,7 +48,7 @@ History
 
 1. Change python minimum version to 3.9
 
-.. _section-4:
+.. _section-5:
 
 0.0.1 (2022-11-15)
 ------------------
