@@ -197,7 +197,7 @@ class Display(OutputModule):
         """
 
         n = Display.STATE_TEXT_SPLIT_LEN
-        encoding_data = str.encode(text)
+        encoding_data = str.encode(str(text))
         splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
         for index, data in enumerate(splited_data):
             send_data = data
