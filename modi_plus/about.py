@@ -1,5 +1,5 @@
 __title__ = "pymodi-plus"
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __author__ = "LUXROBO"
 __email__ = "module.dev@luxrobo.com"
 __description__ = "Python API for controlling modular electronics, MODI+."

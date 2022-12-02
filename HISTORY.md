@@ -1,6 +1,11 @@
 History
 ==
 
+0.2.1 (2022-12-02)
+--
+* Patch
+1. Refactor `write_text` input type on display module
+
 0.2.0 (2022-12-02)
 --
 * Feature
