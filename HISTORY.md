@@ -1,6 +1,11 @@
 History
 ==
 
+0.2.0 (2022-12-02)
+--
+* Feature
+1. Refactor getter/setter for each MODI+ module
+
 0.1.1 (2022-11-23)
 --
 * Feature
