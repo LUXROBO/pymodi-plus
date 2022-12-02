@@ -86,7 +86,7 @@ if __name__ == "__main__":
         print(f"Took {took} seconds to initialize")
         req_tp_msg = parse_message(0x2A, 0, bundle.networks[0].id)
         print(f"request message... {req_tp_msg}")
-        bundle._exe_thrd.close()
+        bundle._exe_thread.close()
         init_time = time.perf_counter()
         bundle.send(req_tp_msg)
         msg = None

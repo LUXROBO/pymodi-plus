@@ -48,7 +48,7 @@ class TestJoystick(unittest.TestCase):
             self.connection.send_list[0],
             parse_get_property_message(-1, Joystick.PROPERTY_DIRECTION_STATE, self.joystick.prop_samp_freq)
         )
-        self.assertEqual(_, "unpressed")
+        self.assertEqual(_, "origin")
 
 
 if __name__ == "__main__":

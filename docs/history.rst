@@ -1,19 +1,21 @@
 History
 =======
 
-0.0.1 (2022-11-15)
-------------------
-
--  Release initial version of the package on in-house GitHub
-
-.. _section-1:
-
-0.0.2 (2022-11-18)
+0.2.0 (2022-12-02)
 ------------------
 
 -  Feature
 
-1. Change python minimum version to 3.9
+1. Refactor getter/setter for each MODI+ module
+
+.. _section-1:
+
+0.1.1 (2022-11-23)
+------------------
+
+-  Feature
+
+1. Change python minimum version to 3.7
 
 .. _section-2:
 
@@ -30,9 +32,16 @@ History
 
 .. _section-3:
 
-0.1.1 (2022-11-23)
+0.0.2 (2022-11-18)
 ------------------
 
 -  Feature
 
-1. Change python minimum version to 3.7
+1. Change python minimum version to 3.9
+
+.. _section-4:
+
+0.0.1 (2022-11-15)
+------------------
+
+-  Release initial version of the package on in-house GitHub

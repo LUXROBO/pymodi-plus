@@ -1,4 +1,5 @@
 import modi_plus
+import time
 
 """
 Example script for the usage of imu module
@@ -19,3 +20,4 @@ if __name__ == "__main__":
               f"Acc x: {imu.acceleration_x:<10}"
               f"Acc y: {imu.acceleration_y:<10}"
               f"Acc z: {imu.acceleration_z:<10}", end="\r")
+        time.sleep(0.02)

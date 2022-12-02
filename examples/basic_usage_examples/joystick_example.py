@@ -1,4 +1,5 @@
 import modi_plus
+import time
 
 """
 Example script for the usage of joystick module
@@ -11,3 +12,4 @@ if __name__ == "__main__":
 
     while True:
         print("x: {0:<10} y: {1:<10} direction: {2:<10}".format(joystick.x, joystick.y, joystick.direction), end="\r")
+        time.sleep(0.02)
