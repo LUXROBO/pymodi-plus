@@ -1,5 +1,4 @@
 """Display module."""
-import time
 
 from typing import List
 from modi_plus.module.module import OutputModule
@@ -7,8 +6,12 @@ from modi_plus.module.module import OutputModule
 
 class Display(OutputModule):
 
-    STATE_TEXT_SPLIT_LEN = 24
-    STATE_DOT_SPLIT_LEN = 23
+    WIDTH = 96
+    HEIGHT = 96
+
+    TEXT_SPLIT_LEN = 24
+    DOT_SPLIT_LEN = 23
+    DOT_LEN = int(WIDTH * HEIGHT / 8)
 
     PROPERTY_DISPLAY_WRITE_TEXT = 17
     PROPERTY_DISPLAY_DRAW_DOT = 18
@@ -198,7 +201,7 @@ class Display(OutputModule):
         :return: None
         """
 
-        n = Display.STATE_TEXT_SPLIT_LEN
+        n = Display.TEXT_SPLIT_LEN
         encoding_data = str.encode(str(text)) + bytes(1)
         splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
         for index, data in enumerate(splited_data):
@@ -252,38 +255,28 @@ class Display(OutputModule):
             Display.PROPERTY_DISPLAY_DRAW_PICTURE,
             property_values=(("u8", x),
                              ("u8", y),
-                             ("u8", 96),
-                             ("u8", 96),
+                             ("u8", Display.WIDTH),
+                             ("u8", Display.HEIGHT),
                              ("string", file_name), )
         )
 
-    def draw_dot(self, dot) -> None:
-        # """Clears the display and show the input picture on the display.
+    def draw_dot(self, dot: bytes) -> None:
+        """Clears the display and show the input dot on the display.
 
-        # :param x: X coordinate of the desired position
-        # :type x: int
-        # :param y: Y coordinate of te desired position
-        # :type y: int
-        # :param name: Picture name to display.
-        # :type name: float
-        # :return: None
-        # """
+        :param dot: Dot to display
+        :type dot: bytes or bytearray
+        :return: None
+        """
 
-        dot_data = None
-        if isinstance(dot, str):
-            if dot == "white":
-                dot_data = bytes([0 for i in range(96 * 12)])
-            else:
-                return
-        else:
-            if len(dot) != (96 * 12):
-                return
-            dot_data = bytes(dot)
+        if not isinstance(dot, bytes):
+            raise ValueError("dot type must bytes")
 
-        n = Display.STATE_DOT_SPLIT_LEN
-        splited_data = [dot_data[x - n:x] for x in range(n, len(dot_data) + n, n)]
+        if len(dot) != Display.DOT_LEN:
+            raise ValueError(f"dot length must be {Display.DOT_LEN}")
+
+        n = Display.DOT_SPLIT_LEN
+        splited_data = [dot[x - n:x] for x in range(n, len(dot) + n, n)]
         for index, data in enumerate(splited_data):
-            # send_data = data
             send_data = bytes([index]) + data
 
             self._set_property(

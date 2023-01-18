@@ -27,7 +27,7 @@ class TestDisplay(unittest.TestCase):
         self.display.text = mock_text
         set_messages = []
 
-        n = Display.STATE_TEXT_SPLIT_LEN
+        n = Display.TEXT_SPLIT_LEN
         encoding_data = str.encode(str(mock_text)) + bytes(1)
         splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
         for index, data in enumerate(splited_data):
@@ -70,13 +70,36 @@ class TestDisplay(unittest.TestCase):
         set_message = parse_set_property_message(
             -1, Display.PROPERTY_DISPLAY_DRAW_PICTURE,
             (("u8", mock_x), ("u8", mock_y),
-             ("u8", 96), ("u8", 96),
+             ("u8", Display.WIDTH), ("u8", Display.HEIGHT),
              ("string", Display.PRESET_PICTURE[mock_name]), )
         )
         sent_messages = []
         while self.connection.send_list:
             sent_messages.append(self.connection.send_list.pop())
         self.assertTrue(set_message in sent_messages)
+
+    def test_draw_dot(self):
+        """Test draw_dot method."""
+
+        mock_dot = bytes([0 for i in range(Display.DOT_LEN)])
+        self.display.draw_dot(mock_dot)
+        set_messages = []
+
+        n = Display.DOT_SPLIT_LEN
+        splited_data = [mock_dot[x - n:x] for x in range(n, len(mock_dot) + n, n)]
+        for index, data in enumerate(splited_data):
+            send_data = bytes([index]) + data
+            set_message = parse_set_property_message(
+                -1, Display.PROPERTY_DISPLAY_DRAW_DOT,
+                (("bytes", send_data), )
+            )
+            set_messages.append(set_message)
+
+        sent_messages = []
+        while self.connection.send_list:
+            sent_messages.append(self.connection.send_list.pop())
+        for set_message in set_messages:
+            self.assertTrue(set_message in sent_messages)
 
     def test_set_offset(self):
         """Test set_offset method."""
