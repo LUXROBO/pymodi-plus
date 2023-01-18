@@ -28,16 +28,12 @@ class TestDisplay(unittest.TestCase):
         set_messages = []
 
         n = Display.STATE_TEXT_SPLIT_LEN
-        encoding_data = str.encode(mock_text)
+        encoding_data = str.encode(str(mock_text)) + bytes(1)
         splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
         for index, data in enumerate(splited_data):
-            send_data = data
-            if index == len(splited_data) - 1:
-                send_data = send_data + bytes(0)
-
             set_message = parse_set_property_message(
                 -1, Display.PROPERTY_DISPLAY_WRITE_TEXT,
-                (("bytes", send_data), )
+                (("bytes", data), )
             )
             set_messages.append(set_message)
 

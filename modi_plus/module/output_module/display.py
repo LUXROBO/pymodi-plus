@@ -199,17 +199,13 @@ class Display(OutputModule):
         """
 
         n = Display.STATE_TEXT_SPLIT_LEN
-        encoding_data = str.encode(text)
+        encoding_data = str.encode(str(text)) + bytes(1)
         splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
         for index, data in enumerate(splited_data):
-            send_data = data
-            if index == len(splited_data) - 1:
-                send_data = send_data + bytes(0)
-
             self._set_property(
                 self._id,
                 Display.PROPERTY_DISPLAY_WRITE_TEXT,
-                property_values=(("bytes", send_data), )
+                property_values=(("bytes", data), )
             )
 
         self._text = text
