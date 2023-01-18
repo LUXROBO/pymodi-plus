@@ -6,7 +6,12 @@ from modi_plus.module.module import OutputModule
 
 class Display(OutputModule):
 
-    STATE_TEXT_SPLIT_LEN = 24
+    WIDTH = 96
+    HEIGHT = 96
+
+    TEXT_SPLIT_LEN = 24
+    DOT_SPLIT_LEN = 23
+    DOT_LEN = int(WIDTH * HEIGHT / 8)
 
     PROPERTY_DISPLAY_WRITE_TEXT = 17
     PROPERTY_DISPLAY_DRAW_DOT = 18
@@ -196,7 +201,7 @@ class Display(OutputModule):
         :return: None
         """
 
-        n = Display.STATE_TEXT_SPLIT_LEN
+        n = Display.TEXT_SPLIT_LEN
         encoding_data = str.encode(str(text)) + bytes(1)
         splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
         for index, data in enumerate(splited_data):
@@ -250,10 +255,35 @@ class Display(OutputModule):
             Display.PROPERTY_DISPLAY_DRAW_PICTURE,
             property_values=(("u8", x),
                              ("u8", y),
-                             ("u8", 96),
-                             ("u8", 96),
+                             ("u8", Display.WIDTH),
+                             ("u8", Display.HEIGHT),
                              ("string", file_name), )
         )
+
+    def draw_dot(self, dot: bytes) -> None:
+        """Clears the display and show the input dot on the display.
+
+        :param dot: Dot to display
+        :type dot: bytes
+        :return: None
+        """
+
+        if not isinstance(dot, bytes):
+            raise ValueError("dot type must bytes")
+
+        if len(dot) != Display.DOT_LEN:
+            raise ValueError(f"dot length must be {Display.DOT_LEN}")
+
+        n = Display.DOT_SPLIT_LEN
+        splited_data = [dot[x - n:x] for x in range(n, len(dot) + n, n)]
+        for index, data in enumerate(splited_data):
+            send_data = bytes([index]) + data
+
+            self._set_property(
+                self._id,
+                Display.PROPERTY_DISPLAY_DRAW_DOT,
+                property_values=(("bytes", send_data), )
+            )
 
     def set_offset(self, x: int, y: int) -> None:
         """Set origin point on the screen
