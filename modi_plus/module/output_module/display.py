@@ -264,7 +264,7 @@ class Display(OutputModule):
         """Clears the display and show the input dot on the display.
 
         :param dot: Dot to display
-        :type dot: bytes or bytearray
+        :type dot: bytes
         :return: None
         """
 
