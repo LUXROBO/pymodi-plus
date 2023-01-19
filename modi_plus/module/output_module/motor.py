@@ -1,5 +1,6 @@
 """Motor module."""
 
+import time
 import struct
 from typing import Tuple
 from modi_plus.module.module import OutputModule
@@ -109,6 +110,7 @@ class Motor(OutputModule):
             property_values=(("u16", target_angle),
                              ("u16", target_speed), )
         )
+        time.sleep(0.01)
 
     def set_speed(self, target_speed: int) -> None:
         """Sets the speed of the motor
@@ -123,6 +125,7 @@ class Motor(OutputModule):
             property_num=Motor.PROPERTY_MOTOR_SPEED,
             property_values=(("s32", target_speed), )
         )
+        time.sleep(0.01)
 
     def append_angle(self, target_angle: int, target_speed: int = 70) -> None:
         """append the angle form current angle of the motor
@@ -138,8 +141,10 @@ class Motor(OutputModule):
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE_APPEND,
             property_values=(("s16", target_angle),
-                             ("u16", target_speed), )
+                             ("u16", target_speed), ),
+            force=True
         )
+        time.sleep(0.01)
 
     def stop(self) -> None:
         """Stop operating motor
@@ -152,3 +157,4 @@ class Motor(OutputModule):
             property_num=Motor.PROPERTY_MOTOR_STOP,
             property_values=()
         )
+        time.sleep(0.01)

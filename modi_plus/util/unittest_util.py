@@ -19,6 +19,9 @@ class MockConnection:
     def send(self, pkt):
         self.send_list.append(pkt)
 
+    def send_nowait(self, pkt):
+        self.send_list.append(pkt)
+
     def recv(self):
         return "Test"
 
