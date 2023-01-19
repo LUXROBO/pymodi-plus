@@ -97,16 +97,14 @@ class Module:
         self._id = id_
         self._uuid = uuid
         self._connection = connection_task
-
         self.module_type = str()
-        self._properties = dict()
 
+        # property
+        self.prop_samp_freq = 91        # sampling_rate[ms] = (100 - property_sampling_frequency) * 11
+        self.prop_request_period = 2    # [s]
+        self.__get_properties = dict()
         self.__set_properties = dict()
         self.__last_set_property_num = None
-
-        # sampling_rate = (100 - property_sampling_frequency) * 11, in ms
-        self.prop_samp_freq = 91
-        self.prop_request_period = 2    # [s]
 
         self.is_connected = True
         self.is_usb_connected = False
@@ -217,28 +215,28 @@ class Module:
         """
 
         # Register property if not exists
-        if property_type not in self._properties:
-            self._properties[property_type] = self.Property()
+        if property_type not in self.__get_properties:
+            self.__get_properties[property_type] = self.Property()
             self.__request_property(self._id, property_type)
 
-        # Request property value if not updated for 1.5 sec
-        last_update = self._properties[property_type].last_update_time
-        if time.time() - last_update > 1.5:
+        # Request property value if not updated for 2 sec
+        last_update = self.__get_properties[property_type].last_update_time
+        if time.time() - last_update > self.prop_request_period:
             self.__request_property(self._id, property_type)
 
-        if self._properties[property_type].value is None:
+        if self.__get_properties[property_type].value is None:
             if self._enable_get_property_timeout:
                 first_request_time = time.time()
 
                 # 3s timeout
-                while self._properties[property_type].value is None:
+                while self.__get_properties[property_type].value is None:
                     if time.time() - first_request_time > 3:
                         raise Module.GetValueInitTimeout
                     time.sleep(0.1)
             else:
                 return bytearray(12)
 
-        return self._properties[property_type].value
+        return self.__get_properties[property_type].value
 
     def _set_property(self, destination_id: int,
                       property_num: int,
@@ -293,12 +291,6 @@ class Module:
 
         self.__last_set_property_num = property_num
 
-    def __check_last_set_property(self, property_num: int) -> bool:
-        if self.__last_set_property_num is None:
-            return False
-        else:
-            return self.__last_set_property_num == property_num
-
     def update_property(self, property_type: int, property_value: bytearray) -> None:
         """ Update property value and time
 
@@ -308,10 +300,10 @@ class Module:
         :type property_value: bytearray
         """
 
-        if property_type not in self._properties:
-            self._properties[property_type] = self.Property()
-        self._properties[property_type].value = property_value
-        self._properties[property_type].last_update_time = time.time()
+        if property_type not in self.__get_properties:
+            self.__get_properties[property_type] = self.Property()
+        self.__get_properties[property_type].value = property_value
+        self.__get_properties[property_type].last_update_time = time.time()
 
     def __request_property(self, destination_id: int, property_type: int) -> None:
         """ Generate message for request property
@@ -323,9 +315,15 @@ class Module:
         :return: None
         """
 
-        self._properties[property_type].last_update_time = time.time()
+        self.__get_properties[property_type].last_update_time = time.time()
         req_prop_msg = parse_get_property_message(destination_id, property_type, self.prop_samp_freq)
         self._connection.send(req_prop_msg)
+
+    def __check_last_set_property(self, property_num: int) -> bool:
+        if self.__last_set_property_num is None:
+            return False
+        else:
+            return self.__last_set_property_num == property_num
 
 
 class SetupModule(Module):
