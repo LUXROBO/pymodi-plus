@@ -180,37 +180,37 @@ To see what other commands are available,
    :target: https://pypi.python.org/pypi/pymodi-plus
 .. |Read the Docs (version)| image:: https://img.shields.io/readthedocs/pymodi-plus/latest?style=flat-square
    :target: https://pymodi-plus.readthedocs.io/en/latest/?badge=master
-.. |GitHub Workflow Status (Build)| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Build%20Status/master?style=flat-square
+.. |GitHub Workflow Status (Build)| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/build.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
 .. |GitHub LICENSE| image:: https://img.shields.io/github/license/LUXROBO/pymodi-plus?style=flat-square&color=blue
    :target: https://github.com/LUXROBO/pymodi-plus/blob/master/LICENSE
 .. |Lines of Code| image:: https://img.shields.io/tokei/lines/github/LUXROBO/pymodi-plus?style=flat-square
    :target: https://github.com/LUXROBO/pymodi-plus/tree/master/modi_plus
-.. |GitHub Workflow Status| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Build%20Status?label=master&branch=master&logo=github&style=flat-square
+.. |GitHub Workflow Status| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/build.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image1| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Build%20Status?label=develop&branch=develop&logo=github&style=flat-square
+.. |image1| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/build.yml?branch=develop
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |GitHub Workflow Status (branch)| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Ubuntu)/master?label=Unit%20Test%20%28Ubuntu%29&logo=github&style=flat-square
+.. |GitHub Workflow Status (branch)| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_ubuntu.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image2| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
+.. |image2| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_macos.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image3| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
+.. |image3| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_macos.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image4| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
+.. |image4| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_macos.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image5| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
+.. |image5| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_macos.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image6| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(macOS)/master?label=Unit%20Test%20%28macOS%29&logo=github&style=flat-square
+.. |image6| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_macos.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image7| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+.. |image7| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_windows.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image8| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+.. |image8| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_windows.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image9| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+.. |image9| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_windows.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image10| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+.. |image10| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_windows.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
-.. |image11| image:: https://img.shields.io/github/workflow/status/LUXROBO/pymodi-plus/Unit%20Test%20(Windows)/master?label=Unit%20Test%20%28Windows%29&logo=github&style=flat-square
+.. |image11| image:: https://img.shields.io/github/actions/workflow/status/LUXROBO/pymodi-plus/unit_test_windows.yml?branch=master
    :target: https://github.com/LUXROBO/pymodi-plus/actions
 .. |Contributor Covenant| image:: https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg?style=flat-square
    :target: CODE_OF_CONDUCT.md
