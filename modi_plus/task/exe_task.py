@@ -1,5 +1,6 @@
 import json
 import time
+from packaging import version
 from base64 import b64decode
 
 from modi_plus.module.module import Module, BROADCAST_ID, get_module_from_name, get_module_type_from_uuid
@@ -53,6 +54,14 @@ class ExeTask:
             if module.id == module_id:
                 return module
 
+    def __compare_version(self, left, right):
+        if version.parse(left) > version.parse(right):
+            return 1
+        elif version.parse(left) == version.parse(right):
+            return 0
+        else:
+            return -1
+
     def __update_health(self, message):
         """ Update information by health message
 
@@ -75,6 +84,13 @@ class ExeTask:
                 _, dir = unpack_data(message["b"], (4, 1))
                 if dir == 1:
                     module.is_usb_connected = True
+
+            # 일반 모듈의 OS 버전이 1.3.1 이상일 경우, health data에 pnp on/off 상태가 포함되어 있다.
+            if module.module_type != "network" and self.__compare_version(module.os_version, "1.3.1") != -1:
+                _, pnp = unpack_data(message["b"], (3, 1))
+                if pnp == 0:
+                    # pnp 상태일 경우, pnp off
+                    self.__request_pnp_off(module_id)
 
             # Reset disconnection alert status
             if module.has_printed:
