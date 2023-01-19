@@ -21,6 +21,6 @@ led1 = bundle.leds.get(0xA55)
 
 or
 
-led0 = bundle.led(0x40207D214881)
-led1 = bundle.led(0x40207D214A55)
+led0 = bundle.led(0x881)
+led1 = bundle.led(0xA55)
 """

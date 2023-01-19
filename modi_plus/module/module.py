@@ -140,7 +140,7 @@ class Module:
                 return True
 
     def __str__(self):
-        return f"{self.__class__.__name__}(0x{self._uuid:X})"
+        return f"{self.__class__.__name__}(0x{self._id:X})"
 
     @property
     def app_version(self):
