@@ -104,7 +104,7 @@ class Motor(OutputModule):
         :return: None
         """
 
-        self.set_property(
+        self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE,
             property_values=(("u16", target_angle),
@@ -120,7 +120,7 @@ class Motor(OutputModule):
         :return: None
         """
 
-        self.set_property(
+        self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_SPEED,
             property_values=(("s32", target_speed), )
@@ -137,7 +137,7 @@ class Motor(OutputModule):
         :return: None
         """
 
-        self.set_property(
+        self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE_APPEND,
             property_values=(("s16", target_angle),
@@ -152,7 +152,7 @@ class Motor(OutputModule):
         :return: None
         """
 
-        self.set_property(
+        self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_STOP,
             property_values=()

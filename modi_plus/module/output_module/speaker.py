@@ -212,7 +212,7 @@ class Speaker(OutputModule):
         if frequency < 0:
             raise ValueError("Not a supported frequency value")
 
-        self.set_property(
+        self._set_property(
             destination_id=self._id,
             property_num=Speaker.PROPERTY_SPEAKER_SET_TUNE,
             property_values=(("u16", frequency), ("u16", volume), )
@@ -236,7 +236,7 @@ class Speaker(OutputModule):
         property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in file_name else Speaker.PROPERTY_SPEAKER_MUSIC
         self.playing_file_name = file_name
 
-        self.set_property(
+        self._set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_START),
@@ -256,7 +256,7 @@ class Speaker(OutputModule):
 
         property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in self.playing_file_name else Speaker.PROPERTY_SPEAKER_MUSIC
 
-        self.set_property(
+        self._set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_STOP),
@@ -275,7 +275,7 @@ class Speaker(OutputModule):
 
         property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in self.playing_file_name else Speaker.PROPERTY_SPEAKER_MUSIC
 
-        self.set_property(
+        self._set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_PAUSE),
@@ -294,7 +294,7 @@ class Speaker(OutputModule):
 
         property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in self.playing_file_name else Speaker.PROPERTY_SPEAKER_MUSIC
 
-        self.set_property(
+        self._set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_RESUME),

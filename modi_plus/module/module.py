@@ -260,6 +260,9 @@ class Module:
         do_send = False
         now_time = time.time()
 
+        if not self.__check_last_set_property(property_num):
+            force = True
+
         if property_num in self.__set_properties:
             if property_values == self.__set_properties[property_num].value:
                 duration = now_time - self.__set_properties[property_num].last_update_time
@@ -288,35 +291,13 @@ class Module:
             )
             self._connection.send_nowait(message)
 
+        self.__last_set_property_num = property_num
+
     def __check_last_set_property(self, property_num: int) -> bool:
-        if self.__last_set_property_num == None:
+        if self.__last_set_property_num is None:
             return False
         else:
             return self.__last_set_property_num == property_num
-
-    def set_property(self, destination_id: int,
-                      property_num: int,
-                      property_values: Union[Tuple, str],
-                      force: bool = False) -> None:
-        """Send the message of set_property command to the module
-
-        :param destination_id: Id of the destination module
-        :type destination_id: int
-        :param property_num: Property Type
-        :type property_num: int
-        :param property_values: Property Values
-        :type property_values: Tuple
-        :param force: Force data to be sent
-        :type force: bool
-        :return: None
-        """
-
-        if self.__check_last_set_property(property_num):
-            self._set_property(destination_id, property_num, property_values, force)
-        else:
-            self._set_property(destination_id, property_num, property_values, True)
-
-        self.__last_set_property_num = property_num
 
     def update_property(self, property_type: int, property_value: bytearray) -> None:
         """ Update property value and time

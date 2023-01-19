@@ -206,7 +206,7 @@ class Display(OutputModule):
         encoding_data = str.encode(str(text)) + bytes(1)
         splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
         for index, data in enumerate(splited_data):
-            self.set_property(
+            self._set_property(
                 self._id,
                 Display.PROPERTY_DISPLAY_WRITE_TEXT,
                 property_values=(("bytes", data), ),
@@ -228,7 +228,7 @@ class Display(OutputModule):
         :return: None
         """
 
-        self.set_property(
+        self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
             property_values=(("u8", x),
@@ -254,7 +254,7 @@ class Display(OutputModule):
         if file_name is None:
             raise ValueError(f"{file_name} is not on the list, check 'Display.preset_pictures()'")
 
-        self.set_property(
+        self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_DRAW_PICTURE,
             property_values=(("u8", x),
@@ -284,7 +284,7 @@ class Display(OutputModule):
         for index, data in enumerate(splited_data):
             send_data = bytes([index]) + data
 
-            self.set_property(
+            self._set_property(
                 self._id,
                 Display.PROPERTY_DISPLAY_DRAW_DOT,
                 property_values=(("bytes", send_data), )
@@ -301,7 +301,7 @@ class Display(OutputModule):
         :return: None
         """
 
-        self.set_property(
+        self._set_property(
             self.id,
             Display.PROPERTY_DISPLAY_SET_OFFSET,
             property_values=(("s8", x), ("s8", y), )
@@ -318,7 +318,7 @@ class Display(OutputModule):
         :return: None
         """
 
-        self.set_property(
+        self._set_property(
             self.id,
             Display.PROPERTY_DISPLAY_MOVE_SCREEN,
             property_values=(("s8", x), ("s8", y), ),
@@ -332,7 +332,7 @@ class Display(OutputModule):
         :return: None
         """
 
-        self.set_property(
+        self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_RESET,
             property_values=(("u8", 0), )
