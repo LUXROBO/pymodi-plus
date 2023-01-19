@@ -2,6 +2,7 @@
 pyserial==3.5
 nest-asyncio==1.5.4
 websocket-client==1.2.3
+packaging==21.3
 
 # windows
 bleak==0.13.0; sys_platform == 'win32'
