@@ -1,5 +1,6 @@
 """Speaker module."""
 
+import time
 import struct
 from typing import List, Tuple, Union
 from modi_plus.module.module import OutputModule
@@ -211,11 +212,12 @@ class Speaker(OutputModule):
         if frequency < 0:
             raise ValueError("Not a supported frequency value")
 
-        self._set_property(
+        self.set_property(
             destination_id=self._id,
             property_num=Speaker.PROPERTY_SPEAKER_SET_TUNE,
             property_values=(("u16", frequency), ("u16", volume), )
         )
+        time.sleep(0.01)
 
     def play_music(self, name: str, volume: int) -> None:
         """Play music in speaker module
@@ -234,13 +236,14 @@ class Speaker(OutputModule):
         property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in file_name else Speaker.PROPERTY_SPEAKER_MUSIC
         self.playing_file_name = file_name
 
-        self._set_property(
+        self.set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_START),
                              ("u8", volume),
                              ("string", self.playing_file_name), )
         )
+        time.sleep(0.1)
 
     def stop_music(self) -> None:
         """Stop music in speaker module
@@ -253,7 +256,7 @@ class Speaker(OutputModule):
 
         property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in self.playing_file_name else Speaker.PROPERTY_SPEAKER_MUSIC
 
-        self._set_property(
+        self.set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_STOP),
@@ -272,7 +275,7 @@ class Speaker(OutputModule):
 
         property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in self.playing_file_name else Speaker.PROPERTY_SPEAKER_MUSIC
 
-        self._set_property(
+        self.set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_PAUSE),
@@ -291,7 +294,7 @@ class Speaker(OutputModule):
 
         property_num = Speaker.PROPERTY_SPEAKER_MELODY if ".mid" in self.playing_file_name else Speaker.PROPERTY_SPEAKER_MUSIC
 
-        self._set_property(
+        self.set_property(
             self._id,
             property_num,
             property_values=(("u8", Speaker.STATE_RESUME),

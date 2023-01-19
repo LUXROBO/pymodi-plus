@@ -327,10 +327,11 @@ class Network(SetupModule):
 
         property_num = Network.PROPERTY_NETWORK_SEND_DATA + 0x100 * index
 
-        self._set_property(
+        self.set_property(
             destination_id=self._id,
             property_num=property_num,
-            property_values=(("s32", data),)
+            property_values=(("s32", data),),
+            force=True
         )
 
     @check_connection
@@ -342,10 +343,11 @@ class Network(SetupModule):
         :return: None
         """
 
-        self._set_property(
+        self.set_property(
             destination_id=self._id,
             property_num=Network.PROPERTY_NETWORK_SEND_TEXT,
-            property_values=(("string", text),)
+            property_values=(("string", text),),
+            force=True
         )
 
     @check_connection
@@ -359,7 +361,7 @@ class Network(SetupModule):
             self.buzzer_off()
             self.__buzzer_flag = False
 
-        self._set_property(
+        self.set_property(
             destination_id=self._id,
             property_num=Network.PROPERTY_NETWORK_BUZZER,
             property_values=(("u8", Network.STATE_BUZZER_ON),)
@@ -372,7 +374,7 @@ class Network(SetupModule):
         :return: None
         """
 
-        self._set_property(
+        self.set_property(
             destination_id=self._id,
             property_num=Network.PROPERTY_NETWORK_BUZZER,
             property_values=(("u8", Network.STATE_BUZZER_OFF),)
@@ -386,7 +388,7 @@ class Network(SetupModule):
         :return: None
         """
 
-        self._set_property(
+        self.set_property(
             destination_id=self._id,
             property_num=Network.PROPERTY_NETWORK_CAMERA,
             property_values=(("u8", Network.STATE_CAMERA_PICTURE),)

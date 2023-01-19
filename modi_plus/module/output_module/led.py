@@ -116,7 +116,7 @@ class Led(OutputModule):
         :return: None
         """
 
-        self._set_property(
+        self.set_property(
             destination_id=self._id,
             property_num=Led.PROPERTY_LED_SET_RGB,
             property_values=(("u16", red),

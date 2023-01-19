@@ -101,8 +101,12 @@ class Module:
         self.module_type = str()
         self._properties = dict()
 
+        self.__set_properties = dict()
+        self.__last_set_property_num = None
+
         # sampling_rate = (100 - property_sampling_frequency) * 11, in ms
         self.prop_samp_freq = 91
+        self.prop_request_period = 2    # [s]
 
         self.is_connected = True
         self.is_usb_connected = False
@@ -238,7 +242,8 @@ class Module:
 
     def _set_property(self, destination_id: int,
                       property_num: int,
-                      property_values: Union[Tuple, str]) -> None:
+                      property_values: Union[Tuple, str],
+                      force: bool = False) -> None:
         """Send the message of set_property command to the module
 
         :param destination_id: Id of the destination module
@@ -247,15 +252,71 @@ class Module:
         :type property_num: int
         :param property_values: Property Values
         :type property_values: Tuple
+        :param force: Force data to be sent
+        :type force: bool
         :return: None
         """
 
-        message = parse_set_property_message(
-            destination_id,
-            property_num,
-            property_values,
-        )
-        self._connection.send(message)
+        do_send = False
+        now_time = time.time()
+
+        if property_num in self.__set_properties:
+            if property_values == self.__set_properties[property_num].value:
+                duration = now_time - self.__set_properties[property_num].last_update_time
+                if force or duration > self.prop_request_period:
+                    # 마지막으로 보낸 데이터와 같은 경우, 2초마다 전송 or force가 true인 경우
+                    self.__set_properties[property_num].value = property_values
+                    self.__set_properties[property_num].last_update_time = now_time
+                    do_send = True
+            else:
+                # 마지막으로 보낸 데이터와 다른 경우, 바로 전송
+                self.__set_properties[property_num].value = property_values
+                self.__set_properties[property_num].last_update_time = now_time
+                do_send = True
+        else:
+            # 데이터를 한번도 안 보낸 경우, 바로 전송
+            self.__set_properties[property_num] = self.Property()
+            self.__set_properties[property_num].value = property_values
+            self.__set_properties[property_num].last_update_time = now_time
+            do_send = True
+
+        if do_send:
+            message = parse_set_property_message(
+                destination_id,
+                property_num,
+                property_values,
+            )
+            self._connection.send_nowait(message)
+
+    def __check_last_set_property(self, property_num: int) -> bool:
+        if self.__last_set_property_num == None:
+            return False
+        else:
+            return self.__last_set_property_num == property_num
+
+    def set_property(self, destination_id: int,
+                      property_num: int,
+                      property_values: Union[Tuple, str],
+                      force: bool = False) -> None:
+        """Send the message of set_property command to the module
+
+        :param destination_id: Id of the destination module
+        :type destination_id: int
+        :param property_num: Property Type
+        :type property_num: int
+        :param property_values: Property Values
+        :type property_values: Tuple
+        :param force: Force data to be sent
+        :type force: bool
+        :return: None
+        """
+
+        if self.__check_last_set_property(property_num):
+            self._set_property(destination_id, property_num, property_values, force)
+        else:
+            self._set_property(destination_id, property_num, property_values, True)
+
+        self.__last_set_property_num = property_num
 
     def update_property(self, property_type: int, property_value: bytearray) -> None:
         """ Update property value and time
