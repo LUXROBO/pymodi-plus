@@ -2,7 +2,6 @@
 
 import time
 import atexit
-from typing import Optional
 
 from importlib import import_module as im
 
@@ -19,7 +18,7 @@ from modi_plus.module.output_module.motor import Motor
 from modi_plus.module.output_module.led import Led
 from modi_plus.module.output_module.speaker import Speaker
 
-from modi_plus.module.module import get_module_type_from_uuid, ModuleList
+from modi_plus.module.module import ModuleList
 from modi_plus._exe_thread import ExeThread
 from modi_plus.util.connection_util import get_platform, get_ble_task_path
 
@@ -102,9 +101,9 @@ class MODIPlus:
         """
         return self._connection.recv()
 
-    def __get_module_by_uuid(self, module_uuid):
+    def __get_module_by_id(self, module_id):
         for module in self._modules:
-            if module.uuid == module_uuid:
+            if module.id == module_id:
                 return module
         return None
 
@@ -114,100 +113,114 @@ class MODIPlus:
                 return True
         return False
 
-    def __module_connection_check(self, uuid):
-        target = self.__get_module_by_uuid(uuid)
+    def __get_connected_module_by_id(self, id):
+        target = self.__get_module_by_id(id)
         if target is None:
             start_time = time.time()
-            while ((time.time() - start_time) < 3) and (target is None):
-                target = self.__get_module_by_uuid(uuid)
+            while time.time() - start_time < 3:
+                target = self.__get_module_by_id(id)
+                if target is not None:
+                    return target
                 time.sleep(0.1)
-            if target is None:
-                raise Exception("Module with given uuid does not exits!!")
-        return target
+            raise Exception("Module with given id does not exits!")
+        else:
+            return target
 
-    def network(self, uuid: int) -> Optional[Network]:
+    def network(self, id: int) -> Network:
         """Module Class of connected Network module.
         """
-        if get_module_type_from_uuid(uuid) != "network":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "network":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not network!")
+        return module
 
-    def battery(self, uuid: int) -> Optional[Battery]:
+    def battery(self, id: int) -> Battery:
         """Module Class of connected Battery module.
         """
-        if get_module_type_from_uuid(uuid) != "battery":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "battery":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not battery!")
+        return module
 
-    def env(self, uuid: int) -> Optional[Env]:
+    def env(self, id: int) -> Env:
         """Module Class of connected Environment modules.
         """
-        if get_module_type_from_uuid(uuid) != "env":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "env":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not env!")
+        return module
 
-    def imu(self, uuid: int) -> Optional[Imu]:
+    def imu(self, id: int) -> Imu:
         """Module Class of connected IMU modules.
         """
-        if get_module_type_from_uuid(uuid) != "imu":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "imu":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not imu!")
+        return module
 
-    def button(self, uuid: int) -> Optional[Button]:
+    def button(self, id: int) -> Button:
         """Module Class of connected Button modules.
         """
-        if get_module_type_from_uuid(uuid) != "button":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "button":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not button!")
+        return module
 
-    def dial(self, uuid: int) -> Optional[Dial]:
+    def dial(self, id: int) -> Dial:
         """Module Class of connected Dial modules.
         """
-        if get_module_type_from_uuid(uuid) != "dial":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "dial":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not dial!")
+        return module
 
-    def joystick(self, uuid: int) -> Optional[Joystick]:
+    def joystick(self, id: int) -> Joystick:
         """Module Class of connected Joystick modules.
         """
-        if get_module_type_from_uuid(uuid) != "joystick":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "joystick":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not joystick!")
+        return module
 
-    def tof(self, uuid: int) -> Optional[Tof]:
+    def tof(self, id: int) -> Tof:
         """Module Class of connected ToF modules.
         """
-        if get_module_type_from_uuid(uuid) != "tof":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "tof":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not tof!")
+        return module
 
-    def display(self, uuid: int) -> Optional[Display]:
+    def display(self, id: int) -> Display:
         """Module Class of connected Display modules.
         """
-        if get_module_type_from_uuid(uuid) != "display":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "display":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not display!")
+        return module
 
-    def motor(self, uuid: int) -> Optional[Motor]:
+    def motor(self, id: int) -> Motor:
         """Module Class of connected Motor modules.
         """
-        if get_module_type_from_uuid(uuid) != "motor":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "motor":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not motor!")
+        return module
 
-    def led(self, uuid: int) -> Optional[Led]:
+    def led(self, id: int) -> Led:
         """Module Class of connected Led modules.
         """
-        if get_module_type_from_uuid(uuid) != "led":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "led":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not led!")
+        return module
 
-    def speaker(self, uuid: int) -> Optional[Speaker]:
+    def speaker(self, id: int) -> Speaker:
         """Module Class of connected Speaker modules.
         """
-        if get_module_type_from_uuid(uuid) != "speaker":
-            return None
-        return self.__module_connection_check(uuid)
+        module = self.__get_connected_module_by_id(id)
+        if module.module_type != "speaker":
+            raise Exception(f"This module(0x{id:X}) is {module.module_type} not speaker!")
+        return module
 
     @property
     def modules(self) -> ModuleList:

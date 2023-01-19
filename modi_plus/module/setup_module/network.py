@@ -330,7 +330,8 @@ class Network(SetupModule):
         self._set_property(
             destination_id=self._id,
             property_num=property_num,
-            property_values=(("s32", data),)
+            property_values=(("s32", data),),
+            force=True
         )
 
     @check_connection
@@ -345,7 +346,8 @@ class Network(SetupModule):
         self._set_property(
             destination_id=self._id,
             property_num=Network.PROPERTY_NETWORK_SEND_TEXT,
-            property_values=(("string", text),)
+            property_values=(("string", text),),
+            force=True
         )
 
     @check_connection

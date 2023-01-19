@@ -1,5 +1,6 @@
 """Speaker module."""
 
+import time
 import struct
 from typing import List, Tuple, Union
 from modi_plus.module.module import OutputModule
@@ -216,6 +217,7 @@ class Speaker(OutputModule):
             property_num=Speaker.PROPERTY_SPEAKER_SET_TUNE,
             property_values=(("u16", frequency), ("u16", volume), )
         )
+        time.sleep(0.01)
 
     def play_music(self, name: str, volume: int) -> None:
         """Play music in speaker module
@@ -241,6 +243,7 @@ class Speaker(OutputModule):
                              ("u8", volume),
                              ("string", self.playing_file_name), )
         )
+        time.sleep(0.1)
 
     def stop_music(self) -> None:
         """Stop music in speaker module

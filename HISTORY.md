@@ -1,6 +1,15 @@
 History
 ==
 
+0.3.0 (2023-01-19)
+--
+* Feature
+1. Add `draw_dot` function on display module
+
+* Patch
+1. Fix `write_text` function error on display module if text length is 23
+2. Change module constructor argument from uuid to id
+
 0.2.1 (2022-12-02)
 --
 * Patch

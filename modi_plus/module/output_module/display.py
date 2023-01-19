@@ -1,12 +1,18 @@
 """Display module."""
 
+import time
 from typing import List
 from modi_plus.module.module import OutputModule
 
 
 class Display(OutputModule):
 
-    STATE_TEXT_SPLIT_LEN = 24
+    WIDTH = 96
+    HEIGHT = 96
+
+    TEXT_SPLIT_LEN = 24
+    DOT_SPLIT_LEN = 23
+    DOT_LEN = int(WIDTH * HEIGHT / 8)
 
     PROPERTY_DISPLAY_WRITE_TEXT = 17
     PROPERTY_DISPLAY_DRAW_DOT = 18
@@ -196,21 +202,19 @@ class Display(OutputModule):
         :return: None
         """
 
-        n = Display.STATE_TEXT_SPLIT_LEN
-        encoding_data = str.encode(str(text))
+        n = Display.TEXT_SPLIT_LEN
+        encoding_data = str.encode(str(text)) + bytes(1)
         splited_data = [encoding_data[x - n:x] for x in range(n, len(encoding_data) + n, n)]
         for index, data in enumerate(splited_data):
-            send_data = data
-            if index == len(splited_data) - 1:
-                send_data = send_data + bytes(0)
-
             self._set_property(
                 self._id,
                 Display.PROPERTY_DISPLAY_WRITE_TEXT,
-                property_values=(("bytes", send_data), )
+                property_values=(("bytes", data), ),
+                force=True
             )
 
         self._text = text
+        time.sleep(0.02 + 0.003 * len(encoding_data))
 
     def write_variable(self, x: int, y: int, variable: float) -> None:
         """Show the input variable on the display.
@@ -232,6 +236,7 @@ class Display(OutputModule):
                              ("float", variable), )
         )
         self._text += str(variable)
+        time.sleep(0.01)
 
     def draw_picture(self, x: int, y: int, name: int) -> None:
         """Clears the display and show the input picture on the display.
@@ -254,10 +259,37 @@ class Display(OutputModule):
             Display.PROPERTY_DISPLAY_DRAW_PICTURE,
             property_values=(("u8", x),
                              ("u8", y),
-                             ("u8", 96),
-                             ("u8", 96),
+                             ("u8", Display.WIDTH),
+                             ("u8", Display.HEIGHT),
                              ("string", file_name), )
         )
+        time.sleep(0.05)
+
+    def draw_dot(self, dot: bytes) -> None:
+        """Clears the display and show the input dot on the display.
+
+        :param dot: Dot to display
+        :type dot: bytes
+        :return: None
+        """
+
+        if not isinstance(dot, bytes):
+            raise ValueError("dot type must bytes")
+
+        if len(dot) != Display.DOT_LEN:
+            raise ValueError(f"dot length must be {Display.DOT_LEN}")
+
+        n = Display.DOT_SPLIT_LEN
+        splited_data = [dot[x - n:x] for x in range(n, len(dot) + n, n)]
+        for index, data in enumerate(splited_data):
+            send_data = bytes([index]) + data
+
+            self._set_property(
+                self._id,
+                Display.PROPERTY_DISPLAY_DRAW_DOT,
+                property_values=(("bytes", send_data), )
+            )
+        time.sleep(0.3)
 
     def set_offset(self, x: int, y: int) -> None:
         """Set origin point on the screen
@@ -274,6 +306,7 @@ class Display(OutputModule):
             Display.PROPERTY_DISPLAY_SET_OFFSET,
             property_values=(("s8", x), ("s8", y), )
         )
+        time.sleep(0.01)
 
     def move_screen(self, x: int, y: int) -> None:
         """Move the screen by x and y
@@ -288,8 +321,10 @@ class Display(OutputModule):
         self._set_property(
             self.id,
             Display.PROPERTY_DISPLAY_MOVE_SCREEN,
-            property_values=(("s8", x), ("s8", y), )
+            property_values=(("s8", x), ("s8", y), ),
+            force=True
         )
+        time.sleep(0.01)
 
     def reset(self) -> None:
         """Clear the screen.
@@ -303,3 +338,4 @@ class Display(OutputModule):
             property_values=(("u8", 0), )
         )
         self._text = ""
+        time.sleep(0.01)
