@@ -34,10 +34,10 @@ class DodgeManager(GameManager):
         self.fire.x, self.fire.y = 25, 20
 
     def update(self):
-        pitch = -self.imu.pitch
-        if pitch < -5 and self.player.x < 48:
+        angle_y = -self.imu.angle_y
+        if angle_y < -5 and self.player.x < 48:
             self.player.x += 30 * self.delta_time
-        elif pitch > 5 and self.player.x > 0:
+        elif angle_y > 5 and self.player.x > 0:
             self.player.x -= 30 * self.delta_time
         self.fire.y -= 15 * self.delta_time
         if self.fire.y < 0:
