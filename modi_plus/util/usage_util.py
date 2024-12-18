@@ -135,7 +135,7 @@ class UsageInstructor:
             env = bundle.envs[0]
 
             while True:
-                print(f"Env ({env.id}) intensity: {env.intensity}")
+                print(f"Env ({env.id}) illuminance: {env.illuminance}")
                 print(f"Env ({env.id}) temperature: {env.temperature}")
                 print(f"Env ({env.id}) humidity: {env.humidity}")
                 print(f"Env ({env.id}) volume: {env.volume}")

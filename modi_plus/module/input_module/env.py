@@ -14,10 +14,10 @@ class Env(InputModule):
     PROPERTY_OFFSET_VOLUME = 6
 
     @property
-    def intensity(self) -> int:
-        """Returns the value of intensity between 0 and 100
+    def illuminance(self) -> int:
+        """Returns the value of illuminance between 0 and 100
 
-        :return: The environment's intensity.
+        :return: The environment's illuminance.
         :rtype: int
         """
 
