@@ -20,30 +20,30 @@ class TestImu(unittest.TestCase):
 
         del self.imu
 
-    def test_get_roll(self):
-        """Test get_roll method."""
+    def test_get_angle_x(self):
+        """Test get_angle_x method."""
 
-        _ = self.imu.roll
+        _ = self.imu.angle_x
         self.assertEqual(
             self.connection.send_list[0],
             parse_get_property_message(-1, Imu.PROPERTY_ANGLE_STATE, self.imu.prop_samp_freq)
         )
         self.assertEqual(_, 0.0)
 
-    def test_get_pitch(self):
-        """Test get_pitch method."""
+    def test_get_angle_y(self):
+        """Test get_angle_y method."""
 
-        _ = self.imu.pitch
+        _ = self.imu.angle_y
         self.assertEqual(
             self.connection.send_list[0],
             parse_get_property_message(-1, Imu.PROPERTY_ANGLE_STATE, self.imu.prop_samp_freq)
         )
         self.assertEqual(_, 0.0)
 
-    def test_get_yaw(self):
-        """Test get_yaw method."""
+    def test_get_angle_z(self):
+        """Test get_angle_z method."""
 
-        _ = self.imu.yaw
+        _ = self.imu.angle_z
         self.assertEqual(
             self.connection.send_list[0],
             parse_get_property_message(-1, Imu.PROPERTY_ANGLE_STATE, self.imu.prop_samp_freq)
@@ -121,7 +121,7 @@ class TestImu(unittest.TestCase):
         self.assertEqual(_, 0.0)
 
     def test_get_angle(self):
-        """Test get_yaw method."""
+        """Test get_angle_z method."""
 
         _ = self.imu.angle
         self.assertEqual(

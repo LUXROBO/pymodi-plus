@@ -11,9 +11,9 @@ if __name__ == "__main__":
     imu = bundle.imus[0]
 
     while True:
-        print(f"Pitch: {imu.pitch:<10}"
-              f"Roll: {imu.roll:<10}"
-              f"Yaw: {imu.yaw:<10}"
+        print(f"Angle_y: {imu.angle_y:<10}"
+              f"Angle_x: {imu.angle_x:<10}"
+              f"Angle_z: {imu.angle_z:<10}"
               f"Vel x: {imu.angular_vel_x:<10}"
               f"Vel y: {imu.angular_vel_y:<10}"
               f"Vel z: {imu.angular_vel_z:<10}"
