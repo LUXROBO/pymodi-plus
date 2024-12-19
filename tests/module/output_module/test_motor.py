@@ -61,7 +61,10 @@ class TestMotor(unittest.TestCase):
         self.motor.angle = mock_angle, mock_speed
         set_message = parse_set_property_message(
             -1, Motor.PROPERTY_MOTOR_ANGLE,
-            (("u16", mock_angle), ("u16", mock_speed), )
+            (("u16", mock_angle),
+             ("u16", mock_speed),
+             ("u16", 0),
+             ("u16", 0), )
         )
         sent_messages = []
         while self.connection.send_list:

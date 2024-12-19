@@ -12,5 +12,5 @@ if __name__ == "__main__":
 
     while True:
         print(f"humidity(%): {env.humidity:<10} temperature(°C): {env.temperature:<10} "
-              f"intensity(%): {env.intensity:<10} Volume(%): {env.volume:<10}", end="\r")
+              f"illuminance(%): {env.illuminance:<10} Volume(%): {env.volume:<10}", end="\r")
         time.sleep(0.02)

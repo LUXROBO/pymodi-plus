@@ -70,7 +70,7 @@ class Imu(InputModule):
         :rtype: tuple
         """
 
-        return self.angle_x, self.angle_y_y, self.angle_z
+        return self.angle_x, self.angle_y, self.angle_z
 
     @property
     def angular_vel_x(self) -> float:

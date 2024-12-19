@@ -110,30 +110,30 @@ class TestNetwork(unittest.TestCase):
         )
         self.assertEqual(_, False)
 
-    def test_imu_angle_x(self):
-        """Test imu_angle_x method."""
+    def test_imu_roll(self):
+        """Test imu_roll method."""
 
-        _ = self.network.imu_angle_x
+        _ = self.network.imu_roll
         self.assertEqual(
             self.connection.send_list[0],
             parse_get_property_message(-1, Network.PROPERTY_NETWORK_IMU, self.network.prop_samp_freq)
         )
         self.assertEqual(_, 0)
 
-    def test_imu_angle_y(self):
-        """Test imu_angle_y method."""
+    def test_imu_pitch(self):
+        """Test imu_pitch method."""
 
-        _ = self.network.imu_angle_y
+        _ = self.network.imu_pitch
         self.assertEqual(
             self.connection.send_list[0],
             parse_get_property_message(-1, Network.PROPERTY_NETWORK_IMU, self.network.prop_samp_freq)
         )
         self.assertEqual(_, 0)
 
-    def test_imu_angle_z(self):
-        """Test imu_angle_z method."""
+    def test_imu_yaw(self):
+        """Test imu_yaw method."""
 
-        _ = self.network.imu_angle_z
+        _ = self.network.imu_yaw
         self.assertEqual(
             self.connection.send_list[0],
             parse_get_property_message(-1, Network.PROPERTY_NETWORK_IMU, self.network.prop_samp_freq)

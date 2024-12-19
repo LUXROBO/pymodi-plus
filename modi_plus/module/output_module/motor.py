@@ -104,8 +104,10 @@ class Motor(OutputModule):
         :return: None
         """
 
-        if (target_angle < 0 or target_angle > 360)\
-            or (target_speed < 0 or target_speed > 100):
+        invalid_angle = (target_angle < 0 or target_angle > 360)
+        invalid_speed = (target_speed < 0 or target_speed > 100)
+
+        if invalid_angle or invalid_speed:
             return
 
         self._set_property(
