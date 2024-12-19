@@ -104,8 +104,8 @@ class Motor(OutputModule):
         :return: None
         """
 
-        if (target_angle < 0 or target_angle > 360)\
-            or (target_speed < 0 or target_speed > 100):
+        if ((target_angle < 0 or target_angle > 360) or
+            (target_speed < 0 or target_speed > 100)):
             return
 
         self._set_property(
