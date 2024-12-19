@@ -245,10 +245,10 @@ class Network(SetupModule):
 
     @property
     @check_connection
-    def imu_angle_x(self) -> int:
-        """Returns the angle_x angle of the MODI Play imu
+    def imu_roll(self) -> int:
+        """Returns the roll angle of the MODI Play imu
 
-        :return: Angle_x angle.
+        :return: Roll angle.
         :rtype: int
         """
 
@@ -261,10 +261,10 @@ class Network(SetupModule):
 
     @property
     @check_connection
-    def imu_angle_y(self) -> int:
-        """Returns the angle_y angle of the MODI Play imu
+    def imu_pitch(self) -> int:
+        """Returns the pitch angle of the MODI Play imu
 
-        :return: Angle_y angle.
+        :return: Pitch angle.
         :rtype: int
         """
 
@@ -277,10 +277,10 @@ class Network(SetupModule):
 
     @property
     @check_connection
-    def imu_angle_zle_z(self) -> int:
-        """Returns the angle_z angle of the MODI Play imu
+    def imu_yaw(self) -> int:
+        """Returns the yaw angle of the MODI Play imu
 
-        :return: Angle_z angle.
+        :return: Yaw angle.
         :rtype: int
         """
 
