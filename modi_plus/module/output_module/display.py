@@ -216,7 +216,7 @@ class Display(OutputModule):
         self._text = text
         time.sleep(0.02 + 0.003 * len(encoding_data))
 
-    def write_variable(self, x: int, y: int, variable: float) -> None:
+    def write_variable_xy(self, x: int, y: int, variable: float) -> None:
         """Show the input variable on the display.
 
         :param x: X coordinate of the desired position
@@ -227,13 +227,31 @@ class Display(OutputModule):
         :type variable: float
         :return: None
         """
-
         self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
             property_values=(("u8", x),
-                             ("u8", y),
-                             ("float", variable), )
+                            ("u8", y),
+                            ("float", variable), )
+        )
+        self._text += str(variable)
+        time.sleep(0.01)
+
+    def write_variable_line(self, line: int, variable: float) -> None:
+        """Show the input variable on the display.
+
+        :param line: display line number of the desired position
+        :type line: int
+        :param variable: Variable to display.
+        :type variable: float
+        :return: None
+        """
+        self._set_property(
+            self._id,
+            Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
+            property_values=(("u8", 0),
+                            ("u8", line * 20),
+                            ("float", variable), )
         )
         self._text += str(variable)
         time.sleep(0.01)
@@ -326,16 +344,22 @@ class Display(OutputModule):
         )
         time.sleep(0.01)
 
-    def reset(self) -> None:
+    def reset(self, mode=0) -> None:
         """Clear the screen.
 
+        :param mode: Erase mode
+            - mode 0 : Erase inside buffer(it looks like nothing has changed)
+            - mode 1 : Erase display
         :return: None
         """
+
+        if mode > 1:
+            mode = 0
 
         self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_RESET,
-            property_values=(("u8", 0), )
+            property_values=(("u8", mode), )
         )
         self._text = ""
         time.sleep(0.01)
