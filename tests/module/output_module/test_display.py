@@ -132,21 +132,6 @@ class TestDisplay(unittest.TestCase):
             sent_messages.append(self.connection.send_list.pop())
         self.assertTrue(set_message in sent_messages)
 
-    def test_move_screen(self):
-        """Test move_screen method."""
-
-        mock_x = 10
-        mock_y = 20
-        self.display.move_screen(mock_x, mock_y)
-        set_message = parse_set_property_message(
-            -1, Display.PROPERTY_DISPLAY_MOVE_SCREEN,
-            (("s8", mock_x), ("s8", mock_y), )
-        )
-        sent_messages = []
-        while self.connection.send_list:
-            sent_messages.append(self.connection.send_list.pop())
-        self.assertTrue(set_message in sent_messages)
-
     def test_reset(self):
         """Test reset method."""
 

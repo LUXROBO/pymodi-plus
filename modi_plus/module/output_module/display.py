@@ -231,8 +231,8 @@ class Display(OutputModule):
             self._id,
             Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
             property_values=(("u8", x),
-                            ("u8", y),
-                            ("float", variable), )
+                             ("u8", y),
+                             ("float", variable), )
         )
         self._text += str(variable)
         time.sleep(0.01)
@@ -250,8 +250,8 @@ class Display(OutputModule):
             self._id,
             Display.PROPERTY_DISPLAY_WRITE_VARIABLE,
             property_values=(("u8", 0),
-                            ("u8", line * 20),
-                            ("float", variable), )
+                             ("u8", line * 20),
+                             ("float", variable), )
         )
         self._text += str(variable)
         time.sleep(0.01)
@@ -323,24 +323,6 @@ class Display(OutputModule):
             self.id,
             Display.PROPERTY_DISPLAY_SET_OFFSET,
             property_values=(("s8", x), ("s8", y), )
-        )
-        time.sleep(0.01)
-
-    def move_screen(self, x: int, y: int) -> None:
-        """Move the screen by x and y
-
-        :param x: X-axis movement value
-        :type x: int
-        :param y: Y-axis movement value
-        :type y: int
-        :return: None
-        """
-
-        self._set_property(
-            self.id,
-            Display.PROPERTY_DISPLAY_MOVE_SCREEN,
-            property_values=(("s8", x), ("s8", y), ),
-            force=True
         )
         time.sleep(0.01)
 
