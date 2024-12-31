@@ -83,7 +83,8 @@ class TestDisplay(unittest.TestCase):
         self.display.draw_picture(mock_name)
         set_message = parse_set_property_message(
             -1, Display.PROPERTY_DISPLAY_DRAW_PICTURE,
-            (("u8", Display.WIDTH), ("u8", Display.HEIGHT),
+            (("u8", 0), ("u8", 0),
+             ("u8", Display.WIDTH), ("u8", Display.HEIGHT),
              ("string", Display.PRESET_PICTURE[mock_name]), )
         )
         sent_messages = []
