@@ -256,7 +256,7 @@ class Display(OutputModule):
         self._text += str(variable)
         time.sleep(0.01)
 
-    def draw_picture(self, x: int, y: int, name: int) -> None:
+    def draw_picture(self, name: int) -> None:
         """Clears the display and show the input picture on the display.
 
         :param x: X coordinate of the desired position
@@ -275,8 +275,8 @@ class Display(OutputModule):
         self._set_property(
             self._id,
             Display.PROPERTY_DISPLAY_DRAW_PICTURE,
-            property_values=(("u8", x),
-                             ("u8", y),
+            property_values=(("u8", 0),
+                             ("u8", 0),
                              ("u8", Display.WIDTH),
                              ("u8", Display.HEIGHT),
                              ("string", file_name), )
