@@ -83,10 +83,11 @@ class ExeTask:
             if module.module_type == "network" and message["l"] == 6:
                 _, dir = unpack_data(message["b"], (5, 1))
 
-                # usb로 연결된 네트워크 모듈인 경우 interpreter 삭제제
+                # usb로 연결된 네트워크 모듈인 경우 interpreter 삭제
                 if dir & 2 and module.is_usb_connected is False:
                     self.__request_erase_interpreter()
-                    self.__request_reboot()
+                    self.__request_reboot(BROADCAST_ID)
+                    time.sleep(1)
                     module.is_usb_connected = True
 
             # 일반 모듈의 OS 버전이 1.3.1 이상일 경우, health data에 pnp on/off 상태가 포함되어 있다.
