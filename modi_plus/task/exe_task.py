@@ -86,6 +86,7 @@ class ExeTask:
                 # usb로 연결된 네트워크 모듈인 경우 interpreter 삭제제
                 if dir & 2 and module.is_usb_connected is False:
                     self.__request_erase_interpreter()
+                    self.__request_reboot()
                     module.is_usb_connected = True
 
             # 일반 모듈의 OS 버전이 1.3.1 이상일 경우, health data에 pnp on/off 상태가 포함되어 있다.
@@ -104,7 +105,7 @@ class ExeTask:
 
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
-            if curr_time - module.last_updated_time > 2:
+            if (curr_time - module.last_updated_time > 2) and (module.is_connected is True):
                 module.is_connected = False
                 module._last_set_message = None
 
