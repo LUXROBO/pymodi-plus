@@ -106,13 +106,13 @@ class Inspector:
     def inspect_env(self, module, i, nb_modules):
         self.print_wrap(
             """
-            Environment module has intensity, temperature, humidity and volume as its property.
+            Environment module has illuminance, temperature, humidity and volume as its property.
             """
         )
         input("\nIf you are ready to inspect this module, Press ENTER: ")
         self.clear()
 
-        properties = ["intensity", "temperature", "humidity", "volume"]
+        properties = ["illuminance", "temperature", "humidity", "volume"]
 
         for prop in properties:
             self.print_module_page(module, i, nb_modules)

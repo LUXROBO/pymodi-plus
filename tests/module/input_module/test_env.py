@@ -40,10 +40,10 @@ class TestEnv(unittest.TestCase):
         )
         self.assertEqual(_, 0)
 
-    def test_get_intensity(self):
-        """Test get_intensity method."""
+    def test_get_illuminance(self):
+        """Test get_illuminance method."""
 
-        _ = self.env.intensity
+        _ = self.env.illuminance
         self.assertEqual(
             self.connection.send_list[0],
             parse_get_property_message(-1, Env.PROPERTY_ENV_STATE, self.env.prop_samp_freq)

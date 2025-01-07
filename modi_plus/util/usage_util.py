@@ -135,7 +135,7 @@ class UsageInstructor:
             env = bundle.envs[0]
 
             while True:
-                print(f"Env ({env.id}) intensity: {env.intensity}")
+                print(f"Env ({env.id}) illuminance: {env.illuminance}")
                 print(f"Env ({env.id}) temperature: {env.temperature}")
                 print(f"Env ({env.id}) humidity: {env.humidity}")
                 print(f"Env ({env.id}) volume: {env.volume}")
@@ -154,9 +154,9 @@ class UsageInstructor:
             imu = bundle.imus[0]
 
             while True:
-                print(f"Gyro ({imu.id}) roll: {imu.roll}")
-                print(f"Gyro ({imu.id}) pitch: {imu.pitch}")
-                print(f"Gyro ({imu.id}) yaw: {imu.yaw}")
+                print(f"Gyro ({imu.id}) angle_x: {imu.angle_x}")
+                print(f"Gyro ({imu.id}) angle_y: {imu.angle_y}")
+                print(f"Gyro ({imu.id}) angle_z: {imu.angle_z}")
                 print(f"Gyro ({imu.id}) angular_vel_x: {imu.angular_vel_x}")
                 print(f"Gyro ({imu.id}) angular_vel_y: {imu.angular_vel_y}")
                 print(f"Gyro ({imu.id}) angular_vel_z: {imu.angular_vel_z}")

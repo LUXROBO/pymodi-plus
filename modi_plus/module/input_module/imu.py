@@ -24,10 +24,10 @@ class Imu(InputModule):
     PROPERTY_OFFSET_VIBRATION = 0
 
     @property
-    def roll(self) -> float:
-        """Returns the roll angle of the imu
+    def angle_x(self) -> float:
+        """Returns the angle_x angle of the imu
 
-        :return: The imu's roll angle.
+        :return: The imu's angle_x angle.
         :rtype: float
         """
 
@@ -37,10 +37,10 @@ class Imu(InputModule):
         return data
 
     @property
-    def pitch(self) -> float:
-        """Returns the pitch angle of the imu
+    def angle_y(self) -> float:
+        """Returns the angle_y angle of the imu
 
-        :return: The imu's pitch angle.
+        :return: The imu's angle_y angle.
         :rtype: float
         """
 
@@ -50,10 +50,10 @@ class Imu(InputModule):
         return data
 
     @property
-    def yaw(self) -> float:
-        """Returns the yaw angle of the imu
+    def angle_z(self) -> float:
+        """Returns the angle_zle_z angle of the imu
 
-        :return: The imu's yaw angle.
+        :return: The imu's angle_z angle.
         :rtype: float
         """
 
@@ -64,17 +64,17 @@ class Imu(InputModule):
 
     @property
     def angle(self) -> Tuple[float, float, float]:
-        """Returns the roll, pitch and yaw angle of the imu
+        """Returns the angle_x, angle_y and angle_z angle of the imu
 
-        :return: The imu's angles of roll, pitch and yaw.
+        :return: The imu's angles of angle_x, angle_y and angle_z.
         :rtype: tuple
         """
 
-        return self.roll, self.pitch, self.yaw
+        return self.angle_x, self.angle_y, self.angle_z
 
     @property
     def angular_vel_x(self) -> float:
-        """Returns the roll angle of the imu
+        """Returns the angle_x angle of the imu
 
         :return: The imu's angular velocity the about x-axis.
         :rtype: float

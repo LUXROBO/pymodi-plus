@@ -80,9 +80,14 @@ class ExeTask:
             module.last_updated_time = curr_time
             module.is_connected = True
 
-            if module.module_type == "network" and message["l"] == 5:
-                _, dir = unpack_data(message["b"], (4, 1))
-                if dir == 1:
+            if module.module_type == "network" and message["l"] == 6:
+                _, dir = unpack_data(message["b"], (5, 1))
+
+                # usb로 연결된 네트워크 모듈인 경우 interpreter 삭제
+                if dir & 2 and module.is_usb_connected is False:
+                    self.__request_erase_interpreter()
+                    self.__request_reboot(BROADCAST_ID)
+                    time.sleep(1)
                     module.is_usb_connected = True
 
             # 일반 모듈의 OS 버전이 1.3.1 이상일 경우, health data에 pnp on/off 상태가 포함되어 있다.
@@ -101,7 +106,7 @@ class ExeTask:
 
         # Disconnect module with no health message for more than 2 second
         for module in self._modules:
-            if curr_time - module.last_updated_time > 2:
+            if (curr_time - module.last_updated_time > 2) and (module.is_connected is True):
                 module.is_connected = False
                 module._last_set_message = None
 
@@ -206,3 +211,6 @@ class ExeTask:
 
     def __request_esp_version(self, id):
         self._connection.send_nowait(parse_message(0xA0, 25, id, (0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF)))
+
+    def __request_erase_interpreter(self):
+        self._connection.send_nowait(parse_message(160, 80, 4095, (0, 0, 0, 0, 0, 0, 0, 0)))

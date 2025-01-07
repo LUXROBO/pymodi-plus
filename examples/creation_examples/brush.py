@@ -15,8 +15,8 @@ class BrushManager(GameManager):
 
     def update(self):
         h, w = self.height // 2, self.width // 2
-        self.cursor.y = h - h * sin(radians(-self.imu.roll))
-        self.cursor.x = w - w * sin(radians(-self.imu.pitch))
+        self.cursor.y = h - h * sin(radians(-self.imu.angle_x))
+        self.cursor.x = w - w * sin(radians(-self.imu.angle_y))
         if self.button.pressed:
             self.add_object(Brush((self.cursor.x, self.cursor.y), "x"))
 

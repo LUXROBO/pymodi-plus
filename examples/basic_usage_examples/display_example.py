@@ -17,7 +17,7 @@ if __name__ == "__main__":
     pos = (20, 30)
 
     for i in range(500):
-        display.write_variable(0, pos[0], pos[1])
+        display.write_variable_xy(pos[0], pos[1], 0)
         pos = (pos[0] + vel[0], pos[1] + vel[1])
         if pos[0] < 0 or pos[0] > 40:
             vel = (-vel[0], vel[1])

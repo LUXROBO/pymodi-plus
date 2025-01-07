@@ -104,11 +104,19 @@ class Motor(OutputModule):
         :return: None
         """
 
+        invalid_angle = (target_angle < 0 or target_angle > 360)
+        invalid_speed = (target_speed < 0 or target_speed > 100)
+
+        if invalid_angle or invalid_speed:
+            return
+
         self._set_property(
             destination_id=self._id,
             property_num=Motor.PROPERTY_MOTOR_ANGLE,
             property_values=(("u16", target_angle),
-                             ("u16", target_speed), )
+                             ("u16", target_speed),
+                             ("u16", 0),
+                             ("u16", 0), )
         )
         time.sleep(0.01)
 
