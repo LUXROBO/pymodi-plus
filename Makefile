@@ -1,4 +1,4 @@
-.PHONY: help install install-dev install-editable reinstall test test-all test-input test-output test-task test-verbose lint format clean clean-build clean-pyc clean-test coverage docs dist release examples
+.PHONY: help install install-dev install-editable reinstall test test-pytest-all test-all test-input test-output test-task test-verbose test-examples-syntax lint format clean clean-build clean-pyc clean-test coverage docs dist release examples
 .DEFAULT_GOAL := help
 
 # Python interpreter detection
@@ -64,9 +64,9 @@ test: ## Run all tests safely (avoiding pytest conflicts)
 	$(PYTHON) -m pytest tests/task/ tests/module/input_module/ tests/module/output_module/ -v
 	@echo "$(GREEN)✓ Tests completed$(NC)"
 
-test-all: ## Run ALL tests including setup_module (may have conflicts)
+test-pytest-all: ## Run ALL pytest tests including setup_module (may have conflicts)
 	$(call check_command,pytest)
-	@echo "$(BLUE)Running all tests (including potential conflicts)...$(NC)"
+	@echo "$(BLUE)Running all pytest tests (including potential conflicts)...$(NC)"
 	$(PYTHON) -m pytest tests/ -v
 	@echo "$(YELLOW)⚠ Some errors may occur due to pytest naming conflicts$(NC)"
 
@@ -93,6 +93,43 @@ test-verbose: ## Run tests with verbose output
 	@echo "$(BLUE)Running tests with verbose output...$(NC)"
 	$(PYTHON) -m pytest tests/task/ tests/module/input_module/ tests/module/output_module/ -vv
 	@echo "$(GREEN)✓ Tests completed$(NC)"
+
+test-examples-syntax: ## Check example files syntax (no execution)
+	@echo "$(BLUE)Checking example files syntax...$(NC)"
+	@error_count=0; total_count=0; \
+	for file in examples/basic_usage_examples/*.py; do \
+		if [ -f "$$file" ]; then \
+			total_count=$$((total_count + 1)); \
+			echo "  Checking $$(basename $$file)..."; \
+			$(PYTHON) -m py_compile "$$file" 2>/dev/null || error_count=$$((error_count + 1)); \
+		fi; \
+	done; \
+	for file in examples/creation_examples/*.py; do \
+		if [ -f "$$file" ]; then \
+			total_count=$$((total_count + 1)); \
+			echo "  Checking $$(basename $$file)..."; \
+			$(PYTHON) -m py_compile "$$file" 2>/dev/null || error_count=$$((error_count + 1)); \
+		fi; \
+	done; \
+	for file in examples/intermediate_usage_examples/*.py; do \
+		if [ -f "$$file" ]; then \
+			total_count=$$((total_count + 1)); \
+			echo "  Checking $$(basename $$file)..."; \
+			$(PYTHON) -m py_compile "$$file" 2>/dev/null || error_count=$$((error_count + 1)); \
+		fi; \
+	done; \
+	if [ $$error_count -eq 0 ]; then \
+		echo "$(GREEN)✓ All $$total_count example files have valid syntax$(NC)"; \
+	else \
+		echo "$(RED)✗ $$error_count/$$total_count files have syntax errors$(NC)"; \
+		exit 1; \
+	fi
+
+test-all: test lint test-examples-syntax ## Run all automated tests
+	@echo ""
+	@echo "$(GREEN)========================================$(NC)"
+	@echo "$(GREEN)✓ All automated tests passed!$(NC)"
+	@echo "$(GREEN)========================================$(NC)"
 
 coverage: ## Run tests with coverage report
 	$(call check_command,pytest)
