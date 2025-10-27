@@ -4,6 +4,7 @@ import json
 import queue
 import base64
 import pexpect
+import subprocess
 
 from typing import Optional
 from threading import Thread
@@ -17,8 +18,23 @@ class BleTask(ConnectionTask):
     def __init__(self, verbose=False, uuid=None):
         print("Initiating ble_task connection...")
         script = os.path.join(os.path.dirname(__file__), "change_interval.sh")
-        os.system(f"chmod 777 {script}")
-        os.system(f"sudo {script}")
+
+        # Security: Validate script path to prevent path traversal
+        script_abs = os.path.abspath(script)
+        expected_dir = os.path.abspath(os.path.dirname(__file__))
+        if not script_abs.startswith(expected_dir):
+            raise ValueError("Invalid script path")
+
+        # Security: Use subprocess instead of os.system to prevent command injection
+        # Change permissions to 755 (rwxr-xr-x) instead of 777 for better security
+        try:
+            subprocess.run(['chmod', '755', script], check=True, timeout=5)
+            subprocess.run(['sudo', script], check=True, timeout=10)
+        except subprocess.CalledProcessError as e:
+            print(f"Warning: Failed to execute Bluetooth configuration script: {e}")
+        except subprocess.TimeoutExpired:
+            print("Warning: Bluetooth configuration script timed out")
+
         super().__init__(verbose=verbose)
         self._bus = None
         self.__uuid = uuid
@@ -47,8 +63,16 @@ class BleTask(ConnectionTask):
         raise ValueError("MODI+ network module does not exist!")
 
     def __reset(self):
-        os.system("sudo hciconfig hci0 down")
-        os.system("sudo hciconfig hci0 up")
+        # Security: Use subprocess instead of os.system to prevent command injection
+        try:
+            subprocess.run(['sudo', 'hciconfig', 'hci0', 'down'],
+                          check=True, timeout=5, capture_output=True)
+            subprocess.run(['sudo', 'hciconfig', 'hci0', 'up'],
+                          check=True, timeout=5, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Warning: Bluetooth reset failed: {e.stderr.decode() if e.stderr else e}")
+        except subprocess.TimeoutExpired:
+            print("Warning: Bluetooth reset timed out")
 
     def open_connection(self):
         self.__reset()
@@ -73,7 +97,15 @@ class BleTask(ConnectionTask):
         time.sleep(0.5)
         self._bus.sendline("disconnect")
         self._bus.terminate()
-        os.system("sudo hciconfig hci0 down")
+
+        # Security: Use subprocess instead of os.system to prevent command injection
+        try:
+            subprocess.run(['sudo', 'hciconfig', 'hci0', 'down'],
+                          check=True, timeout=5, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Warning: Failed to shut down Bluetooth: {e.stderr.decode() if e.stderr else e}")
+        except subprocess.TimeoutExpired:
+            print("Warning: Bluetooth shutdown timed out")
 
     def __ble_read(self):
         """

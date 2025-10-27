@@ -22,8 +22,17 @@ class StoppableThread(th.Thread):
         return self._stop.isSet()
 
     def run(self):
+        # Security: Validate method name to prevent code injection
+        if not self._method.isidentifier():
+            raise ValueError(f"Invalid method name: {self._method}")
+
+        # Security: Check that the method exists before accessing it
+        if not hasattr(self._module, self._method):
+            raise AttributeError(f"Module has no attribute: {self._method}")
+
         while True:
-            prop = eval(f"self._module.{self._method}")
+            # Security: Use getattr() instead of eval() to prevent code injection
+            prop = getattr(self._module, self._method)
             print(f"\rObtained property value: {prop} ", end="")
             time.sleep(0.1)
 

@@ -270,7 +270,11 @@ class Tutor:
         print("Let there be light by typing led.set_rgb(0, 0, 100)")
 
         response = self.check_user_input("led.set_rgb(0, 0, 100)")
-        exec(response)
+        # Security: Use direct function call instead of exec() to prevent code injection
+        if response == "led.set_rgb(0, 0, 100)":
+            led.set_rgb(0, 0, 100)
+        else:
+            print(f"Invalid input. Expected 'led.set_rgb(0, 0, 100)', got '{response}'")
         print()
 
         self.print_wrap(
