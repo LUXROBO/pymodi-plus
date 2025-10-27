@@ -234,7 +234,7 @@ class Module:
                         raise Module.GetValueInitTimeout
                     time.sleep(0.1)
             else:
-                return bytearray(12)
+                return bytearray(14)  # Increased from 12 to 14 to support RGB properties (offset 12 + 2 bytes)
 
         return self.__get_properties[property_type].value
 
