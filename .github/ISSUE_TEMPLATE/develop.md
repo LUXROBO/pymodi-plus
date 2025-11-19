@@ -1,8 +1,1 @@
----
-name: Develop [Only Member]
-about: Development for this project
-title: ""
-labels: ''
-assignees: ''
-
----
+../../docs/github/issue-templates/develop.md

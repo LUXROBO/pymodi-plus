@@ -1,6 +1,31 @@
 History
 ==
 
+0.4.0 (2025-11-19)
+--
+* Feature
+1. Add RGB support for Env module v2.x+
+   - New properties: `red`, `green`, `blue`, `white`, `black`
+   - New properties: `color_class` (0-5: unknown/red/green/blue/white/black)
+   - New property: `brightness` (0-100%)
+   - Automatic version detection (v1.x: not supported, v2.x+: supported)
+2. Enhanced GitHub Actions workflows
+   - Support Python 3.8-3.13 across all platforms
+   - Platform-specific compatibility fixes (macOS, Windows)
+   - Improved CI/CD with conditional linting (flake8 for 3.8-3.11, ruff for 3.12+)
+
+* Tests
+1. Add 31 new RGB-related tests
+   - Version compatibility tests
+   - RGB property tests
+   - Data type validation tests
+   - Total: 94 tests (all passing)
+
+* Documentation
+1. Complete RGB feature documentation
+2. GitHub Actions compatibility guides
+3. Branch protection setup guide
+
 0.3.0 (2023-01-19)
 --
 * Feature
