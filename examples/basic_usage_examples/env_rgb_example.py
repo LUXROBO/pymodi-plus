@@ -1,9 +1,14 @@
-"""Example of using Env module RGB properties
+"""Example of using Env module RGB and color properties
 
-This example demonstrates how to use the RGB color sensor properties
-of the Env module. RGB properties are only available in version 2.x and above.
+This example demonstrates how to use the color sensor properties
+of the Env module including:
+- RGB (red, green, blue) values
+- White and Black values
+- Color class detection (red/green/blue/white/black/unknown)
+- Brightness value
 
-Note: This example tests ALL connected Env modules.
+Note: These properties are only available in version 2.x and above.
+This example tests ALL connected Env modules.
 """
 
 import modi_plus
@@ -36,7 +41,7 @@ if __name__ == "__main__":
     bundle = modi_plus.MODIPlus()
 
     print("=" * 60)
-    print("Env Module RGB Example - Multi-Module Support")
+    print("Env Module Color Sensor Example - Multi-Module Support")
     print("=" * 60)
 
     # Check how many Env modules are connected
@@ -57,17 +62,37 @@ if __name__ == "__main__":
     # If any module supports RGB, start continuous reading
     if rgb_supported_modules:
         print(f"\n{'=' * 60}")
-        print(f"Reading RGB values from {len(rgb_supported_modules)} module(s)")
+        print(f"Reading color sensor values from {len(rgb_supported_modules)} module(s)")
         print("Press Ctrl+C to stop")
         print(f"{'=' * 60}\n")
 
+        # Color class 이름 매핑
+        color_names = {
+            0: "unknown",
+            1: "red",
+            2: "green",
+            3: "blue",
+            4: "white",
+            5: "black"
+        }
+
         try:
             while True:
-                # Read and display RGB from all supported modules
+                # Read and display all color properties from all supported modules
                 for idx, env in rgb_supported_modules:
                     try:
                         r, g, b = env.rgb
-                        print(f"Module #{idx + 1}: RGB=({r:3d}, {g:3d}, {b:3d})", end="  ")
+                        white = env.white
+                        black = env.black
+                        color_class = env.color_class
+                        brightness = env.brightness
+                        color_name = color_names.get(color_class, "unknown")
+                        
+                        print(f"Module #{idx + 1}: ", end="")
+                        print(f"RGB=({r:3d},{g:3d},{b:3d}) ", end="")
+                        print(f"W={white:3d} B={black:3d} ", end="")
+                        print(f"Bright={brightness:3d} ", end="")
+                        print(f"Color={color_name:7s}", end="  ")
                     except Exception as e:
                         print(f"Module #{idx + 1}: Error - {e}", end="  ")
 
