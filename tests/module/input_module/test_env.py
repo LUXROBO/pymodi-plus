@@ -327,7 +327,7 @@ class TestEnvRGBDataTypes(unittest.TestCase):
         # Create mock RGB data with known values
         # red=50, green=75, blue=100, white=25, black=10, color_class=2 (green), brightness=80
         self.mock_rgb_data = struct.pack("HHHHHBB", 50, 75, 100, 25, 10, 2, 80)
-        
+
     def tearDown(self):
         """Tear down test fixtures."""
         del self.env
@@ -336,32 +336,32 @@ class TestEnvRGBDataTypes(unittest.TestCase):
         """Test RGB values are correctly parsed from mock data."""
         # Override _get_property to return our mock data
         original_get_property = self.env._get_property
-        
+
         def mock_get_property(prop_id):
             if prop_id == Env.PROPERTY_RGB_STATE:
                 return self.mock_rgb_data
             return original_get_property(prop_id)
-        
+
         self.env._get_property = mock_get_property
-        
+
         # Test uint16_t values (0-100%)
         self.assertEqual(self.env.red, 50)
         self.assertEqual(self.env.green, 75)
         self.assertEqual(self.env.blue, 100)
         self.assertEqual(self.env.white, 25)
         self.assertEqual(self.env.black, 10)
-        
+
         # Test uint8_t values
         self.assertEqual(self.env.color_class, 2)  # green
         self.assertEqual(self.env.brightness, 80)
-        
+
         # Test rgb tuple
         self.assertEqual(self.env.rgb, (50, 75, 100))
 
     def test_color_class_values(self):
         """Test color_class returns correct values for each color."""
         original_get_property = self.env._get_property
-        
+
         # Test different color classes
         color_class_tests = [
             (0, "unknown"),
@@ -371,18 +371,18 @@ class TestEnvRGBDataTypes(unittest.TestCase):
             (4, "white"),
             (5, "black"),
         ]
-        
+
         for color_value, color_name in color_class_tests:
             mock_data = struct.pack("HHHHHBB", 0, 0, 0, 0, 0, color_value, 0)
-            
+
             def mock_get_property(prop_id):
                 if prop_id == Env.PROPERTY_RGB_STATE:
                     return mock_data
                 return original_get_property(prop_id)
-            
+
             self.env._get_property = mock_get_property
-            self.assertEqual(self.env.color_class, color_value, 
-                           f"color_class should be {color_value} for {color_name}")
+            self.assertEqual(self.env.color_class, color_value,
+                             f"color_class should be {color_value} for {color_name}")
 
     def test_property_rgb_state_constant(self):
         """Test that PROPERTY_RGB_STATE constant is correctly defined."""

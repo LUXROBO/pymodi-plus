@@ -13,7 +13,7 @@ class Env(InputModule):
     PROPERTY_OFFSET_TEMPERATURE = 2
     PROPERTY_OFFSET_HUMIDITY = 4
     PROPERTY_OFFSET_VOLUME = 6
-    
+
     # RGB property offsets (only available in version 2.x and above)
     PROPERTY_OFFSET_RED = 0
     PROPERTY_OFFSET_GREEN = 2
