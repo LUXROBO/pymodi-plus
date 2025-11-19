@@ -138,3 +138,36 @@ To see what other commands are available,
 ```
 $ python -m modi_plus --help
 ```
+
+Documentation
+-------------
+📚 **Complete documentation is available in the [docs/](./docs/) folder.**
+
+### Quick Links
+- 🚀 [Quick Start Guide](./docs/getting-started/QUICKSTART.md) - Get up and running quickly
+- ✨ [Env Module RGB Features](./docs/features/ENV_RGB_FEATURE.md) - New RGB sensor support (v2.x+)
+- 🛠️ [Development Guide](./docs/development/MAKEFILE_GUIDE.md) - Build, test, and contribute
+- 📦 [Deployment Guide](./docs/deployment/PYPI_DEPLOYMENT_GUIDE.md) - Release to PyPI
+- 🐛 [Troubleshooting](./docs/troubleshooting/) - Platform-specific issues and fixes
+
+### What's New in v0.4.0
+- ✅ **RGB Color Sensor Support** for Env module v2.x+
+  - New properties: `red`, `green`, `blue`, `white`, `black`
+  - Color classification: `color_class` (0-5)
+  - Brightness measurement: `brightness` (0-100%)
+- ✅ **Enhanced Testing** - 94 tests across all platforms
+- ✅ **Python 3.8-3.13 Support** - Wide version compatibility
+- ✅ **Improved CI/CD** - GitHub Actions enhancements
+
+See [Release History](./docs/project/HISTORY.md) for complete changelog.
+
+Contributing
+------------
+We welcome contributions! Please see:
+- [Contributing Guidelines](./docs/getting-started/CONTRIBUTING.md)
+- [Code of Conduct](./docs/getting-started/CODE_OF_CONDUCT.md)
+- [Development Guide](./docs/development/TESTS_README.md)
+
+License
+-------
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

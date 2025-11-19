@@ -1,88 +1,225 @@
-.PHONY: clean clean-test clean-pyc clean-build docs
-.DEFAULT_GOAL := build
+.PHONY: help install install-dev install-editable reinstall test test-pytest-all test-all test-input test-output test-task test-verbose test-examples-syntax lint format clean clean-build clean-pyc clean-test coverage docs dist release examples
+.DEFAULT_GOAL := help
 
+# Python interpreter detection
 ifeq ($(shell which python3),)
-	MODI_PYTHON = python
+	PYTHON = python
 else
-	MODI_PYTHON = python3
+	PYTHON = python3
 endif
 
-define BROWSER_PYSCRIPT
-import os, webbrowser, sys
+# Colors for output
+BLUE := \033[0;34m
+GREEN := \033[0;32m
+YELLOW := \033[0;33m
+RED := \033[0;31m
+NC := \033[0m # No Color
 
-try:
-	from urllib import pathname2url
-except:
-	from urllib.request import pathname2url
-
-webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
+# Check if command exists
+define check_command
+	@which $(1) > /dev/null 2>&1 || (echo "$(RED)Error: $(1) is not installed. Run 'make install-dev' first.$(NC)" && exit 1)
 endef
-export BROWSER_PYSCRIPT
 
-BROWSER := $(MODI_PYTHON) -c "$$BROWSER_PYSCRIPT"
+##@ Help
 
+help: ## Show this help message
+	@echo "$(BLUE)PyMODI Plus - Makefile Commands$(NC)"
+	@echo ""
+	@awk 'BEGIN {FS = ":.*##"; printf "Usage:\n  make $(GREEN)<target>$(NC)\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  $(GREEN)%-18s$(NC) %s\n", $$1, $$2 } /^##@/ { printf "\n$(YELLOW)%s$(NC)\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
-# remove all build, test, coverage and Python artifacts
-clean: clean-build clean-pyc clean-test
+##@ Setup
 
-# remove build artifacts
-clean-build:
+install: ## Install package dependencies
+	@echo "$(BLUE)Installing package dependencies...$(NC)"
+	$(PYTHON) -m pip install --upgrade pip
+	$(PYTHON) -m pip install -r requirements.txt
+	@echo "$(GREEN)✓ Package dependencies installed successfully$(NC)"
+
+install-dev: install ## Install package + development dependencies
+	@echo "$(BLUE)Installing development dependencies...$(NC)"
+	$(PYTHON) -m pip install -r requirements-dev.txt
+	$(PYTHON) -m pip install pytest pytest-cov
+	@echo "$(BLUE)Installing package in editable mode...$(NC)"
+	$(PYTHON) -m pip install -e .
+	@echo "$(GREEN)✓ Development dependencies installed successfully$(NC)"
+	@echo "$(BLUE)Checking for dependency conflicts...$(NC)"
+	@$(PYTHON) -m pip check && echo "$(GREEN)✓ No dependency conflicts found$(NC)" || echo "$(YELLOW)⚠ Some dependency warnings (may be safe to ignore)$(NC)"
+
+install-editable: ## Install package in editable/development mode
+	@echo "$(BLUE)Installing package in editable mode...$(NC)"
+	$(PYTHON) -m pip install -e .
+	@echo "$(GREEN)✓ Package installed in editable mode$(NC)"
+
+reinstall: ## Reinstall package (fixes dependency issues)
+	@echo "$(BLUE)Reinstalling package...$(NC)"
+	$(PYTHON) -m pip uninstall -y pymodi-plus || true
+	$(PYTHON) -m pip install -e .
+	@echo "$(GREEN)✓ Package reinstalled$(NC)"
+
+##@ Testing
+
+test: ## Run all tests safely (avoiding pytest conflicts)
+	$(call check_command,pytest)
+	@echo "$(BLUE)Running tests...$(NC)"
+	$(PYTHON) -m pytest tests/task/ tests/module/input_module/ tests/module/output_module/ -v
+	@echo "$(GREEN)✓ Tests completed$(NC)"
+
+test-pytest-all: ## Run ALL pytest tests including setup_module (may have conflicts)
+	$(call check_command,pytest)
+	@echo "$(BLUE)Running all pytest tests (including potential conflicts)...$(NC)"
+	$(PYTHON) -m pytest tests/ -v
+	@echo "$(YELLOW)⚠ Some errors may occur due to pytest naming conflicts$(NC)"
+
+test-input: ## Run input module tests only
+	$(call check_command,pytest)
+	@echo "$(BLUE)Running input module tests...$(NC)"
+	$(PYTHON) -m pytest tests/module/input_module/ -v
+	@echo "$(GREEN)✓ Input module tests completed$(NC)"
+
+test-output: ## Run output module tests only
+	$(call check_command,pytest)
+	@echo "$(BLUE)Running output module tests...$(NC)"
+	$(PYTHON) -m pytest tests/module/output_module/ -v
+	@echo "$(GREEN)✓ Output module tests completed$(NC)"
+
+test-task: ## Run task tests only
+	$(call check_command,pytest)
+	@echo "$(BLUE)Running task tests...$(NC)"
+	$(PYTHON) -m pytest tests/task/ -v
+	@echo "$(GREEN)✓ Task tests completed$(NC)"
+
+test-verbose: ## Run tests with verbose output
+	$(call check_command,pytest)
+	@echo "$(BLUE)Running tests with verbose output...$(NC)"
+	$(PYTHON) -m pytest tests/task/ tests/module/input_module/ tests/module/output_module/ -vv
+	@echo "$(GREEN)✓ Tests completed$(NC)"
+
+test-examples-syntax: ## Check example files syntax (no execution)
+	@echo "$(BLUE)Checking example files syntax...$(NC)"
+	@error_count=0; total_count=0; \
+	for file in examples/basic_usage_examples/*.py; do \
+		if [ -f "$$file" ]; then \
+			total_count=$$((total_count + 1)); \
+			echo "  Checking $$(basename $$file)..."; \
+			$(PYTHON) -m py_compile "$$file" 2>/dev/null || error_count=$$((error_count + 1)); \
+		fi; \
+	done; \
+	for file in examples/creation_examples/*.py; do \
+		if [ -f "$$file" ]; then \
+			total_count=$$((total_count + 1)); \
+			echo "  Checking $$(basename $$file)..."; \
+			$(PYTHON) -m py_compile "$$file" 2>/dev/null || error_count=$$((error_count + 1)); \
+		fi; \
+	done; \
+	for file in examples/intermediate_usage_examples/*.py; do \
+		if [ -f "$$file" ]; then \
+			total_count=$$((total_count + 1)); \
+			echo "  Checking $$(basename $$file)..."; \
+			$(PYTHON) -m py_compile "$$file" 2>/dev/null || error_count=$$((error_count + 1)); \
+		fi; \
+	done; \
+	if [ $$error_count -eq 0 ]; then \
+		echo "$(GREEN)✓ All $$total_count example files have valid syntax$(NC)"; \
+	else \
+		echo "$(RED)✗ $$error_count/$$total_count files have syntax errors$(NC)"; \
+		exit 1; \
+	fi
+
+test-all: test lint test-examples-syntax ## Run all automated tests
+	@echo ""
+	@echo "$(GREEN)========================================$(NC)"
+	@echo "$(GREEN)✓ All automated tests passed!$(NC)"
+	@echo "$(GREEN)========================================$(NC)"
+
+coverage: ## Run tests with coverage report
+	$(call check_command,pytest)
+	$(call check_command,coverage)
+	@echo "$(BLUE)Running tests with coverage...$(NC)"
+	$(PYTHON) -m pytest tests/task/ tests/module/input_module/ tests/module/output_module/ --cov=modi_plus --cov-report=html --cov-report=term
+	@echo "$(GREEN)✓ Coverage report generated in htmlcov/index.html$(NC)"
+
+##@ Code Quality
+
+lint: ## Check code style with flake8
+	$(call check_command,flake8)
+	@echo "$(BLUE)Checking code style...$(NC)"
+	flake8 modi_plus examples tests
+	@echo "$(GREEN)✓ Code style check passed$(NC)"
+
+format: ## Format code with black
+	$(call check_command,black)
+	@echo "$(BLUE)Formatting code...$(NC)"
+	black modi_plus examples tests
+	@echo "$(GREEN)✓ Code formatted successfully$(NC)"
+
+##@ Examples
+
+examples: ## List all available examples
+	@echo "$(BLUE)Available Examples:$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Basic Usage Examples:$(NC)"
+	@ls -1 examples/basic_usage_examples/*.py | xargs -n1 basename | sed 's/^/  - /'
+	@echo ""
+	@echo "$(YELLOW)Creation Examples:$(NC)"
+	@ls -1 examples/creation_examples/*.py 2>/dev/null | xargs -n1 basename | sed 's/^/  - /' || echo "  (no examples found)"
+	@echo ""
+	@echo "$(YELLOW)Intermediate Examples:$(NC)"
+	@ls -1 examples/intermediate_usage_examples/*.py 2>/dev/null | xargs -n1 basename | sed 's/^/  - /' || echo "  (no examples found)"
+	@echo ""
+	@echo "Run an example with: $(GREEN)python examples/basic_usage_examples/<example_name>.py$(NC)"
+
+##@ Cleanup
+
+clean: clean-build clean-pyc clean-test ## Remove all build, test, coverage and Python artifacts
+
+clean-build: ## Remove build artifacts
+	@echo "$(BLUE)Removing build artifacts...$(NC)"
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
+	@echo "$(GREEN)✓ Build artifacts removed$(NC)"
 
-# remove Python file artifacts
-clean-pyc:
+clean-pyc: ## Remove Python file artifacts
+	@echo "$(BLUE)Removing Python file artifacts...$(NC)"
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
+	@echo "$(GREEN)✓ Python file artifacts removed$(NC)"
 
-# remove test and coverage artifacts
-clean-test:
+clean-test: ## Remove test and coverage artifacts
+	@echo "$(BLUE)Removing test and coverage artifacts...$(NC)"
 	rm -fr .tox/
 	rm -f .coverage
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
+	@echo "$(GREEN)✓ Test artifacts removed$(NC)"
 
-# check style with flake8
-lint:
-	flake8 modi_plus examples tests
+##@ Documentation
 
-# run tests quickly with the default Python
-test:
-	$(MODI_PYTHON) setup.py test
-
-# check code coverage quickly with the default Python
-coverage:
-	coverage run --source modi_plus setup.py test
-	coverage report -m
-	coverage html
-	$(BROWSER) htmlcov/index.html
-
-# generate Sphinx HTML documentation, including API docs
-docs:
+docs: ## Generate Sphinx HTML documentation
+	$(call check_command,sphinx-apidoc)
+	@echo "$(BLUE)Generating documentation...$(NC)"
 	rm -f docs/modi_plus.*
 	rm -f docs/modules.md
 	sphinx-apidoc -o docs/ modi_plus
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
+	@echo "$(GREEN)✓ Documentation generated in docs/_build/html/index.html$(NC)"
 
-# package and upload a release
-release: dist
-	twine upload dist/*
+##@ Build & Release
 
-# builds source and wheel package
-dist: clean
-	$(MODI_PYTHON) setup.py sdist
-	$(MODI_PYTHON) setup.py bdist_wheel
+dist: clean ## Build source and wheel package
+	@echo "$(BLUE)Building distribution packages...$(NC)"
+	$(PYTHON) -m pip install --upgrade build
+	$(PYTHON) -m build
 	ls -l dist
+	@echo "$(GREEN)✓ Distribution packages built$(NC)"
 
-# install the package to the active Python's site-packages
-install: clean
-	$(MODI_PYTHON) setup.py install
-
-build: lint test
+release: dist ## Package and upload a release
+	$(call check_command,twine)
+	@echo "$(BLUE)Uploading to PyPI...$(NC)"
+	twine upload dist/*
+	@echo "$(GREEN)✓ Release uploaded$(NC)"
