@@ -32,17 +32,33 @@ jobs:
     - name: Display Python version
       run: python --version
 
-    - name: Install dependencies
+    - name: Install dependencies (Python 3.8-3.12)
+      if: matrix.python-version != '3.13'
       run: |
         python -m pip install --upgrade pip
         pip install --upgrade "flake8>=7.0.0" "importlib-metadata>=6.0.0" pytest pytest-cov
         pip install -r requirements.txt
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
-    - name: Run linting (code style check)
+    - name: Install dependencies (Python 3.13)
+      if: matrix.python-version == '3.13'
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruff pytest pytest-cov
+        pip install -r requirements.txt
+        if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+    - name: Run linting (flake8)
+      if: matrix.python-version != '3.13'
       run: |
         echo "Checking code style with flake8..."
         python -m flake8 modi_plus tests --ignore E203,W503,W504,E501
+
+    - name: Run linting (ruff)
+      if: matrix.python-version == '3.13'
+      run: |
+        echo "Checking code style with ruff (Python 3.13 compatible)..."
+        ruff check modi_plus tests --ignore E501
 
     - name: Run unit tests with unittest
       run: |
