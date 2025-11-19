@@ -5,27 +5,34 @@ on: [push, pull_request]
 
 jobs:
   unit_test:
-    name: macOS Test
+    name: macOS Test - Python ${{ matrix.python-version }}
     runs-on: macos-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+
+    - name: Display Python version
+      run: python --version
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install pytest pytest-cov
         pip install -r requirements.txt
 
-    - name: Run unit tests
-      run: |
-        python --version
-        python -m unittest
+    - name: Run unit tests with unittest
+      run: python -m unittest
+
+    - name: Run pytest tests
+      run: python -m pytest tests/task/ tests/module/input_module/ tests/module/output_module/ -v
