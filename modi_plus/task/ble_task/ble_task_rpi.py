@@ -66,9 +66,9 @@ class BleTask(ConnectionTask):
         # Security: Use subprocess instead of os.system to prevent command injection
         try:
             subprocess.run(['sudo', 'hciconfig', 'hci0', 'down'],
-                          check=True, timeout=5, capture_output=True)
+                           check=True, timeout=5, capture_output=True)
             subprocess.run(['sudo', 'hciconfig', 'hci0', 'up'],
-                          check=True, timeout=5, capture_output=True)
+                           check=True, timeout=5, capture_output=True)
         except subprocess.CalledProcessError as e:
             print(f"Warning: Bluetooth reset failed: {e.stderr.decode() if e.stderr else e}")
         except subprocess.TimeoutExpired:
@@ -101,7 +101,7 @@ class BleTask(ConnectionTask):
         # Security: Use subprocess instead of os.system to prevent command injection
         try:
             subprocess.run(['sudo', 'hciconfig', 'hci0', 'down'],
-                          check=True, timeout=5, capture_output=True)
+                           check=True, timeout=5, capture_output=True)
         except subprocess.CalledProcessError as e:
             print(f"Warning: Failed to shut down Bluetooth: {e.stderr.decode() if e.stderr else e}")
         except subprocess.TimeoutExpired:
