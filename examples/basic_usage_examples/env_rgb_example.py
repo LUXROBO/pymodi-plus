@@ -11,9 +11,50 @@ Note: These properties are only available in version 2.x and above.
 This example tests ALL connected Env modules.
 """
 
+import os
+import sys
+
 import modi_plus
 import time
 
+# --- OS 구분 ---
+IS_WINDOWS = (os.name == "nt")
+
+if IS_WINDOWS:
+    import msvcrt
+else:
+    import termios
+    import tty
+    import select
+
+
+def get_key_nonblocking():
+    """
+    - 키가 눌리면: 1글자(str) 반환
+    - 아무 키도 없으면: None 반환
+    """
+    if IS_WINDOWS:
+        # Windows: msvcrt 사용
+        if msvcrt.kbhit():
+            ch = msvcrt.getch()
+            try:
+                return ch.decode(errors="ignore")
+            except Exception:
+                return None
+        return None
+    else:
+        # macOS / Linux: select + cbreak 모드에서 stdin 읽기
+        dr, _, _ = select.select([sys.stdin], [], [], 0)
+        if dr:
+            return sys.stdin.read(1)
+        return None
+
+
+# --- macOS / Linux에서는 터미널 모드 변경 필요(cbreak) ---
+if not IS_WINDOWS:
+    fd = sys.stdin.fileno()
+    old_term_attr = termios.tcgetattr(fd)
+    tty.setcbreak(fd)  # Enter 없이 한 글자씩 읽히도록
 
 def test_env_module(env, index):
     """Test a single Env module for RGB support"""
@@ -59,6 +100,8 @@ if __name__ == "__main__":
         if test_env_module(env, i):
             rgb_supported_modules.append((i, env))
 
+    stop_flag = False
+
     # If any module supports RGB, start continuous reading
     if rgb_supported_modules:
         print(f"\n{'=' * 60}")
@@ -78,8 +121,27 @@ if __name__ == "__main__":
 
         try:
             while True:
+                ch = get_key_nonblocking()
+                if ch is not None:
+                    ch = ch.lower()
+                    if ch == 'q':
+                        print("\n\nStop command received. Exiting...")
+                        break
+                    elif ch == 's':
+                        stop_flag = not stop_flag
+                        if stop_flag:
+                            print("\nReading paused. Press 's' to resume.")
+                        else:
+                            print("\nReading resumed.")
+
+                if stop_flag:
+                    time.sleep(0.1)
+                    continue
+
                 # Read and display all color properties from all supported modules
                 for idx, env in rgb_supported_modules:
+                    # env.set_rgb_mode(env.RGB_MODE_DUALSHOT)
+                    env.set_rgb_mode(env.RGB_MODE_ON, 120)
                     try:
                         r, g, b = env.rgb
                         white = env.white

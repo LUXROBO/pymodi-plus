@@ -23,6 +23,13 @@ class Env(InputModule):
     PROPERTY_OFFSET_COLOR_CLASS = 10
     PROPERTY_OFFSET_BRIGHTNESS = 11
 
+    PROPERTY_ENV_SET_RECORD_VOICE = 16
+    PROPERTY_ENV_SET_RGB_MODE = 17
+
+    RGB_MODE_AMBIENT = 0
+    RGB_MODE_ON = 1
+    RGB_MODE_DUALSHOT = 2
+
     @property
     def illuminance(self) -> int:
         """Returns the value of illuminance between 0 and 100
@@ -263,3 +270,27 @@ class Env(InputModule):
             )
 
         return (self.red, self.green, self.blue)
+
+    def set_rgb_mode(self, mode: int, duration: int = 3) -> None:
+        """Sets the RGB mode of the Env module
+
+        Note: This method is only available in Env module version 2.x and above.
+        Version 1.x does not support RGB properties.
+
+        :param mode: RGB mode to set (0=off, 1=on)
+        :type mode: int
+        :return: None
+        :raises AttributeError: If app version is 1.x (RGB not supported)
+        """
+        if not self._is_rgb_supported():
+            raise AttributeError(
+                "RGB properties are not supported in Env module version 1.x. "
+                "Please upgrade to version 2.x or above."
+            )
+        
+
+        self._set_property(
+            destination_id=self.id,
+            property_num=Env.PROPERTY_ENV_SET_RGB_MODE, 
+            property_values=(("u8", mode),
+                              ("u16", duration), ))
