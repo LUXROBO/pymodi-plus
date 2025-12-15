@@ -141,7 +141,7 @@ if __name__ == "__main__":
                 # Read and display all color properties from all supported modules
                 for idx, env in rgb_supported_modules:
                     # env.set_rgb_mode(env.RGB_MODE_DUALSHOT)
-                    env.set_rgb_mode(env.RGB_MODE_ON, 120)
+                    env.set_rgb_mode(env.RGB_MODE_AMBIENT)
                     try:
                         r, g, b = env.rgb
                         white = env.white
