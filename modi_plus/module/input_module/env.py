@@ -6,8 +6,10 @@ from modi_plus.module.module import InputModule
 
 class Env(InputModule):
 
+    #-- Property Numbers --
     PROPERTY_ENV_STATE = 2
     PROPERTY_RGB_STATE = 3
+    PROPERTY_RAW_RGB_STATE = 4
 
     PROPERTY_OFFSET_ILLUMINANCE = 0
     PROPERTY_OFFSET_TEMPERATURE = 2
@@ -22,6 +24,11 @@ class Env(InputModule):
     PROPERTY_OFFSET_BLACK = 8
     PROPERTY_OFFSET_COLOR_CLASS = 10
     PROPERTY_OFFSET_BRIGHTNESS = 11
+
+    PROPERTY_RAW_OFFSET_RED = 0
+    PROPERTY_RAW_OFFSET_GREEN = 2
+    PROPERTY_RAW_OFFSET_BLUE = 4
+    PROPERTY_RAW_OFFSET_WHITE = 6
 
     PROPERTY_ENV_SET_RECORD_VOICE = 16
     PROPERTY_ENV_SET_RGB_MODE = 17
@@ -270,6 +277,113 @@ class Env(InputModule):
             )
 
         return (self.red, self.green, self.blue)
+
+    @property
+    def raw_red(self) -> int:
+        """Returns the raw red value between 0 and 65536
+
+        Note: This property is only available in Env module version 2.x and above.
+        Version 1.x does not support RGB properties.
+
+        :return: The environment's red color value (0-100%).
+        :rtype: int
+        :raises AttributeError: If app version is 1.x (RGB not supported)
+        """
+        if not self._is_rgb_supported():
+            raise AttributeError(
+                "RGB properties are not supported in Env module version 1.x. "
+                "Please upgrade to version 2.x or above."
+            )
+
+        offset = Env.PROPERTY_RAW_OFFSET_RED
+        raw = self._get_property(Env.PROPERTY_RAW_RGB_STATE)
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
+        return data
+
+    @property
+    def raw_green(self) -> int:
+        """Returns the raw green value between 0 and 65536
+
+        Note: This property is only available in Env module version 2.x and above.
+        Version 1.x does not support RGB properties.
+
+        :return: The environment's green color value (0-100%).
+        :rtype: int
+        :raises AttributeError: If app version is 1.x (RGB not supported)
+        """
+        if not self._is_rgb_supported():
+            raise AttributeError(
+                "RGB properties are not supported in Env module version 1.x. "
+                "Please upgrade to version 2.x or above."
+            )
+
+        offset = Env.PROPERTY_RAW_OFFSET_GREEN
+        raw = self._get_property(Env.PROPERTY_RAW_RGB_STATE)
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
+        return data
+
+    @property
+    def raw_blue(self) -> int:
+        """Returns the raw blue color between 0 and 65535
+
+        Note: This property is only available in Env module version 2.x and above.
+        Version 1.x does not support RGB properties.
+
+        :return: The environment's blue color value (0-100%).
+        :rtype: int
+        :raises AttributeError: If app version is 1.x (RGB not supported)
+        """
+        if not self._is_rgb_supported():
+            raise AttributeError(
+                "RGB properties are not supported in Env module version 1.x. "
+                "Please upgrade to version 2.x or above."
+            )
+
+        offset = Env.PROPERTY_RAW_OFFSET_BLUE
+        raw = self._get_property(Env.PROPERTY_RAW_RGB_STATE)
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
+        return data
+
+    @property
+    def raw_white(self) -> int:
+        """Returns the raw white color between 0 and 65535
+
+        Note: This property is only available in Env module version 2.x and above.
+        Version 1.x does not support RGB properties.
+
+        :return: The environment's white color value (0-100%).
+        :rtype: int
+        :raises AttributeError: If app version is 1.x (RGB not supported)
+        """
+        if not self._is_rgb_supported():
+            raise AttributeError(
+                "RGB properties are not supported in Env module version 1.x. "
+                "Please upgrade to version 2.x or above."
+            )
+
+        offset = Env.PROPERTY_RAW_OFFSET_WHITE
+        raw = self._get_property(Env.PROPERTY_RAW_RGB_STATE)
+        data = struct.unpack("H", raw[offset:offset + 2])[0]
+        return data
+
+    @property
+    def raw_rgb(self) -> tuple:
+        """Returns the RGB color values as a tuple (raw_red, raw_green, raw_blue, raw_white)
+
+        Note: This property is only available in Env module version 2.x and above.
+        Version 1.x does not support RGB properties.
+
+        :return: Tuple of (red, green, blue) values, each between 0 and 100.
+        :rtype: tuple
+        :raises AttributeError: If app version is 1.x (RGB not supported)
+        """
+        if not self._is_rgb_supported():
+            raise AttributeError(
+                "RGB properties are not supported in Env module version 1.x. "
+                "Please upgrade to version 2.x or above."
+            )
+
+        return (self.raw_red, self.raw_green, self.raw_blue, self.raw_white)
 
     def set_rgb_mode(self, mode: int, duration: int = 3) -> None:
         """Sets the RGB mode of the Env module
