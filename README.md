@@ -147,7 +147,7 @@ Documentation
 - 🚀 [Quick Start Guide](./docs/getting-started/QUICKSTART.md) - Get up and running quickly
 - ✨ [Env Module RGB Features](./docs/features/ENV_RGB_FEATURE.md) - New RGB sensor support (v2.x+)
 - 🛠️ [Development Guide](./docs/development/MAKEFILE_GUIDE.md) - Build, test, and contribute
-- 📦 [Deployment Guide](./docs/deployment/PYPI_DEPLOYMENT_GUIDE.md) - Release to PyPI
+- 📦 [Deployment Guide](./docs/deployment/DEPLOY_GUIDE_KOREAN.md) - Release to PyPI
 - 🐛 [Troubleshooting](./docs/troubleshooting/) - Platform-specific issues and fixes
 
 ### What's New in v0.4.0

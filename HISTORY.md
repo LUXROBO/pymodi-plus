@@ -5,10 +5,12 @@ History
 --
 * Feature
 1. Add RGB support for Env module v2.x+
-   - New properties: `red`, `green`, `blue`, `white`, `black`
-   - New properties: `color_class` (0-5: unknown/red/green/blue/white/black)
+   - New properties: `red`, `green`, `blue`, `white`, `black` (0-100%)
+   - New property: `rgb` - returns tuple (red, green, blue)
+   - New property: `color_class` (0-5: unknown/red/green/blue/white/black)
    - New property: `brightness` (0-100%)
-   - Automatic version detection (v1.x: not supported, v2.x+: supported)
+   - Automatic version detection via `_is_rgb_supported()` method
+   - Raises `AttributeError` when accessing RGB properties on v1.x modules
 2. Enhanced GitHub Actions workflows
    - Support Python 3.8-3.13 across all platforms
    - Platform-specific compatibility fixes (macOS, Windows)

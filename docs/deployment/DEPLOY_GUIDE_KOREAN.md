@@ -577,7 +577,7 @@ pip install --upgrade pymodi-plus
 import modi_plus
 
 # MODI+ 연결
-bundle = modi_plus.MODI()
+bundle = modi_plus.MODIPlus()
 
 # Env 모듈 (v2.x+) RGB 사용
 env = bundle.envs[0]
