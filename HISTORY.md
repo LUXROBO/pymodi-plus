@@ -1,6 +1,16 @@
 History
 ==
 
+0.4.2 (2025-12-22)
+--
+* Feature
+1. Add RGB raw value properties for Env module v2.x+
+   - New properties: `raw_red`, `raw_green`, `raw_blue`, `raw_white` (0-65535)
+   - New property: `raw_rgb` tuple (raw_red, raw_green, raw_blue, raw_white)
+2. Add `set_rgb_mode(mode, duration)` method for Env module
+   - RGB mode constants: `RGB_MODE_AMBIENT`, `RGB_MODE_ON`, `RGB_MODE_DUALSHOT`
+3. Code style fixes for flake8 compatibility
+
 0.4.0 (2025-11-19)
 --
 * Feature

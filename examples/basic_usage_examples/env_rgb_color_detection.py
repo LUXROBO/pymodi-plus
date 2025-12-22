@@ -79,6 +79,9 @@ def color_detection_demo(rgb_modules):
 
             for m in rgb_modules:
                 try:
+                    m['env'].set_rgb_mode(m['env'].RGB_MODE_DUALSHOT)
+                    # m['env'].set_rgb_mode(m['env'].RGB_MODE_ON)
+                      # Ensure RGB mode is enabled
                     r, g, b = m['env'].rgb
                     color = detect_color(r, g, b)
 
