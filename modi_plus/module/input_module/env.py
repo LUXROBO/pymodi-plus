@@ -6,7 +6,7 @@ from modi_plus.module.module import InputModule
 
 class Env(InputModule):
 
-    #-- Property Numbers --
+    # -- Property Numbers --
     PROPERTY_ENV_STATE = 2
     PROPERTY_RGB_STATE = 3
     PROPERTY_RAW_RGB_STATE = 4
@@ -401,10 +401,9 @@ class Env(InputModule):
                 "RGB properties are not supported in Env module version 1.x. "
                 "Please upgrade to version 2.x or above."
             )
-        
 
         self._set_property(
             destination_id=self.id,
-            property_num=Env.PROPERTY_ENV_SET_RGB_MODE, 
+            property_num=Env.PROPERTY_ENV_SET_RGB_MODE,
             property_values=(("u8", mode),
-                              ("u16", duration), ))
+                             ("u16", duration), ))
