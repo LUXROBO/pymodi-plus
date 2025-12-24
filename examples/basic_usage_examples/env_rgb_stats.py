@@ -59,10 +59,11 @@ class RunningStat:
 class EnvStats:
     """Env RGB/조도 측정값 + color_name count 통계를 관리"""
 
-    def __init__(self, metric_names=None) -> None:
+    def __init__(self, number=1, metric_names=None) -> None:
         if metric_names is None:
             metric_names = ("raw_r", "raw_g", "raw_b", "raw_w", "r", "g", "b", "white", "black", "brightness")
         self._metric_names = tuple(metric_names)
+        self._number = number
         self.reset()
 
     def reset(self) -> None:
@@ -70,6 +71,9 @@ class EnvStats:
         self.metrics: Dict[str, RunningStat] = {n: RunningStat() for n in self._metric_names}
         # color_name 통계
         self.color_counts: Dict[str, int] = {}
+
+    def set_number(self, number: int) -> None:
+        self._number = number
 
     def update_metric(self, name: str, value: int) -> None:
         if name not in self.metrics:
@@ -126,8 +130,10 @@ class EnvStats:
         w = self.metrics["white"].avg
         k = self.metrics["black"].avg
         print("\n[Summary] RAW_R,RAW_G,RAW_B,RAW_W,R,G,B,W,K Avg,Top Color")
-        print(f"{raw_r:.1f},{raw_g:.1f},{raw_b:.1f},{raw_w:.1f},", end="")
+        print(f"{self._number},{raw_r:.1f},{raw_g:.1f},{raw_b:.1f},{raw_w:.1f},", end="")
         print(f"{r:.1f},{g:.1f},{b:.1f},{w:.1f},{k:.1f},{top_color}")
+    
+    print("\n")
 
 
 # 통계 인스턴스 딕셔너리: module_idx -> EnvStats
@@ -250,10 +256,36 @@ if __name__ == "__main__":
         for idx, env in rgb_supported_modules:
             get_stats(idx).reset()
         stats_count = 0
+        max_count = 50
+        number_buf = ""
+        number = 1
+
         try:
             while True:
                 ch = get_key_nonblocking()
                 if ch is not None:
+                    if ch.isdigit():
+                        number_buf += ch
+                        continue
+                    elif ch in ('\b', '\x7f'):
+                        number_buf = number_buf[:-1]
+                        continue
+                    elif ch in ('\r', '\n'):
+                        if len(number_buf) > 0:
+                            number = int(number_buf)
+                        else:
+                            number += 1
+                        number_buf = ""
+                        print(f'Number: {number}')
+                        if stop_flag:
+                            stop_flag = False
+                            print("\nReading resumed.")
+                            reset_all_stats()
+                            stats_count = 0
+                        continue
+                    if number_buf:
+                        number_buf = ""
+
                     ch = ch.lower()
                     if ch == 'q':
                         print("\n\nStop command received. Exiting...")
@@ -269,7 +301,7 @@ if __name__ == "__main__":
                             reset_all_stats()
                             stats_count = 0
                             print("\nReading resumed.")
-                elif stats_count >= 100:
+                elif stats_count >= max_count:
                     stop_flag = True
                     print_all_stats()
                     reset_all_stats()
@@ -282,6 +314,7 @@ if __name__ == "__main__":
                 # Read and display all color properties from all supported modules
                 for idx, env in rgb_supported_modules:
                     # env.set_rgb_mode(env.RGB_MODE_DUALSHOT)
+                    env.set_rgb_mode(env.RGB_MODE_AMBIENT, 300)
                     env.set_rgb_mode(env.RGB_MODE_ON, 300)
                     try:
                         r, g, b = env.rgb
@@ -294,6 +327,7 @@ if __name__ == "__main__":
 
                         # --- 모듈별 통계 갱신 ---
                         module_stats = get_stats(idx)
+                        module_stats.set_number(number)
                         module_stats.update_metric("raw_r", raw_r)
                         module_stats.update_metric("raw_g", raw_g)
                         module_stats.update_metric("raw_b", raw_b)
@@ -308,7 +342,7 @@ if __name__ == "__main__":
                         module_stats.update_color(color_name)
 
                         print(f"Module #{idx + 1}: ", end="")
-                        print(f"RAW_RGB=({raw_r:5d},{raw_g:5d},{raw_b:5d},{raw_w:5d}) ", end="")
+                        print(f"{number} RAW_RGB=({raw_r:4d},{raw_g:4d},{raw_b:4d},{raw_w:4d}) ", end="")
                         print(f"RGB=({r:3d},{g:3d},{b:3d}) ", end="")
                         print(f"W={white:3d} B={black:3d} ", end="")
                         print(f"Bright={brightness:3d} ", end="")
