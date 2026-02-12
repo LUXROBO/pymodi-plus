@@ -19,8 +19,36 @@ def get_spec(filename: str, mode: str="r"):
 get_about = get_spec("./modi_plus/about.py", "d")
 get_readme = get_spec("README.md")
 get_history = get_spec("HISTORY.md")
-get_requirements = get_spec("requirements.txt")
 get_requirements_dev = get_spec("requirements-dev.txt")
+
+# 최소 의존성 (Pyodide 호환)
+INSTALL_REQUIRES = [
+    'nest-asyncio>=1.5.4',
+    'packaging>=21.3',
+]
+
+# Optional 의존성
+EXTRAS_REQUIRE = {
+    'serial': [
+        'pyserial>=3.5',
+    ],
+    'ble': [
+        'bleak>=0.13.0; sys_platform == "win32"',
+        'bleak>=0.13.0; sys_platform == "darwin"',
+    ],
+    'websocket': [
+        'websocket-client>=1.2.3',
+    ],
+    'all': [
+        'pyserial>=3.5',
+        'bleak>=0.13.0; sys_platform == "win32"',
+        'bleak>=0.13.0; sys_platform == "darwin"',
+        'websocket-client>=1.2.3',
+        'winusbcdc>=1.4; sys_platform == "win32"',
+        'pexpect; sys_platform == "linux"',
+    ],
+}
+EXTRAS_REQUIRE['dev'] = get_requirements_dev()
 
 about = get_about()
 setup(
@@ -31,8 +59,8 @@ setup(
     description=about["__summary__"],
     long_description=get_readme() + "\n" + get_history(),
     long_description_content_type="text/markdown",
-    install_requires=get_requirements(),
-    extras_require={"dev": get_requirements_dev()},
+    install_requires=INSTALL_REQUIRES,
+    extras_require=EXTRAS_REQUIRE,
     license=about["__license__"],
     include_package_data=True,
     keywords=["python", "modi", "modi-plus", "modi_plus", "modi+"],

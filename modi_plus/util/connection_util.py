@@ -3,7 +3,13 @@ import sys
 import platform
 from typing import List
 
-import serial.tools.list_ports as stl
+# 조건부 import - pyserial 없어도 기본 기능은 사용 가능
+try:
+    import serial.tools.list_ports as stl
+    HAS_SERIAL = True
+except ImportError:
+    stl = None
+    HAS_SERIAL = False
 
 
 def list_modi_ports() -> List[str]:
@@ -11,6 +17,9 @@ def list_modi_ports() -> List[str]:
 
     :return: List[ListPortInfo]
     """
+    if not HAS_SERIAL:
+        return []
+
     info_list = []
 
     def __is_modi_port(port):

@@ -59,9 +59,33 @@ conda activate pymodi_plus
 python --version
 ```
 
-Install the latest PyMODI+ if you haven't installed it yet:
+Install the latest PyMODI+ with all features (USB + BLE):
+```bash
+pip install pymodi-plus[all]
 ```
-python -m pip install pymodi-plus --user --upgrade
+
+Or install with specific features:
+```bash
+# USB/Serial connection only
+pip install pymodi-plus[serial]
+
+# BLE connection only
+pip install pymodi-plus[ble]
+
+# Minimal install (for web/Pyodide environments)
+pip install pymodi-plus
+```
+
+### Web/Pyodide Support
+
+For web browser environments using Pyodide, install [pymodi-plus-web](https://github.com/LUXROBO/pymodi-plus-web):
+```python
+# In Pyodide
+import micropip
+await micropip.install('pymodi-plus-web')
+
+from modi_plus_web import MODIPlusWeb
+modi = MODIPlusWeb()
 ```
 
 Usage

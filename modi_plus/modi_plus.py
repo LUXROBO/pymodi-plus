@@ -2,6 +2,7 @@
 
 import time
 import atexit
+from typing import Optional
 
 from importlib import import_module as im
 
@@ -21,6 +22,7 @@ from modi_plus.module.output_module.speaker import Speaker
 from modi_plus.module.module import ModuleList
 from modi_plus._exe_thread import ExeThread
 from modi_plus.util.connection_util import get_platform, get_ble_task_path
+from modi_plus.task import HAS_SERIAL, HAS_BLE, ConnectionTask
 
 
 class MODIPlus:
@@ -37,9 +39,20 @@ class MODIPlus:
             cls.network_uuids[network_uuid] = super(MODIPlus, cls).__call__(*args, **kwargs)
         return cls.network_uuids[network_uuid]
 
-    def __init__(self, connection_type="serialport", verbose=False, port=None, network_uuid=""):
+    def __init__(
+        self,
+        connection_type: str = "serialport",
+        verbose: bool = False,
+        port: Optional[str] = None,
+        network_uuid: str = "",
+        task: Optional[ConnectionTask] = None,
+    ):
         self._modules = list()
-        self._connection = self.__init_task(connection_type, verbose, port, network_uuid)
+        # 외부에서 task 주입 가능 (웹 버전용)
+        if task is not None:
+            self._connection = task
+        else:
+            self._connection = self.__init_task(connection_type, verbose, port, network_uuid)
         self._exe_thread = ExeThread(self._modules, self._connection)
 
         print("Start initializing connected MODI+ modules")
@@ -59,15 +72,25 @@ class MODIPlus:
 
     def __init_task(self, connection_type, verbose, port, network_uuid):
         if connection_type == "serialport":
+            if not HAS_SERIAL:
+                raise ImportError(
+                    "Serial 통신을 사용하려면 pyserial이 필요합니다.\n"
+                    "설치: pip install pymodi-plus[serial] 또는 pip install pymodi-plus[all]"
+                )
             return im("modi_plus.task.serialport_task").SerialportTask(verbose, port)
         elif connection_type == "ble":
+            if not HAS_BLE:
+                raise ImportError(
+                    "BLE 통신을 사용하려면 bleak이 필요합니다.\n"
+                    "설치: pip install pymodi-plus[ble] 또는 pip install pymodi-plus[all]"
+                )
             if not network_uuid:
                 raise ValueError("Network UUID not specified!")
             self.network_uuids[network_uuid] = self
 
             os = get_platform()
             if os == "chrome" or os == "linux":
-                raise ValueError(f"{os} doen't supported for ble connection")
+                raise ValueError(f"{os} doesn't support ble connection")
 
             return im(get_ble_task_path()).BleTask(verbose, network_uuid)
         else:
