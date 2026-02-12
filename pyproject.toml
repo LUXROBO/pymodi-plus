@@ -1,0 +1,28 @@
+# PyMODI+ Monorepo Configuration
+[project]
+name = "pymodi-plus-monorepo"
+description = "PyMODI+ Monorepo - Core library and Web extension"
+readme = "README.md"
+requires-python = ">=3.7"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "packages/core/tests",
+    "packages/web/tests",
+]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+
+[tool.ruff]
+line-length = 120
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+# Monorepo packages configuration
+# Each package has its own setup.py for independent publishing
+# - packages/core/ -> pymodi-plus (PyPI)
+# - packages/web/  -> pymodi-plus-web (PyPI)
