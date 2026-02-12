@@ -19,6 +19,24 @@ await micropip.install('pymodi-plus-web')
 pip install pymodi-plus-web
 ```
 
+### 내부 테스트 설치
+
+#### TestPyPI에서 설치
+```bash
+pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ pymodi-plus-web
+```
+
+#### Git에서 직접 설치
+```bash
+# feature/web-support 브랜치에서 설치
+pip install git+https://github.com/LUXROBO/pymodi-plus.git@feature/web-support#subdirectory=packages/web
+```
+
+#### 로컬 wheel 파일에서 설치
+```bash
+pip install pymodi_plus_web-0.1.0-py3-none-any.whl
+```
+
 ## Usage
 
 ### Basic Usage (Pyodide)
