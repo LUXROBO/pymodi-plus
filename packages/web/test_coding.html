@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyMODI+ Web - Python Coding</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #16213e;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #0f3460;
+        }
+        .header h1 { font-size: 16px; color: #e94560; }
+        .status-bar { display: flex; gap: 20px; font-size: 12px; }
+        .status-item { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #666; }
+        .dot.ok { background: #4ade80; }
+        .dot.loading { background: #fbbf24; animation: blink 1s infinite; }
+        .dot.error { background: #ef4444; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        .container { flex: 1; display: flex; overflow: hidden; }
+
+        .left-panel { flex: 1; display: flex; flex-direction: column; min-width: 400px; }
+        .right-panel { width: 400px; display: flex; flex-direction: column; border-left: 1px solid #0f3460; }
+
+        .panel-title {
+            background: #16213e;
+            padding: 10px 15px;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid #0f3460;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .example-select {
+            background: #0f3460;
+            border: 1px solid #1e40af;
+            color: #eee;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        #editor {
+            flex: 1;
+            background: #0f0f23;
+            color: #c9d1d9;
+            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            padding: 15px;
+            border: none;
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+            tab-size: 4;
+        }
+
+        .toolbar {
+            background: #16213e;
+            padding: 10px 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: #4ade80; color: #000; }
+        .btn-primary:hover:not(:disabled) { background: #22c55e; }
+        .btn-danger { background: #ef4444; color: #fff; }
+        .btn-secondary { background: #374151; color: #fff; }
+
+        .output-panel { flex: 1; display: flex; flex-direction: column; }
+        #output {
+            height: 300px;
+            background: #0f0f23;
+            padding: 12px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            font-family: 'SF Mono', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .log-line { padding: 2px 0; }
+        .log-info { color: #60a5fa; }
+        .log-success { color: #4ade80; }
+        .log-error { color: #f87171; }
+        .log-python { color: #a78bfa; }
+        .log-send { color: #fbbf24; }
+        .log-recv { color: #22d3ee; }
+
+        .comm-panel { border-top: 1px solid #0f3460; display: flex; flex-direction: column; }
+        #commLog {
+            height: 150px;
+            background: #0a0a15;
+            padding: 10px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .module-bar {
+            background: #0f3460;
+            padding: 8px 12px;
+            font-size: 11px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .module-chip {
+            background: #1e40af;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PyMODI+ Web Coding</h1>
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="dot" id="dotPyodide"></div>
+                <span id="statusPyodide">Pyodide</span>
+            </div>
+            <div class="status-item">
+                <div class="dot" id="dotFlutter"></div>
+                <span>Flutter</span>
+            </div>
+            <div class="status-item">
+                <div class="dot" id="dotModi"></div>
+                <span>MODI+</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="left-panel">
+            <div class="panel-title">
+                <span>Python Editor</span>
+                <select class="example-select" id="exampleSelect">
+                    <option value="">-- Select Example --</option>
+                    <option value="led">LED Example</option>
+                    <option value="dial">Dial Example</option>
+                    <option value="button">Button Example</option>
+                    <option value="env">Environment Sensor</option>
+                    <option value="motor">Motor Example</option>
+                    <option value="speaker">Speaker Example</option>
+                    <option value="dial_led">Dial + LED Control</option>
+                </select>
+            </div>
+            <textarea id="editor" spellcheck="false"># PyMODI+ Web Example
+# Select an example from the dropdown above,
+# or write your own code!
+
+import modi_plus
+import time
+
+bundle = modi_plus.MODIPlus()
+
+# Your code here...
+print(f"Connected modules: {bundle.modules}")
+</textarea>
+            <div class="toolbar">
+                <button class="btn btn-primary" id="btnRun" disabled>▶ Run</button>
+                <button class="btn btn-danger" id="btnStop" disabled>⬛ Stop</button>
+                <button class="btn btn-secondary" id="btnClear">Clear</button>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="chkTransform" checked>
+                    Auto-transform code
+                </label>
+                <span id="runStatus" style="margin-left: auto; font-size: 12px; color: #888;"></span>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="panel-title">Output</div>
+            <div class="module-bar" id="moduleBar">
+                <span style="color: #888;">No modules</span>
+            </div>
+            <div class="output-panel">
+                <div id="output"></div>
+            </div>
+
+            <div class="comm-panel">
+                <div class="panel-title">
+                    <span>Communication Log</span>
+                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 11px;" id="btnClearComm">Clear</button>
+                </div>
+                <div id="commLog"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ============================================================
+    // Example Code Templates
+    // ============================================================
+    const EXAMPLES = {
+        led: `import modi_plus
+import time
+
+"""
+LED Example - Controls LED color
+"""
+
+bundle = modi_plus.MODIPlus()
+led = bundle.leds[0]
+
+# Set individual colors
+led.blue = 100
+time.sleep(1)
+led.blue = 0
+
+led.green = 255
+time.sleep(1)
+led.green = 0
+
+led.red = 100
+time.sleep(1)
+
+# Gradient effect
+for c in range(100):
+    led.rgb = 100 - c, c, 0
+    time.sleep(0.02)
+
+led.turn_on()
+time.sleep(1)
+led.turn_off()
+`,
+
+        dial: `import modi_plus
+import time
+
+"""
+Dial Example - Reads dial value and plays sound
+"""
+
+bundle = modi_plus.MODIPlus()
+dial = bundle.dials[0]
+speak = bundle.speakers[0]
+
+while True:
+    speak.tune = "DO6", dial.turn
+    time.sleep(0.02)
+`,
+
+        button: `import modi_plus
+import time
+
+"""
+Button Example - Detects button press
+"""
+
+bundle = modi_plus.MODIPlus()
+button = bundle.buttons[0]
+
+while True:
+    if button.pressed:
+        print("pressed")
+    else:
+        print("not pressed")
+
+    if button.double_clicked:
+        print("double clicked!")
+        break
+
+    time.sleep(0.02)
+`,
+
+        env: `import modi_plus
+import time
+
+"""
+Environment Sensor Example
+"""
+
+bundle = modi_plus.MODIPlus()
+env = bundle.envs[0]
+
+while True:
+    print(f"Humidity: {env.humidity}% | Temp: {env.temperature}C | Light: {env.illuminance}% | Vol: {env.volume}%")
+    time.sleep(0.5)
+`,
+
+        motor: `import modi_plus
+import time
+
+"""
+Motor Example - Controls motor angle and speed
+"""
+
+bundle = modi_plus.MODIPlus()
+motor = bundle.motors[0]
+
+motor.angle = 0, 70
+time.sleep(3)
+
+motor.angle = 50, 70
+time.sleep(3)
+
+motor.speed = 50
+time.sleep(3)
+
+motor.speed = 100
+time.sleep(3)
+
+motor.speed = 0
+time.sleep(1)
+`,
+
+        speaker: `import modi_plus
+import time
+
+"""
+Speaker Example - Plays tunes
+"""
+
+bundle = modi_plus.MODIPlus()
+speak = bundle.speakers[0]
+
+speak.tune = 800, 70
+time.sleep(2)
+
+speak.frequency = 700
+time.sleep(2)
+
+speak.volume = 100
+time.sleep(1)
+
+speak.reset()
+`,
+
+        dial_led: `import modi_plus
+import time
+
+"""
+Dial + LED Control
+Turn the dial to change LED color!
+"""
+
+bundle = modi_plus.MODIPlus()
+dial = bundle.dials[0]
+led = bundle.leds[0]
+
+print("Turn the dial to change LED color!")
+print("Press Stop to exit")
+
+while True:
+    degree = dial.turn
+
+    # Map dial (0-100) to RGB
+    if degree < 50:
+        r = int(255 * (1 - degree / 50))
+        g = int(255 * (degree / 50))
+        b = 0
+    else:
+        r = 0
+        g = int(255 * (1 - (degree - 50) / 50))
+        b = int(255 * ((degree - 50) / 50))
+
+    led.rgb = r, g, b
+    print(f"Dial: {degree} -> RGB({r}, {g}, {b})")
+
+    time.sleep(0.1)
+`
+    };
+
+    // ============================================================
+    // State
+    // ============================================================
+    let worker = null;
+    let isRunning = false;
+    let connectedModules = [];
+
+    // ============================================================
+    // Logging
+    // ============================================================
+    function log(msg, type) {
+        const el = document.getElementById('output');
+        const div = document.createElement('div');
+        div.className = 'log-line log-' + (type || 'info');
+        div.textContent = msg;
+        el.insertBefore(div, el.firstChild);
+    }
+
+    function commLog(msg, type) {
+        const el = document.getElementById('commLog');
+        const div = document.createElement('div');
+        div.className = 'log-line log-' + (type || 'info');
+        const time = new Date().toLocaleTimeString('ko-KR', {hour12: false});
+        div.textContent = '[' + time + '] ' + msg;
+        el.insertBefore(div, el.firstChild);
+    }
+
+    function setStatus(id, status, text) {
+        document.getElementById('dot' + id).className = 'dot ' + status;
+        if (text) document.getElementById('status' + id).textContent = text;
+    }
+
+    // ============================================================
+    // Flutter Communication
+    // ============================================================
+    function sendToFlutter(type, data) {
+        if (window.parent !== window) {
+            const message = JSON.stringify({ type, data });
+            window.parent.postMessage(message, '*');
+            commLog('→ ' + type, 'send');
+        }
+    }
+
+    window.addEventListener('message', function(event) {
+        try {
+            const msg = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+            if (!msg || !msg.type) return;
+
+            commLog('← ' + msg.type, 'recv');
+
+            if (msg.type === 'getPropertyResponse' || msg.type === 'GET_PROPERTY_RESPONSE') {
+                if (msg.data && worker) {
+                    worker.postMessage({ type: 'propertyResponse', data: msg.data });
+                }
+            }
+            else if (msg.type === 'ON_CHANGE_CONNECT_MODI') {
+                updateModulesFromFlutter(msg.data);
+            }
+            else if (msg.type === 'flutterReady' || msg.type === 'FLUTTER_READY') {
+                setStatus('Flutter', 'ok');
+                commLog('Flutter connected!', 'success');
+                sendToFlutter('START_INTERPRETER');
+            }
+        } catch (e) {
+            console.error('Message parse error:', e);
+        }
+    });
+
+    function updateModulesFromFlutter(data) {
+        if (!data || !data.connectModules) {
+            commLog('No modules', 'info');
+            return;
+        }
+
+        connectedModules = data.connectModules;
+        commLog('Modules: ' + connectedModules.length, 'success');
+
+        const bar = document.getElementById('moduleBar');
+        if (connectedModules.length === 0) {
+            bar.innerHTML = '<span style="color: #888;">No modules connected</span>';
+            setStatus('Modi', '');
+            return;
+        }
+
+        bar.innerHTML = connectedModules.map(m =>
+            '<span class="module-chip">' + m.type + '[' + m.fieldIndex + ']</span>'
+        ).join('');
+        setStatus('Modi', 'ok');
+
+        if (worker) {
+            worker.postMessage({ type: 'updateModules', data: { modules: connectedModules } });
+        }
+    }
+
+    // ============================================================
+    // Web Worker
+    // ============================================================
+    function initWorker() {
+        log('Starting PyMODI+ Web...', 'info');
+
+        worker = new Worker('./lib/pymodi-bridge.js');
+
+        worker.onmessage = function(e) {
+            const { type, data } = e.data;
+
+            switch (type) {
+                case 'workerStarted':
+                    log('Worker started', 'info');
+                    worker.postMessage({ type: 'init' });
+                    break;
+
+                case 'ready':
+                    document.getElementById('btnRun').disabled = false;
+                    if (connectedModules.length > 0) {
+                        worker.postMessage({ type: 'updateModules', data: { modules: connectedModules } });
+                    }
+                    break;
+
+                case 'status':
+                    setStatus(data.id, data.status, data.text);
+                    break;
+
+                case 'log':
+                    log(data.msg, data.logType);
+                    break;
+
+                case 'commLog':
+                    commLog(data.msg, data.logType);
+                    break;
+
+                case 'runState':
+                    isRunning = data.running;
+                    document.getElementById('btnRun').disabled = data.running;
+                    document.getElementById('btnStop').disabled = !data.running;
+                    document.getElementById('runStatus').textContent = data.running ? 'Running...' : '';
+                    break;
+
+                case 'interpreterEnd':
+                    sendToFlutter('END_INTERPRETER');
+                    break;
+
+                case 'modiSend':
+                    sendToFlutter('SET_PROPERTY_REQUEST', data);
+                    break;
+
+                case 'getProperty':
+                    sendToFlutter('GET_PROPERTY_REQUEST', data);
+                    break;
+            }
+        };
+
+        worker.onerror = function(e) {
+            log('Worker error: ' + e.message, 'error');
+            setStatus('Pyodide', 'error', 'Error');
+        };
+    }
+
+    // ============================================================
+    // Run/Stop
+    // ============================================================
+    function runCode() {
+        if (isRunning || !worker) return;
+
+        const code = document.getElementById('editor').value;
+        if (!code.trim()) return;
+
+        const transform = document.getElementById('chkTransform').checked;
+        worker.postMessage({
+            type: 'run',
+            data: { code, options: { transform } }
+        });
+    }
+
+    function stopCode() {
+        if (!isRunning || !worker) return;
+        log('Stopping...', 'info');
+        worker.postMessage({ type: 'stop' });
+    }
+
+    // ============================================================
+    // Event Handlers
+    // ============================================================
+    document.getElementById('btnRun').addEventListener('click', runCode);
+    document.getElementById('btnStop').addEventListener('click', stopCode);
+
+    document.getElementById('btnClear').addEventListener('click', function() {
+        document.getElementById('output').innerHTML = '';
+    });
+
+    document.getElementById('btnClearComm').addEventListener('click', function() {
+        document.getElementById('commLog').innerHTML = '';
+    });
+
+    document.getElementById('exampleSelect').addEventListener('change', function() {
+        const example = EXAMPLES[this.value];
+        if (example) {
+            document.getElementById('editor').value = example;
+        }
+    });
+
+    document.getElementById('editor').addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            runCode();
+        }
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+            this.selectionStart = this.selectionEnd = start + 4;
+        }
+    });
+
+    // ============================================================
+    // Start
+    // ============================================================
+    log('PyMODI+ Web Coding Environment', 'info');
+    initWorker();
+    </script>
+</body>
+</html>

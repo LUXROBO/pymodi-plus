@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PyMODI+ Simple Test</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+</head>
+<body style="font-family: sans-serif; padding: 20px; background: #1a1a2e; color: #eee;">
+    <h2>PyMODI+ Web - Simple Test</h2>
+    <div id="status">Loading Pyodide...</div>
+    <pre id="log" style="background: #0f0f23; padding: 15px; margin-top: 20px; height: 400px; overflow: auto;"></pre>
+
+    <script>
+    function log(msg) {
+        const el = document.getElementById('log');
+        el.textContent += new Date().toLocaleTimeString() + ' - ' + msg + '\n';
+        el.scrollTop = el.scrollHeight;
+        console.log(msg);
+    }
+
+    async function main() {
+        try {
+            log('Starting Pyodide load...');
+            document.getElementById('status').textContent = 'Loading Pyodide (this may take 20-30 seconds)...';
+
+            const pyodide = await loadPyodide();
+            log('Pyodide loaded successfully!');
+
+            document.getElementById('status').textContent = 'Pyodide Ready!';
+            document.getElementById('status').style.color = '#4ade80';
+
+            // Simple Python test
+            log('Running Python code...');
+            await pyodide.runPythonAsync(`
+import sys
+print(f"Python version: {sys.version}")
+print("Hello from Pyodide!")
+
+# Simple MODI mock
+class MockMODI:
+    def __init__(self):
+        self.modules = ['LED', 'Button', 'Env']
+
+modi = MockMODI()
+print(f"Mock modules: {modi.modules}")
+            `);
+
+            log('Python execution complete!');
+
+        } catch (e) {
+            log('ERROR: ' + e.message);
+            document.getElementById('status').textContent = 'Error: ' + e.message;
+            document.getElementById('status').style.color = '#f87171';
+            console.error(e);
+        }
+    }
+
+    // Start
+    log('Page loaded');
+    main();
+    </script>
+</body>
+</html>

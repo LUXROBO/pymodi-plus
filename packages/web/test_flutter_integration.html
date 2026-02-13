@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyMODI+ Web - Flutter Integration</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #16213e;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #0f3460;
+        }
+        .header h1 { font-size: 16px; color: #e94560; }
+        .status { display: flex; gap: 15px; font-size: 12px; }
+        .status-item { display: flex; align-items: center; gap: 5px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #666; }
+        .status-dot.connected { background: #4ade80; }
+        .status-dot.loading { background: #fbbf24; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .main { flex: 1; display: flex; overflow: hidden; }
+        .editor-panel { flex: 1; display: flex; flex-direction: column; border-right: 1px solid #0f3460; }
+        .log-panel { width: 400px; display: flex; flex-direction: column; }
+        .panel-header { background: #16213e; padding: 8px 15px; font-size: 12px; font-weight: 600; border-bottom: 1px solid #0f3460; }
+
+        #editor {
+            flex: 1;
+            background: #0f0f23;
+            color: #ccc;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            padding: 15px;
+            border: none;
+            resize: none;
+            outline: none;
+            line-height: 1.5;
+        }
+
+        .controls { background: #16213e; padding: 10px 15px; display: flex; gap: 10px; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-run { background: #4ade80; color: #000; }
+        .btn-run:hover { background: #22c55e; }
+        .btn-run:disabled { background: #666; cursor: not-allowed; }
+        .btn-stop { background: #ef4444; color: #fff; }
+        .btn-clear { background: #6366f1; color: #fff; }
+
+        #log { flex: 1; background: #0f0f23; padding: 10px; overflow-y: auto; font-family: monospace; font-size: 11px; }
+        .log-entry { padding: 2px 0; border-bottom: 1px solid #1a1a2e; }
+        .log-entry.info { color: #60a5fa; }
+        .log-entry.success { color: #4ade80; }
+        .log-entry.error { color: #f87171; }
+        .log-entry.recv { color: #c084fc; }
+        .log-entry.send { color: #fbbf24; }
+        .log-entry.python { color: #34d399; }
+
+        .module-info { background: #16213e; padding: 10px; border-bottom: 1px solid #0f3460; font-size: 11px; }
+        .module-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+        .module-tag { background: #0f3460; padding: 3px 8px; border-radius: 3px; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PyMODI+ Web - Flutter Integration</h1>
+        <div class="status">
+            <div class="status-item">
+                <div class="status-dot" id="pyodideStatus"></div>
+                <span>Pyodide</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot" id="modiStatus"></div>
+                <span>MODI+</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot" id="flutterStatus"></div>
+                <span>Flutter</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="editor-panel">
+            <div class="panel-header">Python Code Editor (Ctrl+Enter to run)</div>
+            <textarea id="editor" spellcheck="false"># PyMODI+ Web Example
+# Flutter와 postMessage로 통신하여 MODI+ 모듈 제어
+
+import time
+
+# 연결된 모듈 확인
+print("Connected modules:", modi.modules)
+
+# LED 제어 예시
+if modi.leds:
+    led = modi.leds[0]
+    print(f"LED found: {led}")
+
+    # LED 깜빡이기
+    for i in range(3):
+        led.set_rgb(255, 0, 0)  # 빨강
+        time.sleep(0.3)
+        led.set_rgb(0, 255, 0)  # 초록
+        time.sleep(0.3)
+        led.set_rgb(0, 0, 255)  # 파랑
+        time.sleep(0.3)
+
+    led.turn_off()
+    print("LED test complete!")
+
+# 버튼 상태 확인
+if modi.buttons:
+    btn = modi.buttons[0]
+    print(f"Button pressed: {btn.pressed}")
+    print(f"Button clicked: {btn.clicked}")
+
+# 환경 센서 읽기
+if modi.envs:
+    env = modi.envs[0]
+    print(f"Temperature: {env.temperature}°C")
+    print(f"Humidity: {env.humidity}%")
+    print(f"Illuminance: {env.illuminance} lux")
+</textarea>
+            <div class="controls">
+                <button class="btn btn-run" id="runBtn" disabled>▶ Run</button>
+                <button class="btn btn-stop" id="stopBtn" disabled>■ Stop</button>
+                <button class="btn btn-clear" id="clearBtn">Clear</button>
+                <button class="btn" id="testMsgBtn" style="background:#6366f1;color:#fff;">📡 Test Send</button>
+            </div>
+        </div>
+
+        <div class="log-panel">
+            <div class="panel-header">Communication Log</div>
+            <div class="module-info">
+                <strong>Connected Modules:</strong>
+                <div class="module-list" id="moduleList">
+                    <span style="color: #666;">Waiting for connection...</span>
+                </div>
+            </div>
+            <div id="log"></div>
+        </div>
+    </div>
+
+    <script>
+    // ===== Global State =====
+    let pyodide = null;
+    let modi = null;
+    let connectedModules = [];
+
+    // ===== PostMessage Types (Flutter 호환) =====
+    const PostMessageType = {
+        // Python → Flutter (하드웨어 제어)
+        SET_PROPERTY_REQUEST: 'setPropertyRequest',
+        GET_PROPERTY_REQUEST: 'getPropertyRequest',
+
+        // Flutter → Python (하드웨어 응답)
+        GET_PROPERTY_RESPONSE: 'getPropertyResponse',
+
+        // 모듈 정보
+        GET_CONNECTED_MODI: 'getConntectedModi',
+        CONNECTED_MODI: 'connectedModi',
+
+        // Python ready
+        PYTHON_READY: 'pythonReady',
+    };
+
+    // ===== Logging =====
+    function log(message, type = 'info') {
+        const logEl = document.getElementById('log');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
+        entry.textContent = `[${time}] ${message}`;
+        logEl.insertBefore(entry, logEl.firstChild);
+    }
+
+    function updateStatus(id, status) {
+        document.getElementById(id).className = 'status-dot ' + status;
+    }
+
+    // ===== Flutter PostMessage Communication =====
+
+    /**
+     * Python에서 Flutter로 메시지 전송
+     * pymodi-plus의 send() 호출 시 이 함수가 호출됨
+     *
+     * 패킷 형식: {"c": cmd, "s": source, "d": dest, "b": base64_data, "l": length}
+     */
+    window.modiSendToFlutter = function(packet) {
+        try {
+            const data = JSON.parse(packet);
+            log(`→ setPropertyRequest: ${JSON.stringify(data).substring(0, 80)}...`, 'send');
+
+            // Flutter로 setPropertyRequest 전송
+            sendToFlutter(PostMessageType.SET_PROPERTY_REQUEST, data);
+        } catch (e) {
+            log(`Send error: ${e}`, 'error');
+        }
+    };
+
+    /**
+     * Python에서 Flutter로 속성 요청 (센서 읽기 등)
+     */
+    window.modiGetProperty = function(moduleType, moduleIndex, propertyNum) {
+        const data = {
+            moduleType: moduleType,
+            index: moduleIndex,
+            propertyNum: propertyNum
+        };
+
+        log(`→ getPropertyRequest: ${moduleType}[${moduleIndex}].prop${propertyNum}`, 'send');
+        sendToFlutter(PostMessageType.GET_PROPERTY_REQUEST, data);
+    };
+
+    /**
+     * Flutter(부모 윈도우)로 메시지 전송
+     */
+    function sendToFlutter(type, data) {
+        const message = { type: type, data: data };
+
+        log(`📤 SEND → type: ${type}, data: ${JSON.stringify(data).substring(0, 80)}`, 'send');
+
+        if (window.parent !== window) {
+            window.parent.postMessage(message, '*');
+            log(`📤 postMessage sent to parent`, 'send');
+        } else {
+            log(`⚠️ [Standalone mode] No parent window - message not sent`, 'info');
+        }
+    }
+
+    /**
+     * Flutter에서 메시지 수신
+     */
+    window.addEventListener('message', function(event) {
+        // 모든 메시지 로깅 (디버깅용)
+        log(`📩 RAW message from: ${event.origin}`, 'recv');
+
+        try {
+            const message = typeof event.data === 'string'
+                ? JSON.parse(event.data)
+                : event.data;
+
+            if (!message) {
+                log(`📩 Empty message data`, 'recv');
+                return;
+            }
+
+            log(`📩 Message type: ${message.type || 'no type'}, data: ${JSON.stringify(message.data || message).substring(0, 100)}`, 'recv');
+
+            if (!message.type) return;
+
+            switch (message.type) {
+                case PostMessageType.GET_PROPERTY_RESPONSE:
+                    // 하드웨어 응답 → Python으로 전달
+                    handlePropertyResponse(message.data);
+                    break;
+
+                case PostMessageType.CONNECTED_MODI:
+                case 'connectedModi':
+                    // 연결된 모듈 목록
+                    handleConnectedModi(message.data);
+                    break;
+
+                case 'flutterReady':
+                    // Flutter WebView 준비 완료
+                    updateStatus('flutterStatus', 'connected');
+                    log('Flutter connection established', 'success');
+                    requestConnectedModi();
+                    break;
+
+                default:
+                    log(`← Unknown type: ${message.type}`, 'recv');
+            }
+        } catch (e) {
+            log(`📩 Parse error: ${e.message}, raw: ${String(event.data).substring(0, 50)}`, 'error');
+        }
+    });
+
+    /**
+     * getPropertyResponse 처리 - 하드웨어 데이터를 Python으로 전달
+     *
+     * Flutter에서 오는 형식:
+     * {
+     *   moduleType: "led",
+     *   index: 0,
+     *   propertyNum: 0,
+     *   data: [...] // 속성 값
+     * }
+     */
+    function handlePropertyResponse(data) {
+        if (!modi || !pyodide) return;
+
+        log(`← getPropertyResponse: ${JSON.stringify(data).substring(0, 60)}...`, 'recv');
+
+        try {
+            // MODI+ JSON 패킷 형식으로 변환하여 Python에 전달
+            const packet = JSON.stringify(data);
+            pyodide.runPython(`modi.on_message('${packet.replace(/'/g, "\\'")}')`);
+        } catch (e) {
+            log(`Response handling error: ${e}`, 'error');
+        }
+    }
+
+    /**
+     * 연결된 모듈 목록 처리
+     */
+    function handleConnectedModi(data) {
+        const moduleList = document.getElementById('moduleList');
+
+        if (!data || !data.modules || data.modules.length === 0) {
+            moduleList.innerHTML = '<span style="color: #666;">No modules connected</span>';
+            updateStatus('modiStatus', '');
+            return;
+        }
+
+        connectedModules = data.modules;
+        moduleList.innerHTML = data.modules.map(m =>
+            `<span class="module-tag">${m.type} (ID: ${m.id})</span>`
+        ).join('');
+
+        updateStatus('modiStatus', 'connected');
+        log(`Modules connected: ${data.modules.map(m => m.type).join(', ')}`, 'success');
+
+        // Python에 모듈 정보 전달
+        if (pyodide && modi) {
+            try {
+                pyodide.runPython(`
+_update_modules(${JSON.stringify(data.modules)})
+                `);
+            } catch (e) {
+                log(`Module update error: ${e}`, 'error');
+            }
+        }
+    }
+
+    /**
+     * Flutter에 연결된 모듈 목록 요청
+     */
+    function requestConnectedModi() {
+        sendToFlutter(PostMessageType.GET_CONNECTED_MODI, {});
+    }
+
+    // ===== Pyodide Initialization =====
+    async function initPyodide() {
+        log('Loading Pyodide...', 'info');
+        updateStatus('pyodideStatus', 'loading');
+
+        try {
+            pyodide = await loadPyodide();
+            log('Pyodide loaded', 'success');
+
+            // pymodi-plus-web 초기화 (Mock 모드)
+            await pyodide.runPythonAsync(`
+import sys
+import json
+import time as _time
+
+# ===== Flutter 통신용 PostMessageTask =====
+class PostMessageTask:
+    def __init__(self, verbose=False):
+        self.verbose = verbose
+        self._recv_queue = []
+        self._send_callback = None
+        self._connected = False
+
+    def open_connection(self):
+        self._connected = True
+
+    def close_connection(self):
+        self._connected = False
+        self._send_callback = None
+
+    @property
+    def is_connected(self):
+        return self._connected
+
+    def set_send_callback(self, callback):
+        self._send_callback = callback
+
+    def on_message(self, data):
+        """Flutter에서 getPropertyResponse 수신"""
+        if isinstance(data, dict):
+            data = json.dumps(data)
+        self._recv_queue.append(data)
+        if self.verbose:
+            print(f"[Task] Received: {data[:50]}...")
+
+    def send(self, pkt, verbose=False):
+        """Flutter로 setPropertyRequest 전송"""
+        if self._send_callback:
+            self._send_callback(pkt)
+
+    def recv(self):
+        if not self._recv_queue:
+            return None
+        return self._recv_queue.pop(0)
+
+# ===== 모듈 클래스 =====
+class BaseModule:
+    def __init__(self, module_type, module_id, index=0):
+        self.type = module_type
+        self.id = module_id
+        self.index = index
+        self._task = None
+
+    def __repr__(self):
+        return f"<{self.type} id={self.id}>"
+
+    def _send_command(self, property_num, data):
+        """하드웨어에 명령 전송"""
+        if self._task and self._task._send_callback:
+            packet = {
+                "moduleType": self.type.lower(),
+                "index": self.index,
+                "propertyNum": property_num,
+                "data": data
+            }
+            self._task.send(json.dumps(packet))
+
+    def _request_property(self, property_num):
+        """하드웨어에서 속성 요청"""
+        import js
+        js.window.modiGetProperty(self.type.lower(), self.index, property_num)
+
+class LED(BaseModule):
+    # Property numbers
+    PROP_RGB = 2
+
+    def __init__(self, module_id, index=0):
+        super().__init__('LED', module_id, index)
+        self._rgb = (0, 0, 0)
+
+    def set_rgb(self, r, g, b):
+        self._rgb = (r, g, b)
+        self._send_command(self.PROP_RGB, [r, g, b])
+        print(f"[LED] Set RGB({r}, {g}, {b})")
+
+    def turn_on(self):
+        self.set_rgb(255, 255, 255)
+
+    def turn_off(self):
+        self.set_rgb(0, 0, 0)
+
+    @property
+    def red(self):
+        return self._rgb[0]
+
+    @property
+    def green(self):
+        return self._rgb[1]
+
+    @property
+    def blue(self):
+        return self._rgb[2]
+
+class Button(BaseModule):
+    PROP_STATE = 0
+
+    def __init__(self, module_id, index=0):
+        super().__init__('Button', module_id, index)
+        self._pressed = False
+        self._clicked = False
+
+    @property
+    def pressed(self):
+        self._request_property(self.PROP_STATE)
+        return self._pressed
+
+    @property
+    def clicked(self):
+        return self._clicked
+
+class Env(BaseModule):
+    PROP_TEMP = 0
+    PROP_HUMIDITY = 1
+    PROP_ILLUMINANCE = 2
+    PROP_VOLUME = 3
+
+    def __init__(self, module_id, index=0):
+        super().__init__('Env', module_id, index)
+        self._temp = 25.0
+        self._humidity = 50.0
+        self._illuminance = 500
+        self._volume = 0
+
+    @property
+    def temperature(self):
+        self._request_property(self.PROP_TEMP)
+        return self._temp
+
+    @property
+    def humidity(self):
+        self._request_property(self.PROP_HUMIDITY)
+        return self._humidity
+
+    @property
+    def illuminance(self):
+        self._request_property(self.PROP_ILLUMINANCE)
+        return self._illuminance
+
+class Motor(BaseModule):
+    PROP_SPEED = 0
+    PROP_ANGLE = 2
+
+    def __init__(self, module_id, index=0):
+        super().__init__('Motor', module_id, index)
+        self._speed = 0
+        self._angle = 0
+
+    def set_speed(self, speed):
+        self._speed = speed
+        self._send_command(self.PROP_SPEED, [speed])
+        print(f"[Motor] Set speed: {speed}")
+
+    def set_angle(self, angle):
+        self._angle = angle
+        self._send_command(self.PROP_ANGLE, [angle])
+        print(f"[Motor] Set angle: {angle}")
+
+    def stop(self):
+        self.set_speed(0)
+
+class Speaker(BaseModule):
+    PROP_FREQUENCY = 0
+    PROP_VOLUME = 1
+
+    def __init__(self, module_id, index=0):
+        super().__init__('Speaker', module_id, index)
+
+    def set_frequency(self, freq):
+        self._send_command(self.PROP_FREQUENCY, [freq])
+        print(f"[Speaker] Set frequency: {freq}Hz")
+
+    def set_volume(self, vol):
+        self._send_command(self.PROP_VOLUME, [vol])
+        print(f"[Speaker] Set volume: {vol}")
+
+# ===== MODIPlusWeb 클래스 =====
+class MODIPlusWeb:
+    def __init__(self, verbose=False):
+        self.verbose = verbose
+        self._task = PostMessageTask(verbose=verbose)
+        self._task.open_connection()
+        self._modules = []
+
+    @property
+    def modules(self):
+        return self._modules
+
+    @property
+    def leds(self):
+        return [m for m in self._modules if isinstance(m, LED)]
+
+    @property
+    def buttons(self):
+        return [m for m in self._modules if isinstance(m, Button)]
+
+    @property
+    def envs(self):
+        return [m for m in self._modules if isinstance(m, Env)]
+
+    @property
+    def motors(self):
+        return [m for m in self._modules if isinstance(m, Motor)]
+
+    @property
+    def speakers(self):
+        return [m for m in self._modules if isinstance(m, Speaker)]
+
+    def set_send_callback(self, callback):
+        self._task.set_send_callback(callback)
+
+    def on_message(self, data):
+        """Flutter에서 응답 수신"""
+        self._task.on_message(data)
+        # TODO: 응답 파싱하여 모듈 상태 업데이트
+
+    def _add_module(self, module):
+        module._task = self._task
+        self._modules.append(module)
+
+# ===== 초기화 =====
+import js
+
+modi = MODIPlusWeb(verbose=True)
+modi.set_send_callback(lambda pkt: js.window.modiSendToFlutter(pkt))
+
+# Mock 모듈 추가 (테스트용)
+modi._add_module(LED(1001, 0))
+modi._add_module(Button(2001, 0))
+modi._add_module(Env(3001, 0))
+modi._add_module(Motor(4001, 0))
+modi._add_module(Speaker(5001, 0))
+
+def _update_modules(modules_data):
+    """Flutter에서 받은 모듈 목록으로 업데이트"""
+    global modi
+    modi._modules = []
+
+    type_map = {
+        'led': LED,
+        'button': Button,
+        'environment': Env,
+        'env': Env,
+        'motor': Motor,
+        'speaker': Speaker,
+    }
+
+    for i, m in enumerate(modules_data):
+        mod_type = m.get('type', '').lower()
+        mod_id = m.get('id', i + 1000)
+
+        if mod_type in type_map:
+            module = type_map[mod_type](mod_id, i)
+            modi._add_module(module)
+
+    print(f"✅ Modules updated: {modi.modules}")
+
+print("✅ PyMODI+ Web initialized")
+print(f"📦 Mock modules: {modi.modules}")
+            `);
+
+            modi = pyodide.globals.get('modi');
+
+            updateStatus('pyodideStatus', 'connected');
+            log('PyMODI+ Web initialized', 'success');
+
+            document.getElementById('runBtn').disabled = false;
+
+            // Flutter에 준비 완료 알림
+            sendToFlutter(PostMessageType.PYTHON_READY, {});
+
+            // 모듈 목록 요청
+            setTimeout(requestConnectedModi, 500);
+
+        } catch (e) {
+            log(`Initialization error: ${e}`, 'error');
+            console.error(e);
+            updateStatus('pyodideStatus', '');
+        }
+    }
+
+    // ===== Code Execution =====
+    async function runCode() {
+        const code = document.getElementById('editor').value;
+        if (!code.trim()) return;
+
+        document.getElementById('runBtn').disabled = true;
+        document.getElementById('stopBtn').disabled = false;
+
+        log('=== Running Python ===', 'info');
+
+        try {
+            // print 캡처
+            await pyodide.runPythonAsync(\`
+import sys
+class LogCapture:
+    def write(self, text):
+        if text.strip():
+            import js
+            js.window.logPython(text.strip())
+    def flush(self):
+        pass
+sys.stdout = LogCapture()
+sys.stderr = LogCapture()
+            \`);
+
+            await pyodide.runPythonAsync(code);
+            log('=== Complete ===', 'success');
+        } catch (e) {
+            log(\`Error: \${e}\`, 'error');
+        } finally {
+            document.getElementById('runBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        }
+    }
+
+    window.logPython = (text) => log(\`[Python] \${text}\`, 'python');
+
+    // ===== Event Handlers =====
+    document.getElementById('runBtn').addEventListener('click', runCode);
+    document.getElementById('stopBtn').addEventListener('click', () => log('Stop requested', 'info'));
+    document.getElementById('clearBtn').addEventListener('click', () => document.getElementById('log').innerHTML = '');
+
+    document.getElementById('testMsgBtn').addEventListener('click', () => {
+        log('=== TEST MESSAGE ===', 'info');
+        // 테스트: LED 빨간색 설정 명령 전송
+        sendToFlutter('setPropertyRequest', {
+            moduleType: 'led',
+            index: 0,
+            propertyNum: 2,
+            data: [255, 0, 0]
+        });
+        // 테스트: 환경센서 온도 요청
+        sendToFlutter('getPropertyRequest', {
+            moduleType: 'environment',
+            index: 0,
+            propertyNum: 0
+        });
+    });
+
+    document.getElementById('editor').addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            if (!document.getElementById('runBtn').disabled) runCode();
+        }
+    });
+
+    // ===== Initialize =====
+    initPyodide();
+    log('PyMODI+ Web loaded - waiting for Flutter...', 'info');
+    </script>
+</body>
+</html>

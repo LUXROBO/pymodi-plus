@@ -1,4 +1,4 @@
-.PHONY: help install install-dev install-editable reinstall test test-pytest-all test-all test-input test-output test-task test-verbose test-examples-syntax lint format clean clean-build clean-pyc clean-test coverage docs dist release examples
+.PHONY: help install install-dev install-editable reinstall test test-pytest-all test-all test-input test-output test-task test-verbose test-examples-syntax lint format clean clean-build clean-pyc clean-test coverage docs dist release examples test-core test-web install-core install-web build-core build-web
 .DEFAULT_GOAL := help
 
 # Python interpreter detection
@@ -223,3 +223,53 @@ release: dist ## Package and upload a release
 	@echo "$(BLUE)Uploading to PyPI...$(NC)"
 	twine upload dist/*
 	@echo "$(GREEN)✓ Release uploaded$(NC)"
+
+##@ Monorepo - Core Package
+
+install-core: ## Install core package (packages/core)
+	@echo "$(BLUE)Installing core package...$(NC)"
+	cd packages/core && $(PYTHON) -m pip install -e .
+	@echo "$(GREEN)✓ Core package installed$(NC)"
+
+test-core: ## Run core package tests
+	$(call check_command,pytest)
+	@echo "$(BLUE)Running core package tests...$(NC)"
+	$(PYTHON) -m pytest packages/core/tests/task/ packages/core/tests/module/input_module/ packages/core/tests/module/output_module/ -v
+	@echo "$(GREEN)✓ Core tests completed$(NC)"
+
+build-core: ## Build core package distribution
+	@echo "$(BLUE)Building core package...$(NC)"
+	cd packages/core && $(PYTHON) -m pip install --upgrade build && $(PYTHON) -m build
+	@echo "$(GREEN)✓ Core package built$(NC)"
+
+##@ Monorepo - Web Package
+
+install-web: install-core ## Install web package (depends on core)
+	@echo "$(BLUE)Installing web package...$(NC)"
+	cd packages/web && $(PYTHON) -m pip install -e .
+	@echo "$(GREEN)✓ Web package installed$(NC)"
+
+test-web: ## Run web package tests
+	$(call check_command,pytest)
+	@echo "$(BLUE)Running web package tests...$(NC)"
+	$(PYTHON) -m pytest packages/web/tests/ -v
+	@echo "$(GREEN)✓ Web tests completed$(NC)"
+
+build-web: ## Build web package distribution
+	@echo "$(BLUE)Building web package...$(NC)"
+	cd packages/web && $(PYTHON) -m pip install --upgrade build && $(PYTHON) -m build
+	@echo "$(GREEN)✓ Web package built$(NC)"
+
+##@ Monorepo - All Packages
+
+install-all: install-core install-web ## Install all packages
+	@echo "$(GREEN)✓ All packages installed$(NC)"
+
+test-monorepo: test-core test-web ## Run all package tests
+	@echo ""
+	@echo "$(GREEN)========================================$(NC)"
+	@echo "$(GREEN)✓ All monorepo tests passed!$(NC)"
+	@echo "$(GREEN)========================================$(NC)"
+
+build-all: build-core build-web ## Build all packages
+	@echo "$(GREEN)✓ All packages built$(NC)"

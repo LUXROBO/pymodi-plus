@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>pymodi-plus-web Pyodide IDE</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+        }
+        h1 { color: #00d9ff; margin-bottom: 10px; }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .panel {
+            background: #16213e;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #0f3460;
+        }
+        .panel h2 {
+            margin: 0 0 10px 0;
+            color: #00d9ff;
+            font-size: 16px;
+        }
+        .status {
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .success { background: #1b4332; color: #95d5b2; }
+        .error { background: #5c1a1a; color: #f8d7da; }
+        .info { background: #1a3a5c; color: #a8dadc; }
+        .loading { background: #5c4a1a; color: #fff3cd; }
+
+        .editor-container {
+            display: flex;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #0d1117;
+        }
+        #lineNumbers {
+            background: #161b22;
+            color: #6e7681;
+            padding: 12px 8px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: right;
+            user-select: none;
+            border-right: 1px solid #30363d;
+            min-width: 40px;
+            overflow: hidden;
+            white-space: pre;
+        }
+        #editor {
+            flex: 1;
+            height: 400px;
+            background: #0d1117;
+            color: #c9d1d9;
+            border: none;
+            padding: 12px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            resize: none;
+            tab-size: 4;
+            outline: none;
+        }
+        #output, #messages, #hardware {
+            background: #0d1117;
+            color: #8b949e;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 180px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid #30363d;
+        }
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        button:hover { background: #2ea043; }
+        button:disabled { background: #484f58; cursor: not-allowed; }
+        button.primary { background: #1f6feb; }
+        button.primary:hover { background: #388bfd; }
+        button.danger { background: #da3633; }
+        button.danger:hover { background: #f85149; }
+        button.secondary { background: #30363d; }
+        button.secondary:hover { background: #484f58; }
+
+        .examples {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .examples button {
+            background: #30363d;
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+        .examples button:hover { background: #484f58; }
+        .examples button.active { background: #1f6feb; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .module-sim {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .module-card {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 10px;
+            min-width: 100px;
+            text-align: center;
+        }
+        .module-card .name { color: #58a6ff; font-size: 12px; }
+        .module-card .id { color: #6e7681; font-size: 10px; }
+        .module-card .value { color: #f0f6fc; font-size: 18px; font-weight: bold; margin: 5px 0; }
+        .led-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 5px auto;
+            border: 2px solid #30363d;
+            transition: background-color 0.1s;
+        }
+
+        .tab-buttons { display: flex; gap: 5px; margin-bottom: 10px; }
+        .tab-buttons button { padding: 5px 12px; font-size: 12px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>pymodi-plus-web IDE</h1>
+        <div id="status" class="status loading">Loading Pyodide...</div>
+    </div>
+
+    <div class="container">
+        <div class="panel">
+            <h2>Python Editor - pymodi-plus 스타일</h2>
+            <div class="examples">
+                <button onclick="loadExample('led')" class="active">LED 예제</button>
+                <button onclick="loadExample('button')">Button 예제</button>
+                <button onclick="loadExample('multi')">복합 예제</button>
+                <button onclick="loadExample('env')">환경센서</button>
+                <button onclick="loadExample('motor')">모터</button>
+            </div>
+            <div class="editor-container">
+                <div id="lineNumbers">1</div>
+                <textarea id="editor" spellcheck="false"># pymodi-plus 웹 버전 LED 예제
+# 기존 pymodi-plus 코드와 거의 동일합니다!
+
+from modi_plus_web import MODIPlusWeb
+import time
+
+# 웹 버전 MODI+ 객체 생성
+bundle = MODIPlusWeb()
+
+# LED 모듈 가져오기
+led = bundle.leds[0]
+
+# LED 제어 (기존 pymodi-plus와 동일한 API)
+led.blue = 100
+print("LED 파란색 켜짐")
+time.sleep(0.5)
+
+led.blue = 0
+led.green = 255
+print("LED 초록색 켜짐")
+time.sleep(0.5)
+
+led.green = 0
+led.red = 100
+print("LED 빨간색 켜짐")
+time.sleep(0.5)
+
+# RGB 색상 변경
+led.rgb = (255, 128, 0)  # 주황색
+print("LED RGB: 주황색")
+
+led.turn_on()
+print("LED 켜기")
+
+led.turn_off()
+print("LED 끄기")
+</textarea>
+            </div>
+            <div class="btn-group">
+                <button id="btnRun" class="primary" onclick="runCode()">▶ Run (Ctrl+Enter)</button>
+                <button onclick="clearOutput()">Clear</button>
+                <button class="danger" onclick="stopCode()">■ Stop</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Output</h2>
+            <pre id="output"></pre>
+        </div>
+
+        <div class="panel">
+            <h2>Hardware Simulation (WebUSB 시뮬레이션)</h2>
+            <div class="module-sim">
+                <div class="module-card">
+                    <div class="name">LED</div>
+                    <div class="id">ID: 0x1001</div>
+                    <div class="led-preview" id="ledPreview"></div>
+                </div>
+                <div class="module-card">
+                    <div class="name">Button</div>
+                    <div class="id">ID: 0x2001</div>
+                    <div class="value" id="buttonState">OFF</div>
+                    <button class="secondary" onmousedown="pressButton()" onmouseup="releaseButton()">Press</button>
+                </div>
+                <div class="module-card">
+                    <div class="name">Dial</div>
+                    <div class="id">ID: 0x3001</div>
+                    <div class="value" id="dialValue">0</div>
+                    <input type="range" min="0" max="100" value="0" oninput="changeDial(this.value)">
+                </div>
+                <div class="module-card">
+                    <div class="name">ENV</div>
+                    <div class="id">ID: 0x4001</div>
+                    <div class="value" id="envTemp">25°C</div>
+                </div>
+            </div>
+            <pre id="hardware" style="margin-top: 10px; height: 100px;">하드웨어 통신 로그...</pre>
+        </div>
+
+        <div class="panel">
+            <h2>Communication Log (Python ↔ JS)</h2>
+            <div class="tab-buttons">
+                <button onclick="showTab('toJs')" class="secondary">Python → JS</button>
+                <button onclick="showTab('toPy')" class="secondary">JS → Python</button>
+            </div>
+            <pre id="messages">패킷 통신 로그가 여기에 표시됩니다...</pre>
+        </div>
+    </div>
+
+    <script>
+        let pyodide = null;
+        let isRunning = false;
+        const output = document.getElementById('output');
+        const messages = document.getElementById('messages');
+        const hardware = document.getElementById('hardware');
+        const status = document.getElementById('status');
+        const editor = document.getElementById('editor');
+        const lineNumbers = document.getElementById('lineNumbers');
+        const ledPreview = document.getElementById('ledPreview');
+
+        // 실제 pymodi-plus 스타일 예제들
+        const examples = {
+            led: `# pymodi-plus 웹 버전 LED 예제
+# 기존 pymodi-plus 코드와 거의 동일합니다!
+
+from modi_plus_web import MODIPlusWeb
+import time
+
+# 웹 버전 MODI+ 객체 생성
+bundle = MODIPlusWeb()
+
+# LED 모듈 가져오기
+led = bundle.leds[0]
+
+# LED 제어 (기존 pymodi-plus와 동일한 API)
+led.blue = 100
+print("LED 파란색 켜짐")
+time.sleep(0.5)
+
+led.blue = 0
+led.green = 255
+print("LED 초록색 켜짐")
+time.sleep(0.5)
+
+led.green = 0
+led.red = 100
+print("LED 빨간색 켜짐")
+time.sleep(0.5)
+
+# RGB 색상 변경
+led.rgb = (255, 128, 0)  # 주황색
+print("LED RGB: 주황색")
+
+led.turn_on()
+print("LED 켜기")
+
+led.turn_off()
+print("LED 끄기")`,
+
+            button: `# pymodi-plus 웹 버전 Button 예제
+from modi_plus_web import MODIPlusWeb
+import time
+
+bundle = MODIPlusWeb()
+button = bundle.buttons[0]
+
+print("버튼을 눌러보세요!")
+print("(Hardware Simulation 패널의 Press 버튼 사용)")
+
+# 5초간 버튼 상태 모니터링
+for i in range(50):
+    if button.pressed:
+        print("버튼 눌림! ●")
+    else:
+        print("버튼 대기중... ○")
+    time.sleep(0.1)
+
+print("\\n모니터링 종료")`,
+
+            multi: `# pymodi-plus 복합 예제 (LED + Button)
+from modi_plus_web import MODIPlusWeb
+import time
+
+bundle = MODIPlusWeb()
+led = bundle.leds[0]
+button = bundle.buttons[0]
+dial = bundle.dials[0]
+
+print("버튼을 누르면 LED가 켜집니다!")
+print("다이얼로 밝기를 조절하세요.")
+
+for i in range(100):
+    # 다이얼 값으로 밝기 조절
+    brightness = dial.degree
+
+    if button.pressed:
+        led.rgb = (brightness, brightness, brightness)
+        print(f"LED ON - 밝기: {brightness}")
+    else:
+        led.turn_off()
+        print(f"LED OFF - 다이얼: {brightness}")
+
+    time.sleep(0.1)`,
+
+            env: `# pymodi-plus 환경센서 예제
+from modi_plus_web import MODIPlusWeb
+import time
+
+bundle = MODIPlusWeb()
+env = bundle.envs[0]
+
+print("환경 센서 데이터 읽기")
+print("-" * 30)
+
+for i in range(10):
+    temp = env.temperature
+    humid = env.humidity
+    light = env.illuminance
+
+    print(f"온도: {temp:.1f}°C")
+    print(f"습도: {humid:.1f}%")
+    print(f"조도: {light:.0f} lux")
+    print("-" * 30)
+    time.sleep(1)`,
+
+            motor: `# pymodi-plus 모터 예제
+from modi_plus_web import MODIPlusWeb
+import time
+
+bundle = MODIPlusWeb()
+motor = bundle.motors[0]
+
+print("모터 제어 테스트")
+
+# 전진
+motor.speed = 50, 50
+print("전진 (50, 50)")
+time.sleep(1)
+
+# 후진
+motor.speed = -50, -50
+print("후진 (-50, -50)")
+time.sleep(1)
+
+# 좌회전
+motor.speed = -30, 30
+print("좌회전 (-30, 30)")
+time.sleep(1)
+
+# 우회전
+motor.speed = 30, -30
+print("우회전 (30, -30)")
+time.sleep(1)
+
+# 정지
+motor.speed = 0, 0
+print("정지")`,
+        };
+
+        // 하드웨어 시뮬레이션 상태
+        const hwState = {
+            button: { pressed: false },
+            dial: { degree: 0 },
+            led: { r: 0, g: 0, b: 0 },
+            env: { temperature: 25.5, humidity: 60, illuminance: 500 }
+        };
+
+        function pressButton() {
+            hwState.button.pressed = true;
+            document.getElementById('buttonState').textContent = 'ON';
+            document.getElementById('buttonState').style.color = '#58a6ff';
+            sendToePython('button', { pressed: true });
+        }
+
+        function releaseButton() {
+            hwState.button.pressed = false;
+            document.getElementById('buttonState').textContent = 'OFF';
+            document.getElementById('buttonState').style.color = '#8b949e';
+            sendToePython('button', { pressed: false });
+        }
+
+        function changeDial(value) {
+            hwState.dial.degree = parseInt(value);
+            document.getElementById('dialValue').textContent = value;
+            sendToePython('dial', { degree: parseInt(value) });
+        }
+
+        function sendToePython(module, data) {
+            const timestamp = new Date().toLocaleTimeString();
+            hardware.textContent += `[${timestamp}] ${module}: ${JSON.stringify(data)}\n`;
+            hardware.scrollTop = hardware.scrollHeight;
+        }
+
+        function updateLedPreview(r, g, b) {
+            ledPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            ledPreview.style.boxShadow = r + g + b > 0 ? `0 0 20px rgba(${r}, ${g}, ${b}, 0.8)` : 'none';
+        }
+
+        // 라인 번호
+        function updateLineNumbers() {
+            const lines = editor.value.split('\n').length;
+            let nums = '';
+            for (let i = 1; i <= lines; i++) nums += i + '\n';
+            lineNumbers.textContent = nums;
+        }
+
+        editor.addEventListener('scroll', () => lineNumbers.scrollTop = editor.scrollTop);
+        editor.addEventListener('input', updateLineNumbers);
+
+        function loadExample(name) {
+            editor.value = examples[name];
+            updateLineNumbers();
+            document.querySelectorAll('.examples button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function log(text, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌ ' : type === 'success' ? '✅ ' : '';
+            output.textContent += `[${timestamp}] ${prefix}${text}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function logPacket(direction, pkt) {
+            const timestamp = new Date().toLocaleTimeString();
+            const arrow = direction === 'toJs' ? '→ JS' : '← PY';
+            messages.textContent += `[${timestamp}] ${arrow}: ${pkt}\n`;
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function clearOutput() { output.textContent = ''; }
+
+        function setStatus(text, type) {
+            status.textContent = text;
+            status.className = 'status ' + type;
+        }
+
+        function showTab(tab) {
+            // 탭 전환 로직
+        }
+
+        // Python으로부터 메시지 수신 (LED 제어 등)
+        window.modiSend = (pkt) => {
+            logPacket('toJs', pkt);
+            try {
+                const data = JSON.parse(pkt);
+                // LED 명령 처리
+                if (data.module === 'led') {
+                    updateLedPreview(data.r || 0, data.g || 0, data.b || 0);
+                }
+            } catch (e) {}
+        };
+
+        async function initPyodide() {
+            try {
+                log('Pyodide 로딩 중...');
+                pyodide = await loadPyodide();
+                log('Pyodide 로드 완료!', 'success');
+
+                pyodide.setStdout({ batched: (text) => log(text) });
+                pyodide.setStderr({ batched: (text) => log(text, 'error') });
+
+                await initModiPlusWeb();
+
+                setStatus('Ready', 'success');
+                document.getElementById('btnRun').disabled = false;
+                updateLineNumbers();
+
+                editor.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); runCode(); }
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                        const start = editor.selectionStart;
+                        editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(editor.selectionEnd);
+                        editor.selectionStart = editor.selectionEnd = start + 4;
+                    }
+                });
+
+            } catch (e) {
+                log('Pyodide 로드 실패: ' + e, 'error');
+                setStatus('Error', 'error');
+            }
+        }
+
+        async function initModiPlusWeb() {
+            // pymodi-plus-web 시뮬레이션 모듈 생성
+            await pyodide.runPythonAsync(`
+import js
+import json
+import time as _time
+from queue import Queue
+
+# 하드웨어 상태 (JS와 공유)
+hw_state = {
+    'button': {'pressed': False},
+    'dial': {'degree': 0},
+    'led': {'r': 0, 'g': 0, 'b': 0},
+    'env': {'temperature': 25.5, 'humidity': 60, 'illuminance': 500}
+}
+
+class PostMessageTask:
+    def __init__(self):
+        self._recv_queue = Queue()
+        self._connected = True
+
+    def send(self, pkt):
+        js.window.modiSend(pkt)
+
+    def recv(self):
+        return self._recv_queue.get() if not self._recv_queue.empty() else None
+
+    def on_message(self, data):
+        self._recv_queue.put(data)
+
+# 모듈 클래스들 (pymodi-plus API 호환)
+class MockLed:
+    def __init__(self, task):
+        self._task = task
+        self._r = self._g = self._b = 0
+
+    @property
+    def red(self): return self._r
+    @red.setter
+    def red(self, v):
+        self._r = v
+        self._send_color()
+
+    @property
+    def green(self): return self._g
+    @green.setter
+    def green(self, v):
+        self._g = v
+        self._send_color()
+
+    @property
+    def blue(self): return self._b
+    @blue.setter
+    def blue(self, v):
+        self._b = v
+        self._send_color()
+
+    @property
+    def rgb(self): return (self._r, self._g, self._b)
+    @rgb.setter
+    def rgb(self, v):
+        self._r, self._g, self._b = v
+        self._send_color()
+
+    def turn_on(self):
+        self.rgb = (255, 255, 255)
+
+    def turn_off(self):
+        self.rgb = (0, 0, 0)
+
+    def _send_color(self):
+        self._task.send(json.dumps({'module': 'led', 'r': self._r, 'g': self._g, 'b': self._b}))
+
+class MockButton:
+    @property
+    def pressed(self):
+        return js.window.hwState.button.pressed
+
+    @property
+    def double_clicked(self):
+        return False
+
+class MockDial:
+    @property
+    def degree(self):
+        return int(js.window.hwState.dial.degree)
+
+class MockEnv:
+    @property
+    def temperature(self):
+        return float(js.window.hwState.env.temperature)
+
+    @property
+    def humidity(self):
+        return float(js.window.hwState.env.humidity)
+
+    @property
+    def illuminance(self):
+        return float(js.window.hwState.env.illuminance)
+
+class MockMotor:
+    def __init__(self, task):
+        self._task = task
+        self._speed = (0, 0)
+
+    @property
+    def speed(self): return self._speed
+    @speed.setter
+    def speed(self, v):
+        self._speed = v
+        self._task.send(json.dumps({'module': 'motor', 'left': v[0], 'right': v[1]}))
+
+class ModuleList(list):
+    def __getitem__(self, idx):
+        if idx < len(self):
+            return super().__getitem__(idx)
+        return self[0] if len(self) > 0 else None
+
+class MODIPlusWeb:
+    def __init__(self):
+        self._task = PostMessageTask()
+        self._led = MockLed(self._task)
+        self._button = MockButton()
+        self._dial = MockDial()
+        self._env = MockEnv()
+        self._motor = MockMotor(self._task)
+        print("MODIPlusWeb 초기화 완료!")
+
+    @property
+    def leds(self): return ModuleList([self._led])
+    @property
+    def buttons(self): return ModuleList([self._button])
+    @property
+    def dials(self): return ModuleList([self._dial])
+    @property
+    def envs(self): return ModuleList([self._env])
+    @property
+    def motors(self): return ModuleList([self._motor])
+
+# 모듈로 등록
+class modi_plus_web:
+    MODIPlusWeb = MODIPlusWeb
+    PostMessageTask = PostMessageTask
+
+import sys
+sys.modules['modi_plus_web'] = modi_plus_web
+
+# time.sleep을 짧게 만들기 (웹에서 빠르게 테스트)
+original_sleep = _time.sleep
+def fast_sleep(t):
+    original_sleep(min(t, 0.1))
+_time.sleep = fast_sleep
+
+print("pymodi-plus-web 환경 준비 완료!")
+            `);
+
+            // JS 하드웨어 상태 공유
+            window.hwState = {
+                button: { pressed: false },
+                dial: { degree: 0 },
+                env: { temperature: 25.5, humidity: 60, illuminance: 500 }
+            };
+
+            log('modi_plus_web 모듈 로드 완료!', 'success');
+        }
+
+        async function runCode() {
+            if (isRunning) return;
+            isRunning = true;
+            const code = editor.value;
+            log('--- 실행 시작 ---');
+            try {
+                await pyodide.runPythonAsync(code);
+                log('--- 실행 완료 ---', 'success');
+            } catch (e) {
+                log('오류: ' + e, 'error');
+            }
+            isRunning = false;
+        }
+
+        function stopCode() {
+            isRunning = false;
+            log('실행 중단 요청됨', 'error');
+        }
+
+        initPyodide();
+    </script>
+</body>
+</html>
