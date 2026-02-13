@@ -134,7 +134,8 @@ if modi.envs:
             <div class="controls">
                 <button class="btn btn-run" id="runBtn" disabled>▶ Run</button>
                 <button class="btn btn-stop" id="stopBtn" disabled>■ Stop</button>
-                <button class="btn btn-clear" id="clearBtn">Clear Log</button>
+                <button class="btn btn-clear" id="clearBtn">Clear</button>
+                <button class="btn" id="testMsgBtn" style="background:#6366f1;color:#fff;">📡 Test Send</button>
             </div>
         </div>
 
@@ -180,8 +181,7 @@ if modi.envs:
         entry.className = `log-entry ${type}`;
         const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
         entry.textContent = `[${time}] ${message}`;
-        logEl.appendChild(entry);
-        logEl.scrollTop = logEl.scrollHeight;
+        logEl.insertBefore(entry, logEl.firstChild);
     }
 
     function updateStatus(id, status) {
@@ -228,11 +228,13 @@ if modi.envs:
     function sendToFlutter(type, data) {
         const message = { type: type, data: data };
 
+        log(`📤 SEND → type: ${type}, data: ${JSON.stringify(data).substring(0, 80)}`, 'send');
+
         if (window.parent !== window) {
             window.parent.postMessage(message, '*');
+            log(`📤 postMessage sent to parent`, 'send');
         } else {
-            // 부모 윈도우가 없는 경우 (독립 실행)
-            log(`[Standalone] Would send: ${type}`, 'info');
+            log(`⚠️ [Standalone mode] No parent window - message not sent`, 'info');
         }
     }
 
@@ -240,12 +242,22 @@ if modi.envs:
      * Flutter에서 메시지 수신
      */
     window.addEventListener('message', function(event) {
+        // 모든 메시지 로깅 (디버깅용)
+        log(`📩 RAW message from: ${event.origin}`, 'recv');
+
         try {
             const message = typeof event.data === 'string'
                 ? JSON.parse(event.data)
                 : event.data;
 
-            if (!message || !message.type) return;
+            if (!message) {
+                log(`📩 Empty message data`, 'recv');
+                return;
+            }
+
+            log(`📩 Message type: ${message.type || 'no type'}, data: ${JSON.stringify(message.data || message).substring(0, 100)}`, 'recv');
+
+            if (!message.type) return;
 
             switch (message.type) {
                 case PostMessageType.GET_PROPERTY_RESPONSE:
@@ -267,10 +279,10 @@ if modi.envs:
                     break;
 
                 default:
-                    log(`← Unknown: ${message.type}`, 'recv');
+                    log(`← Unknown type: ${message.type}`, 'recv');
             }
         } catch (e) {
-            // JSON 아닌 메시지는 무시
+            log(`📩 Parse error: ${e.message}, raw: ${String(event.data).substring(0, 50)}`, 'error');
         }
     });
 
@@ -679,6 +691,23 @@ sys.stderr = LogCapture()
     document.getElementById('runBtn').addEventListener('click', runCode);
     document.getElementById('stopBtn').addEventListener('click', () => log('Stop requested', 'info'));
     document.getElementById('clearBtn').addEventListener('click', () => document.getElementById('log').innerHTML = '');
+
+    document.getElementById('testMsgBtn').addEventListener('click', () => {
+        log('=== TEST MESSAGE ===', 'info');
+        // 테스트: LED 빨간색 설정 명령 전송
+        sendToFlutter('setPropertyRequest', {
+            moduleType: 'led',
+            index: 0,
+            propertyNum: 2,
+            data: [255, 0, 0]
+        });
+        // 테스트: 환경센서 온도 요청
+        sendToFlutter('getPropertyRequest', {
+            moduleType: 'environment',
+            index: 0,
+            propertyNum: 0
+        });
+    });
 
     document.getElementById('editor').addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {

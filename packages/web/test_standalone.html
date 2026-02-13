@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PyMODI+ Web - Standalone Test (Mock Mode)</title>
+    <style>
+        body { font-family: sans-serif; background: #1a1a2e; color: #eee; padding: 20px; }
+        h2 { color: #e94560; margin-bottom: 20px; }
+        .panel { background: #0f0f23; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        #output { height: 300px; overflow: auto; font-family: monospace; font-size: 12px; }
+        .log { padding: 2px 0; }
+        .log-info { color: #60a5fa; }
+        .log-success { color: #4ade80; }
+        .log-error { color: #f87171; }
+        .log-python { color: #a78bfa; }
+        textarea { width: 100%; height: 200px; background: #16213e; color: #eee; border: 1px solid #0f3460; padding: 10px; font-family: monospace; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-run { background: #4ade80; color: #000; }
+        .btn-stop { background: #ef4444; color: #fff; }
+    </style>
+</head>
+<body>
+    <h2>PyMODI+ Web - Standalone Test (Mock Mode)</h2>
+    <p>This test runs without Flutter, using mock modules for testing.</p>
+
+    <div class="panel">
+        <h3>Code</h3>
+        <textarea id="editor"># Standalone test - mock modules
+import asyncio
+
+print("Testing PyMODI+ Web Library")
+print(f"Connected modules: {modi.modules}")
+
+# Test LED
+if modi.leds:
+    led = modi.leds[0]
+    print(f"LED: {led}")
+    led.red = 100
+    print(f"Set red=100, rgb={led.rgb}")
+    led.rgb = 50, 100, 150
+    print(f"Set rgb=(50,100,150), rgb={led.rgb}")
+    led.turn_off()
+    print("LED turned off")
+
+# Test Motor
+if modi.motors:
+    motor = modi.motors[0]
+    print(f"Motor: {motor}")
+    motor.speed = 50
+    print("Motor speed set to 50")
+
+# Test Speaker
+if modi.speakers:
+    speaker = modi.speakers[0]
+    print(f"Speaker: {speaker}")
+    speaker.tune = 800, 70
+    print(f"Speaker tune: {speaker.tune}")
+
+print("\nTest complete!")
+</textarea>
+        <div>
+            <button class="btn-run" id="btnRun">Run</button>
+            <button class="btn-stop" id="btnStop">Stop</button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>Output</h3>
+        <div id="output"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+    let pyodide = null;
+
+    function log(msg, type) {
+        const el = document.getElementById('output');
+        const div = document.createElement('div');
+        div.className = 'log log-' + (type || 'info');
+        div.textContent = msg;
+        el.appendChild(div);
+        el.scrollTop = el.scrollHeight;
+    }
+
+    async function init() {
+        log('Loading Pyodide...', 'info');
+        pyodide = await loadPyodide();
+        log('Pyodide loaded!', 'success');
+
+        // Mock JS functions
+        window.workerSend = function(packet) {
+            const data = JSON.parse(packet);
+            log('[MOCK SEND] ' + JSON.stringify(data), 'info');
+        };
+        window.workerGetPropertyAsync = async function(type, idx, prop) {
+            log('[MOCK GET] ' + type + '[' + idx + '].prop' + prop, 'info');
+            // Return mock values
+            if (type === 'dial') return { turn: 50, turnSpeed: 10 };
+            if (type === 'button') return { pressed: false, clicked: false };
+            if (type === 'env') return { temperature: 25, humidity: 50, illuminance: 70, volume: 30 };
+            return 0;
+        };
+        window.workerShouldStop = function() { return false; };
+        window.workerLog = function(text) { log(text, 'python'); };
+
+        // Load library
+        const resp = await fetch('./lib/pymodi_web.py');
+        const libCode = await resp.text();
+        await pyodide.runPythonAsync(libCode);
+        log('Library loaded!', 'success');
+
+        // Add mock modules
+        await pyodide.runPythonAsync(`
+modi._add(Led(1, 0))
+modi._add(Motor(2, 0))
+modi._add(Speaker(3, 0))
+modi._add(Button(4, 0))
+modi._add(Dial(5, 0))
+modi._add(Env(6, 0))
+print(f"Mock modules added: {modi.modules}")
+`);
+        log('Mock modules added', 'success');
+
+        document.getElementById('btnRun').disabled = false;
+    }
+
+    async function run() {
+        const code = document.getElementById('editor').value;
+
+        // Setup stdout
+        await pyodide.runPythonAsync(`
+import sys
+class _Out:
+    def write(self, t):
+        if t.strip():
+            import js
+            js.workerLog(t.rstrip())
+    def flush(self): pass
+sys.stdout = _Out()
+sys.stderr = _Out()
+`);
+
+        try {
+            // Simple transform
+            let transformed = code
+                .replace(/import modi_plus\n?/g, '')
+                .replace(/import time\n?/g, '')
+                .replace(/time\.sleep\(([^)]+)\)/g, 'await asyncio.sleep($1)')
+                .replace(/while True:/g, 'while not is_stopped():');
+
+            // Wrap if needed
+            if (transformed.includes('await') && !transformed.includes('async def')) {
+                transformed = `import asyncio\n\nasync def __main__():\n` +
+                    transformed.split('\n').map(l => '    ' + l).join('\n') +
+                    `\n\nawait __main__()`;
+            }
+
+            log('--- Running ---', 'info');
+            await pyodide.runPythonAsync(transformed);
+            log('--- Done ---', 'success');
+        } catch (e) {
+            log('Error: ' + e.message, 'error');
+        }
+    }
+
+    document.getElementById('btnRun').addEventListener('click', run);
+    document.getElementById('btnRun').disabled = true;
+
+    init();
+    </script>
+</body>
+</html>
